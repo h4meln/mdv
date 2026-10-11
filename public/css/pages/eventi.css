@@ -1,0 +1,5 @@
+/* Eventi */
+body { padding-bottom: 220px; }
+.page { max-width: 1500px; margin: 0 auto; padding: 36px 20px 0; }
+.page > h1 { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 36px; color: #ebebeb; margin: 0 0 24px; }
+@media (max-width: 480px) { .page > h1 { font-size: 26px; } }

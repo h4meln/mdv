@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eventi — MDV</title>
+<link rel="stylesheet" href="public/css/base.css">
+<link rel="stylesheet" href="public/css/pages/eventi.css">
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+</head>
+<body>
+<main class="page">
+
+  <!-- ── calendar ── -->
+  <mdv-calendar></mdv-calendar>
+</main>
+
+<!-- ── nav ── -->
+<mdv-eggbar active="eventi"></mdv-eggbar>
+
+<!-- ── toast ── -->
+<mdv-toast
+  icon="heart"
+  title="SALVA IL MONDO!"
+  sub-title="Una piccola azione può fare la differenza"
+  text="Dai un occhio alla nostra raccolta fondi al seguente {link} e di seguito trovi il nostro documento di buona causa."
+  link="https://www.google.it"
+  link-label="link"
+  pdf="public/Mondo delle uova Presentazione.pdf"
+  pdf-label="Documento di buona causa"
+  pdf-meta="PDF · Apri documento"
+  delay="0.35"
+></mdv-toast>
+
+<!-- ── components ── -->
+<script type="module" src="components/eggbar/eggbar.js"></script>
+<script type="module" src="components/toast/toast.js"></script>
+<script type="module" src="components/calendar/calendar.js"></script>
+</body>
+</html>

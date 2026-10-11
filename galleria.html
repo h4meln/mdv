@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galleria — MDV</title>
+<link rel="stylesheet" href="public/css/base.css">
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+</head>
+<body>
+
+<!-- ── nav ── -->
+<mdv-eggbar active="galleria"></mdv-eggbar>
+
+<!-- ── gallery ── -->
+<!--
+  Per disabilitare alcune funzionalità della galleria, aggiungere gli attributi seguenti al tag <mdv-gallery>:
+    no-auto
+      Auto-scroll verticale continuo
+    no-drag
+      Drag con mouse/touch
+    no-wheel
+      Scroll con rotellina
+    no-zoom
+      Click per ingrandire
+    cols={numero}
+      Numero di colonne
+    parallax={numero}
+      Intensità del parallax (0.0 - 1.0)
+    auto-speed={numero}
+      Velocità di auto-scroll (0.0 - 1.0)
+    auto-scroll
+      Abilita auto-scroll lento (nuovo comportamento opzionale)
+    drag-axis="x"
+      Limita il drag all'asse X (orizzontale)
+-->
+<mdv-gallery 
+  cols="4" 
+  parallax="0.025" 
+  auto-speed="0.25" 
+  auto-scroll 
+  no-auto 
+></mdv-gallery>
+
+<!-- ── toast ── -->
+<mdv-toast
+  icon="heart"
+  title="SALVA IL MONDO!"
+  sub-title="Una piccola azione può fare la differenza"
+  text="Dai un occhio alla nostra raccolta fondi al seguente {link} e di seguito trovi il nostro documento di buona causa."
+  link="https://www.google.it"
+  link-label="link"
+  pdf="public/Mondo delle uova Presentazione.pdf"
+  pdf-label="Documento di buona causa"
+  pdf-meta="PDF · Apri documento"
+  delay="0.35"
+></mdv-toast>
+
+<!-- ── components ── -->
+<script type="module" src="components/eggbar/eggbar.js"></script>
+<script type="module" src="components/gallery/gallery.js"></script>
+<script type="module" src="components/toast/toast.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MDV APS/ETS</title>
+
+  <link rel="stylesheet" href="public/css/base.css">
+  <link rel="stylesheet" href="public/css/pages/sala_prove.css">
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
+</head>
+<body>
+
+  <div class="sp-page">
+
+    <!-- diorama -->
+    <aside class="sp-left-wrap">
+      <mdv-diorama room="red"></mdv-diorama>
+    </aside>
+
+    <!-- binario di scorrimento -->
+    <main class="sp-content">
+
+      <!-- info sale -->
+      <section class="sp-section">
+        <div class="sp-info-list">
+
+          <div class="sp-list-item">
+            <div class="sp-egg">
+              <h3>Orari</h3>
+              <span class="egg-val">20<br>24</span>
+            </div>
+            <div class="sp-text">
+              <strong>Apertura e turni</strong>
+              <span>Lunedì – Venerdì in fasce da 2 ore.</span>
+              <span class="note">Aperture straordinarie su richiesta ai volontari.</span>
+            </div>
+          </div>
+
+          <div class="sp-list-item">
+            <div class="sp-egg">
+              <h3>Tariffe</h3>
+              <span class="egg-val">25 €</span>
+            </div>
+            <div class="sp-text">
+              <strong>Costi e abbonamento</strong>
+              <span>25 € per 2 ore, o 200 € per 10 prove.</span>
+              <span class="note">Disdici per tempo: la sala va a chi aspetta.</span>
+            </div>
+          </div>
+
+          <div class="sp-list-item">
+            <div class="sp-egg">
+              <h3>Set</h3>
+              <span class="egg-val">Plug &<br>Play</span>
+            </div>
+            <div class="sp-text">
+              <strong>Strumentazione inclusa</strong>
+              <span>Batterie Mapex, audio 500W, ampli e piano.</span>
+              <span class="note">Porta solo il tuo strumento (e i tuoi cavi).</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- calendario prenotazioni -->
+      <section class="sp-section">
+        <div class="sp-cal-wrap">
+
+          <div class="sp-cal-head">
+            <div class="legend">
+              <span><i style="background:#D50000"></i>Sala Rossa</span>
+              <span><i style="background:#3F51B5"></i>Sala Blu</span>
+              <span><i style="background:#009688"></i>Festività</span>
+            </div>
+          </div>
+
+          <!-- google-calendar -->
+          <mdv-google-calendar
+            sources="https://calendar.google.com/calendar/ical/mondodelleuova%40gmail.com/public/basic.ics,https://calendar.google.com/calendar/ical/36d3qqiof9f43a44fa3q0ivnlk%40group.calendar.google.com/public/basic.ics,https://calendar.google.com/calendar/ical/it.italian%23holiday%40group.v.calendar.google.com/public/basic.ics"
+            start-hour="20"
+            end-hour="24"
+            days="1,2,3,4,5"
+            hour-height="52">
+          </mdv-google-calendar>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- nav -->
+  <mdv-eggbar active="sala_prove"></mdv-eggbar>
+
+  <!-- toast -->
+  <mdv-toast
+    icon="heart"
+    title="SALVA IL MONDO!"
+    sub-title="Una piccola azione può fare la differenza"
+    text="Dai un occhio alla nostra raccolta fondi al seguente {link} e di seguito trovi il nostro documento di buona causa."
+    link="https://www.google.it"
+    link-label="link"
+    pdf="public/Mondo delle uova Presentazione.pdf"
+    pdf-label="Documento di buona causa"
+    pdf-meta="PDF · Apri documento"
+    delay="0.35">
+  </mdv-toast>
+
+  <!-- components -->
+  <script type="module" src="public/js/pages/sala_prove.js"></script>
+  <script type="module" src="components/diorama/diorama.js"></script>
+  <script type="module" src="components/eggbar/eggbar.js"></script>
+  <script type="module" src="components/toast/toast.js"></script>
+  <script type="module" src="components/google-calendar/calendar.js"></script>
+
+</body>
+</html>

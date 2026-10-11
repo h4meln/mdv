@@ -1,0 +1,51 @@
+:root {
+  --brand-navbar-bg:    #ffffff;
+  --brand-indicator-bg: #ffe4b3;
+  --brand-navbar-clr:   #222327;
+  --brand-active-clr:   #222327;
+  color-scheme: dark;
+}
+
+mdv-eggbar:not([data-ready]) { visibility: hidden; }
+
+mdv-eggbar {
+  --navbar-bg:    var(--brand-navbar-bg);
+  --indicator-bg: var(--brand-indicator-bg);
+  --navbar-clr:   var(--brand-navbar-clr);
+  --active-clr:   var(--brand-active-clr);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Amatic SC', cursive, sans-serif; }
+
+html {
+  /* fallback: se anche il gradiente non fosse ancora dipinto, niente banda bianca */
+  background: #1d1c1d;
+  min-height: 100dvh;
+}
+
+body {
+  /* dvh segue la chrome del browser e il fullscreen; vh come fallback */
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: #fff;
+  font-family: 'Amatic SC', cursive, sans-serif;
+  position: relative;
+}
+
+/* gradiente ancorato alla viewport: mai una banda sotto, in nessuno stato */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(135deg, #0f3460 0%, #1d1c1d 50%, #582020 100%);
+}
+
+html, body { overflow-x: clip; }
+
+@keyframes page-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+body { animation: page-in .28s ease both; }

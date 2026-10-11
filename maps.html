@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MapStudio Pro</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<style>
+/* ============ Material 3 tokens ============ */
+:root{
+  --primary:#6750A4; --on-primary:#FFFFFF;
+  --primary-container:#EADDFF; --on-primary-container:#21005D;
+  --secondary-container:#E8DEF8; --on-secondary-container:#1D192B;
+  --tertiary:#7D5260;
+  --surface:#FEF7FF; --surface-dim:#DED8E1;
+  --sc-lowest:#FFFFFF; --sc-low:#F7F2FA; --sc:#F3EDF7; --sc-high:#ECE6F0; --sc-highest:#E6E0E9;
+  --on-surface:#1D1B20; --on-surface-variant:#49454F;
+  --outline:#79747E; --outline-variant:#CAC4D0;
+  --error:#B3261E; --on-error:#FFFFFF; --error-container:#F9DEDC; --on-error-container:#410E0B;
+  --hover:rgba(103,80,164,.08); --hover-2:rgba(103,80,164,.12); --press:rgba(103,80,164,.16);
+  --e1:0 1px 2px rgba(0,0,0,.16),0 1px 3px 1px rgba(0,0,0,.10);
+  --e2:0 1px 2px rgba(0,0,0,.16),0 2px 6px 2px rgba(0,0,0,.10);
+  --e3:0 4px 8px 3px rgba(0,0,0,.12),0 1px 3px rgba(0,0,0,.22);
+  --r-xs:8px; --r-s:12px; --r-m:16px; --r-l:24px; --r-xl:28px;
+}
+[data-theme="dark"]{
+  --primary:#D0BCFF; --on-primary:#381E72;
+  --primary-container:#4F378B; --on-primary-container:#EADDFF;
+  --secondary-container:#4A4458; --on-secondary-container:#E8DEF8;
+  --surface:#141218; --surface-dim:#141218;
+  --sc-lowest:#0F0D13; --sc-low:#1D1B20; --sc:#211F26; --sc-high:#2B2930; --sc-highest:#36343B;
+  --on-surface:#E6E0E9; --on-surface-variant:#CAC4D0;
+  --outline:#938F99; --outline-variant:#49454F;
+  --error:#F2B8B5; --on-error:#601410; --error-container:#8C1D18; --on-error-container:#F9DEDC;
+  --hover:rgba(208,188,255,.10); --hover-2:rgba(208,188,255,.16); --press:rgba(208,188,255,.20);
+  --e1:0 1px 2px rgba(0,0,0,.5),0 1px 3px 1px rgba(0,0,0,.35);
+  --e2:0 1px 2px rgba(0,0,0,.5),0 2px 6px 2px rgba(0,0,0,.35);
+  --e3:0 4px 8px 3px rgba(0,0,0,.4),0 1px 3px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:Roboto,system-ui,-apple-system,sans-serif;
+  background:var(--surface); color:var(--on-surface);
+  height:100dvh; display:flex; flex-direction:column; overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font-family:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--primary);outline-offset:2px;border-radius:6px}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--outline-variant);border-radius:8px;border:3px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+
+.ms{
+  font-family:'Material Symbols Rounded';font-weight:400;font-style:normal;
+  font-size:20px;line-height:1;letter-spacing:normal;text-transform:none;
+  display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;
+  -webkit-font-feature-settings:'liga';-webkit-font-smoothing:antialiased;
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+  user-select:none;flex:none;
+}
+
+/* ============ Buttons ============ */
+.btn{
+  position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  height:40px;padding:0 20px;border-radius:20px;border:none;background:transparent;color:var(--primary);
+  font:500 .875rem/1 Roboto,sans-serif;letter-spacing:.01em;cursor:pointer;white-space:nowrap;
+  transition:background .15s,box-shadow .15s,opacity .15s,transform .1s;
+}
+.btn:active{transform:scale(.97)}
+.btn:hover{background:var(--hover)}
+.btn .ms{font-size:18px}
+.btn.filled{background:var(--primary);color:var(--on-primary)}
+.btn.filled:hover{background:var(--primary);box-shadow:var(--e1);filter:brightness(1.06)}
+.btn.tonal{background:var(--secondary-container);color:var(--on-secondary-container)}
+.btn.tonal:hover{background:var(--secondary-container);box-shadow:var(--e1);filter:brightness(1.04)}
+.btn.outlined{border:1px solid var(--outline);color:var(--primary)}
+.btn.outlined:hover{background:var(--hover)}
+.btn:disabled{opacity:.38;cursor:not-allowed;background:transparent;box-shadow:none;filter:none;transform:none}
+.btn.filled:disabled{background:var(--on-surface);color:var(--surface)}
+
+.icon-btn{
+  position:relative;overflow:hidden;width:40px;height:40px;border-radius:50%;border:none;background:transparent;
+  color:var(--on-surface-variant);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background .15s,color .15s;flex:none;
+}
+.icon-btn:hover{background:var(--hover)}
+.icon-btn:disabled{opacity:.35;cursor:not-allowed;background:transparent}
+.icon-btn.on{background:var(--primary-container);color:var(--on-primary-container)}
+.icon-btn.sm{width:32px;height:32px}
+.icon-btn.sm .ms{font-size:18px}
+
+.rip{position:absolute;border-radius:50%;background:currentColor;opacity:.22;transform:scale(0);animation:rip .55s ease-out;pointer-events:none}
+@keyframes rip{to{transform:scale(2.4);opacity:0}}
+
+/* ============ App bar ============ */
+.appbar{
+  display:flex;align-items:center;gap:6px;height:64px;padding:0 12px 0 16px;flex:none;
+  background:var(--sc);color:var(--on-surface);box-shadow:var(--e1);z-index:1000;
+}
+.appbar .logo{font-size:28px;color:var(--primary);margin-right:4px}
+.appbar .titles{display:flex;flex-direction:column;min-width:0;margin-right:auto}
+.appbar h1{font-size:1rem;font-weight:500;letter-spacing:.01em;line-height:1.2}
+.appbar small{font-size:.72rem;color:var(--on-surface-variant);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ============ Layout ============ */
+.app{flex:1;display:grid;grid-template-columns:392px minmax(0,1fr);min-height:0}
+.panel{background:var(--sc-low);border-right:1px solid var(--outline-variant);display:flex;flex-direction:column;min-height:0}
+.tabs{display:flex;flex:none;background:var(--sc-low);border-bottom:1px solid var(--outline-variant)}
+.tabs button{
+  flex:1;height:52px;position:relative;overflow:hidden;border:none;background:transparent;cursor:pointer;
+  color:var(--on-surface-variant);font:500 .74rem Roboto;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;transition:color .15s,background .15s;
+}
+.tabs button .ms{font-size:20px}
+.tabs button:hover{background:var(--hover)}
+.tabs button.on{color:var(--primary)}
+.tabs button.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:56px;height:3px;border-radius:3px 3px 0 0;background:var(--primary)}
+.pane{display:none;padding:16px;overflow-y:auto;flex:1;overscroll-behavior:contain}
+.pane.on{display:block}
+
+h3{
+  font-size:.72rem;font-weight:500;color:var(--on-surface-variant);text-transform:uppercase;
+  letter-spacing:.08em;margin:22px 0 10px;display:flex;align-items:center;gap:8px;
+}
+h3:first-child{margin-top:4px}
+h3 .badge{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:10px;padding:1px 8px;font-size:.68rem;letter-spacing:0;text-transform:none}
+
+/* ============ Search ============ */
+.search{
+  display:flex;align-items:center;gap:10px;height:52px;border-radius:26px;
+  background:var(--sc-high);padding:0 8px 0 16px;border:1px solid transparent;transition:border-color .15s,background .15s;
+}
+.search:focus-within{border-color:var(--primary);background:var(--sc)}
+.search .ms{color:var(--on-surface-variant)}
+.search input{flex:1;min-width:0;border:none;background:none;outline:none;font-size:.9rem;color:var(--on-surface)}
+.search input::placeholder{color:var(--on-surface-variant)}
+.sug{
+  display:none;margin-top:6px;background:var(--sc-lowest);border-radius:var(--r-m);box-shadow:var(--e2);
+  overflow:hidden;border:1px solid var(--outline-variant);
+}
+.sug.on{display:block}
+.sug-item{
+  display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:12px 14px;border:none;
+  background:transparent;cursor:pointer;font-size:.82rem;line-height:1.35;color:var(--on-surface);
+  border-bottom:1px solid var(--outline-variant);position:relative;overflow:hidden;
+}
+.sug-item:last-child{border-bottom:none}
+.sug-item:hover{background:var(--hover)}
+.sug-item .ms{color:var(--on-surface-variant);margin-top:1px}
+.msg{font-size:.76rem;line-height:1.5;color:var(--on-surface-variant);margin-top:8px}
+.msg:empty{display:none}
+
+/* ============ Rows / lists ============ */
+.row{
+  display:flex;align-items:center;gap:4px;padding:6px 6px 6px 10px;border-radius:var(--r-m);
+  background:var(--sc-lowest);margin-bottom:6px;border:1px solid var(--outline-variant);
+  transition:box-shadow .15s,border-color .15s,background .15s;
+}
+.row:hover{box-shadow:var(--e1)}
+.row.on{border-color:var(--primary);background:var(--primary-container)}
+.row.on .row-name{color:var(--on-primary-container)}
+.row .dot{width:14px;height:14px;border-radius:50%;flex:none;box-shadow:0 0 0 2px var(--sc-lowest)}
+.row-name{
+  flex:1;min-width:0;border:none;background:transparent;outline:none;font-size:.86rem;padding:6px 4px;
+  border-radius:8px;color:var(--on-surface);
+}
+.row-name:focus{background:var(--hover-2)}
+.row small{display:block;font-size:.7rem;color:var(--on-surface-variant);padding:2px 4px 0}
+.empty{
+  font-size:.8rem;color:var(--on-surface-variant);padding:20px 16px;text-align:center;
+  border:1px dashed var(--outline);border-radius:var(--r-m);line-height:1.5;
+}
+
+/* ============ Segmented buttons ============ */
+.seg{display:flex;border:1px solid var(--outline);border-radius:20px;overflow:hidden;background:transparent;width:100%}
+.seg button{
+  flex:1;position:relative;overflow:hidden;border:none;background:transparent;color:var(--on-surface);
+  min-height:38px;padding:6px 8px;font:500 .76rem Roboto;cursor:pointer;display:inline-flex;align-items:center;
+  justify-content:center;gap:6px;border-right:1px solid var(--outline);transition:background .15s;white-space:nowrap;
+}
+.seg button:last-child{border-right:none}
+.seg button:hover{background:var(--hover)}
+.seg button.on{background:var(--secondary-container);color:var(--on-secondary-container)}
+.seg button .ms{font-size:17px}
+
+/* ============ Chips ============ */
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{
+  width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;background:var(--c);
+  box-shadow:0 0 0 2px var(--sc-lowest),0 0 0 3px var(--outline-variant);
+  transition:transform .12s,box-shadow .12s;position:relative;overflow:hidden;
+}
+.chip:hover{transform:scale(1.1)}
+.chip.on{box-shadow:0 0 0 2px var(--sc-lowest),0 0 0 4px var(--primary)}
+
+/* ============ Fields ============ */
+.fld{display:block;margin:14px 0}
+.fld>span{display:block;font-size:.76rem;color:var(--on-surface-variant);margin-bottom:6px}
+.fld input[type=text],.fld select{
+  width:100%;height:48px;padding:0 14px;border-radius:var(--r-s);border:1px solid var(--outline);
+  background:var(--sc-lowest);font-size:.86rem;color:var(--on-surface);outline:none;transition:border-color .15s;
+}
+.fld input[type=text]:focus,.fld select:focus{border-color:var(--primary);border-width:2px;padding:0 13px}
+.fld .val{float:right;color:var(--primary);font-weight:500;font-variant-numeric:tabular-nums}
+input[type=range]{
+  width:100%;height:24px;accent-color:var(--primary);cursor:pointer;background:transparent;
+}
+
+/* ============ Switch ============ */
+.switch{display:flex;align-items:center;gap:14px;padding:10px 0;font-size:.86rem;cursor:pointer;user-select:none}
+.switch input{position:absolute;opacity:0;width:0;height:0}
+.switch .track{width:52px;height:32px;border-radius:16px;background:var(--sc-highest);border:2px solid var(--outline);position:relative;transition:.2s;flex:none}
+.switch .track::after{content:'';position:absolute;top:50%;left:6px;transform:translateY(-50%);width:16px;height:16px;border-radius:50%;background:var(--outline);transition:.2s}
+.switch input:checked+.track{background:var(--primary);border-color:var(--primary)}
+.switch input:checked+.track::after{left:24px;width:24px;height:24px;background:var(--on-primary)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid2 .btn{width:100%;padding:0 10px}
+
+/* ============ Work area ============ */
+.work{display:flex;flex-direction:column;min-height:0;min-width:0;background:var(--surface)}
+.stagewrap{
+  flex:1;overflow:auto;padding:20px;display:flex;justify-content:center;align-items:flex-start;
+  background:var(--surface);
+  background-image:radial-gradient(var(--outline-variant) 1px,transparent 1px);
+  background-size:20px 20px;
+}
+#stage{
+  position:relative;border-radius:var(--r-l);overflow:hidden;background:var(--sc-highest);
+  box-shadow:var(--e3);flex:0 0 auto;transition:width .25s ease,height .25s ease;max-width:100%;
+}
+#lmap,#frame{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+#frame{display:none}
+
+.tb{
+  position:absolute;top:12px;right:12px;z-index:600;display:flex;flex-direction:column;gap:4px;
+  background:var(--sc-lowest);border-radius:var(--r-xl);padding:6px;box-shadow:var(--e2);
+}
+.tb .icon-btn{width:42px;height:42px}
+.tb hr{border:none;border-top:1px solid var(--outline-variant);margin:4px 6px}
+#hint{
+  position:absolute;left:12px;bottom:34px;z-index:600;background:var(--sc-lowest);color:var(--on-surface);
+  border-radius:var(--r-xs);padding:8px 14px;font-size:.76rem;box-shadow:var(--e2);display:none;max-width:70%;
+}
+
+.status{
+  display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 16px;flex:none;
+  border-top:1px solid var(--outline-variant);background:var(--sc-low);font-size:.74rem;
+}
+.status .pill{
+  background:var(--sc-highest);color:var(--on-surface-variant);padding:5px 12px;border-radius:8px;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.status .seg{width:auto;flex:none}
+.status .seg button{padding:6px 14px;min-height:34px}
+
+/* ============ Dock ============ */
+.dock{background:var(--sc-low);border-top:1px solid var(--outline-variant);padding:12px 16px;flex:none}
+.dock .bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.dock.min .bar{margin-bottom:0}
+.dock.min textarea{display:none}
+.dock select{
+  height:40px;padding:0 12px;border-radius:10px;border:1px solid var(--outline);background:var(--sc-lowest);
+  font-size:.82rem;color:var(--on-surface);outline:none;cursor:pointer;
+}
+.dock select:focus{border-color:var(--primary);border-width:2px}
+.dock textarea{
+  width:100%;height:120px;border-radius:var(--r-s);border:1px solid var(--outline);background:var(--sc-lowest);
+  padding:12px;font:.74rem/1.55 'Roboto Mono',Consolas,monospace;resize:vertical;color:var(--on-surface);outline:none;
+}
+.dock textarea:focus{border-color:var(--primary)}
+.dock #note{margin-left:auto;font-size:.72rem;color:var(--on-surface-variant)}
+
+.kbd{
+  font:.72rem Consolas,monospace;background:var(--sc-highest);border-radius:6px;padding:2px 6px;
+  color:var(--on-surface);border:1px solid var(--outline-variant);
+}
+
+/* ============ Snackbar ============ */
+#snack{
+  position:fixed;left:50%;bottom:24px;transform:translate(-50%,120px);
+  background:#322F35;color:#F5EFF7;padding:14px 20px;border-radius:10px;font-size:.85rem;
+  box-shadow:var(--e3);z-index:5000;transition:transform .28s cubic-bezier(.2,0,0,1);
+  max-width:min(90vw,520px);text-align:center;pointer-events:none;
+}
+[data-theme="dark"] #snack{background:#E6E0E9;color:#322F35}
+#snack.show{transform:translate(-50%,0)}
+
+/* ============ Leaflet overrides ============ */
+.leaflet-popup-content-wrapper{border-radius:var(--r-s)!important;box-shadow:var(--e2)!important;font-family:Roboto,sans-serif}
+.leaflet-popup-content{margin:12px 16px!important;font-size:.85rem;line-height:1.4}
+.leaflet-container{font-family:Roboto,sans-serif;background:var(--sc-highest)}
+.leaflet-control-scale-line{background:rgba(255,255,255,.75);border-color:#666;color:#333;font-size:.68rem}
+.leaflet-bar a{border-radius:0!important}
+
+/* ============ Responsive ============ */
+@media(max-width:980px){
+  body{height:auto;overflow:auto}
+  .app{display:block}
+  .panel{border-right:none;border-bottom:1px solid var(--outline-variant)}
+  .pane{max-height:56vh}
+  .stagewrap{padding:12px;min-height:340px}
+  .appbar .titles small{display:none}
+  .appbar .btn span:not(.ms){display:none}
+  .appbar .btn{padding:0 12px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="appbar">
+  <span class="ms logo">map</span>
+  <div class="titles">
+    <h1>MapStudio Pro</h1>
+    <small>Mappe, disegni, percorsi ed export</small>
+  </div>
+  <button class="icon-btn" id="undoB" title="Annulla (Ctrl+Z)"><span class="ms">undo</span></button>
+  <button class="icon-btn" id="redoB" title="Ripeti (Ctrl+Y)"><span class="ms">redo</span></button>
+  <button class="btn tonal" onclick="saveProject()" title="Salva progetto .json"><span class="ms">save</span><span>Salva</span></button>
+  <button class="btn outlined" onclick="$('imp').click()" title="Apri progetto .json"><span class="ms">folder_open</span><span>Apri</span></button>
+  <input type="file" id="imp" accept=".json" hidden>
+  <button class="icon-btn" id="themeBtn" title="Cambia tema"><span class="ms">dark_mode</span></button>
+</header>
+
+<div class="app">
+  <aside class="panel">
+    <nav class="tabs" id="tabs">
+      <button class="on" data-t="p1"><span class="ms">place</span>Luoghi</button>
+      <button data-t="p2"><span class="ms">draw</span>Disegni</button>
+      <button data-t="p3"><span class="ms">map</span>Mappa</button>
+      <button data-t="p4"><span class="ms">handyman</span>Strumenti</button>
+    </nav>
+
+    <!-- ============ LUOGHI ============ -->
+    <div class="pane on" id="p1">
+      <h3>Cerca un luogo</h3>
+      <div class="search">
+        <span class="ms">search</span>
+        <input id="q" placeholder="Indirizzo o 45.07, 7.69" autocomplete="off">
+        <button class="icon-btn sm" id="qClear" title="Cancella"><span class="ms">close</span></button>
+      </div>
+      <div id="sug" class="sug"></div>
+      <div class="msg" id="qmsg"></div>
+
+      <h3>Luoghi <span class="badge" id="pcount">0</span></h3>
+      <div id="list"></div>
+
+      <div id="props" hidden>
+        <h3>Aspetto del luogo</h3>
+        <div class="chips" id="colors"></div>
+        <div class="seg" id="iconSeg" style="margin-top:12px">
+          <button data-v="pin"><span class="ms">place</span>Spillo</button>
+          <button data-v="dot"><span class="ms">radio_button_checked</span>Punto</button>
+          <button data-v="star"><span class="ms">star</span>Stella</button>
+        </div>
+        <label class="fld"><span>Testo del popup</span>
+          <input type="text" id="popup" placeholder="Vuoto = nome del luogo">
+        </label>
+        <div class="msg" id="coord"></div>
+      </div>
+    </div>
+
+    <!-- ============ DISEGNI ============ -->
+    <div class="pane" id="p2">
+      <h3>Nuovo disegno</h3>
+      <div class="grid2">
+        <button class="btn outlined" data-go="line"><span class="ms">polyline</span>Linea</button>
+        <button class="btn outlined" data-go="poly"><span class="ms">pentagon</span>Area</button>
+        <button class="btn outlined" data-go="circle"><span class="ms">circle</span>Cerchio</button>
+        <button class="btn outlined" data-go="measure"><span class="ms">straighten</span>Righello</button>
+      </div>
+      <div class="msg">Linea/Area: clic per i punti, doppio clic o <span class="kbd">Invio</span> per terminare. Cerchio: clic sul centro, poi sul bordo. Lunghezze, perimetri e aree sono calcolati automaticamente.</div>
+
+      <h3>Colore del prossimo disegno</h3>
+      <div class="chips" id="dcols"></div>
+
+      <h3>Disegni sulla mappa <span class="badge" id="scount">0</span></h3>
+      <div id="slist"></div>
+    </div>
+
+    <!-- ============ MAPPA ============ -->
+    <div class="pane" id="p3">
+      <h3>Provider embed</h3>
+      <div class="seg" id="prov">
+        <button data-v="osm">OSM</button><button data-v="google">Google</button>
+        <button data-v="streetview">Street</button><button data-v="bing">Bing</button>
+      </div>
+
+      <h3>Stile mappa</h3>
+      <div class="seg" id="style">
+        <button data-v="road">Stradale</button><button data-v="sat">Satellite</button>
+        <button data-v="terrain">Rilievo</button><button data-v="dark">Scuro</button>
+      </div>
+      <div class="msg">OSM embed supporta solo Stradale e Rilievo. Satellite e Scuro valgono su Google/Bing e nell'export Leaflet.</div>
+
+      <h3>Dimensioni anteprima</h3>
+      <label class="fld"><span>Zoom <b class="val" id="zoomV">16</b></span>
+        <input type="range" id="zoom" min="3" max="19" value="16"></label>
+      <label class="fld"><span>Larghezza <b class="val" id="wV">100%</b></span>
+        <input type="range" id="w" min="20" max="100" value="100"></label>
+      <label class="fld"><span>Altezza <b class="val" id="hV">520 px</b></span>
+        <input type="range" id="h" min="240" max="900" step="10" value="520"></label>
+
+      <h3>Opzioni export</h3>
+      <label class="switch"><input type="checkbox" id="lazy" checked><span class="track"></span>Caricamento lazy</label>
+      <label class="switch"><input type="checkbox" id="radius" checked><span class="track"></span>Bordi arrotondati</label>
+    </div>
+
+    <!-- ============ STRUMENTI ============ -->
+    <div class="pane" id="p4">
+      <h3>Percorso tra i luoghi</h3>
+      <div class="seg" id="rm">
+        <button data-v="car"><span class="ms">directions_car</span>Auto</button>
+        <button data-v="bike"><span class="ms">directions_bike</span>Bici</button>
+        <button data-v="foot"><span class="ms">directions_walk</span>A piedi</button>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <button class="btn filled" onclick="route()"><span class="ms">route</span>Calcola</button>
+        <button class="btn outlined" onclick="clearRoute()"><span class="ms">delete</span>Rimuovi</button>
+      </div>
+      <div class="msg" id="rinfo">Servono almeno 2 luoghi. Usa ↑ ↓ nella lista per cambiare l'ordine.</div>
+
+      <h3>Righello</h3>
+      <div class="grid2">
+        <button class="btn outlined" onclick="undoM()"><span class="ms">undo</span>Ultimo punto</button>
+        <button class="btn outlined" onclick="clearM()"><span class="ms">delete_sweep</span>Cancella</button>
+      </div>
+
+      <h3>Condividi il luogo selezionato</h3>
+      <div class="grid2">
+        <button class="btn outlined" onclick="share('g')">Google Maps</button>
+        <button class="btn outlined" onclick="share('a')">Apple Maps</button>
+        <button class="btn outlined" onclick="share('w')">Waze</button>
+        <button class="btn outlined" onclick="share('o')">OpenStreetMap</button>
+        <button class="btn outlined" onclick="share('c')"><span class="ms">content_copy</span>Coordinate</button>
+        <button class="btn outlined" onclick="share('l')"><span class="ms">link</span>Link Google</button>
+      </div>
+
+      <h3>Importa dati</h3>
+      <button class="btn outlined" style="width:100%" onclick="$('gj').click()"><span class="ms">upload_file</span>Importa GeoJSON</button>
+      <input type="file" id="gj" accept=".geojson,.json" hidden>
+
+      <h3>Scorciatoie</h3>
+      <div class="msg">
+        <span class="kbd">/</span> cerca · <span class="kbd">V</span> naviga · <span class="kbd">A</span> aggiungi ·
+        <span class="kbd">L</span> linea · <span class="kbd">G</span> area · <span class="kbd">C</span> cerchio ·
+        <span class="kbd">R</span> righello · <span class="kbd">Invio</span> termina · <span class="kbd">Esc</span> annulla ·
+        <span class="kbd">Canc</span> elimina · <span class="kbd">Ctrl+Z/Y</span> annulla/ripeti
+      </div>
+
+      <h3>Dati</h3>
+      <button class="btn outlined" style="width:100%;color:var(--error);border-color:var(--error)" onclick="resetAll()">
+        <span class="ms">delete_forever</span>Azzera tutto
+      </button>
+      <div class="msg">Il progetto si salva automaticamente nel browser. "Salva" scarica un .json riapribile.</div>
+    </div>
+  </aside>
+
+  <section class="work">
+    <div class="stagewrap">
+      <div id="stage">
+        <div id="lmap"></div>
+        <iframe id="frame" title="Anteprima embed"></iframe>
+        <div id="hint"></div>
+        <div class="tb" id="tb">
+          <button class="icon-btn" data-tool="move" title="Naviga (V)"><span class="ms">pan_tool</span></button>
+          <button class="icon-btn" data-tool="add" title="Aggiungi luoghi (A)"><span class="ms">add_location_alt</span></button>
+          <button class="icon-btn" data-tool="line" title="Linea (L)"><span class="ms">polyline</span></button>
+          <button class="icon-btn" data-tool="poly" title="Area (G)"><span class="ms">pentagon</span></button>
+          <button class="icon-btn" data-tool="circle" title="Cerchio (C)"><span class="ms">circle</span></button>
+          <button class="icon-btn" data-tool="measure" title="Righello (R)"><span class="ms">straighten</span></button>
+          <hr>
+          <button class="icon-btn" onclick="map.zoomIn()" title="Zoom avanti"><span class="ms">add</span></button>
+          <button class="icon-btn" onclick="map.zoomOut()" title="Zoom indietro"><span class="ms">remove</span></button>
+          <button class="icon-btn" onclick="fitAll()" title="Mostra tutto"><span class="ms">center_focus_strong</span></button>
+          <button class="icon-btn" onclick="locate()" title="La mia posizione"><span class="ms">my_location</span></button>
+          <button class="icon-btn" onclick="fullscreenStage()" title="Schermo intero"><span class="ms">fullscreen</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="status">
+      <span class="pill" id="cL">— , —</span>
+      <span class="pill" id="zL">z—</span>
+      <span class="pill" id="dL">Righello: 0 m</span>
+      <div class="seg" id="view" style="margin-left:auto">
+        <button data-v="leaflet"><span class="ms">map</span>Interattiva</button>
+        <button data-v="embed"><span class="ms">code</span>Embed</button>
+      </div>
+      <div class="seg" id="dev">
+        <button data-v="100%">Desktop</button>
+        <button data-v="768px">Tablet</button>
+        <button data-v="375px">Mobile</button>
+      </div>
+    </div>
+
+    <div class="dock" id="dock">
+      <div class="bar">
+        <select id="fmt">
+          <option value="iframe">iframe classico</option>
+          <option value="resp">iframe responsive</option>
+          <option value="leaflet">Pagina Leaflet (tutto)</option>
+          <option value="link">Link di navigazione</option>
+          <option value="geojson">GeoJSON</option>
+          <option value="kml">KML</option>
+          <option value="gpx">GPX</option>
+          <option value="csv">CSV</option>
+        </select>
+        <button class="btn filled" onclick="copyCode()"><span class="ms">content_copy</span>Copia</button>
+        <button class="btn outlined" onclick="download()"><span class="ms">download</span>Scarica</button>
+        <button class="icon-btn" id="dockToggle" title="Mostra/nascondi codice"><span class="ms">expand_more</span></button>
+        <span id="note"></span>
+      </div>
+      <textarea id="code" readonly spellcheck="false"></textarea>
+    </div>
+  </section>
+</div>
+
+<div id="snack"></div>
+
+<script>
+/* =========================================================
+   MapStudio Pro — logica applicativa
+   ========================================================= */
+const $  = id => document.getElementById(id);
+const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+
+const COL = {red:'#E5484D',blue:'#3B82F6',green:'#22A06B',orange:'#F59E0B',purple:'#8B5CF6',black:'#3F3F46'};
+const TILES = {
+  road:   ['https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png','© OpenStreetMap contributors'],
+  sat:    ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}','© Esri'],
+  terrain:['https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png','© OpenTopoMap, OSM'],
+  dark:   ['https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png','© CARTO, OSM']
+};
+const DEF = {
+  places:[], shapes:[], route:null, sel:null,
+  provider:'osm', style:'road', zoom:16, w:100, h:520,
+  radius:true, lazy:true, device:'100%', fmt:'iframe',
+  tool:'move', view:'leaflet', rm:'car', dcol:'blue', theme:null
+};
+const HINTS = {
+  add:'Clic sulla mappa per aggiungere un luogo',
+  line:'Clic per i punti · doppio clic o Invio per terminare',
+  poly:'Clic per i vertici · doppio clic o Invio per chiudere',
+  circle:'Clic sul centro, poi sul bordo',
+  measure:'Clic per misurare un percorso'
+};
+
+/* ---------- stato ---------- */
+let S = clone(DEF);
+try{
+  const raw = localStorage.getItem('mapstudio-pro');
+  if(raw){ const p = JSON.parse(raw); if(p && Array.isArray(p.places)) S = Object.assign(clone(DEF), p); }
+}catch(e){}
+
+let nid = 1;
+(S.places.concat(S.shapes)).forEach(x => { if(+x.id >= nid) nid = +x.id + 1; });
+
+let map, grp, sg, rg, dg, tile, mk = {}, mLine, mPts = [], dp = [], hover = null;
+let undoStack = [], redoStack = [];
+let searchTimer = null, lastReq = 0, codeTimer = null;
+
+/* ---------- utilità ---------- */
+const fD = m => m < 1000 ? Math.round(m) + ' m' : (m/1000).toFixed(2) + ' km';
+const fA = a => a < 1e6 ? Math.round(a) + ' m²' : (a/1e6).toFixed(3) + ' km²';
+const fT = s => s < 3600 ? Math.max(1, Math.round(s/60)) + ' min' : Math.floor(s/3600) + ' h ' + Math.round(s%3600/60) + ' min';
+const cur = () => S.places.find(p => p.id === S.sel) || S.places[0] || null;
+
+function len(pts){ let d = 0; for(let i=1;i<pts.length;i++) d += L.latLng(pts[i-1]).distanceTo(L.latLng(pts[i])); return d; }
+function area(pts){
+  const r = x => x*Math.PI/180; let s = 0;
+  for(let i=0;i<pts.length;i++){
+    const a = pts[i], b = pts[(i+1)%pts.length];
+    s += (r(b[1]) - r(a[1])) * (2 + Math.sin(r(a[0])) + Math.sin(r(b[0])));
+  }
+  return Math.abs(s * 6371008.8**2 / 2);
+}
+function circ(c, rad, n = 48){
+  const r = x => x*Math.PI/180, d = x => x*180/Math.PI;
+  const f = r(c[0]), l = r(c[1]), q = rad/6371008.8, out = [];
+  for(let i=0;i<=n;i++){
+    const t = 2*Math.PI*i/n;
+    const f2 = Math.asin(Math.sin(f)*Math.cos(q) + Math.cos(f)*Math.sin(q)*Math.cos(t));
+    out.push([d(f2), d(l + Math.atan2(Math.sin(t)*Math.sin(q)*Math.cos(f), Math.cos(q) - Math.sin(f)*Math.sin(f2)))]);
+  }
+  return out;
+}
+function shapeInfo(s){
+  if(s.type === 'circle') return `Raggio ${fD(s.r)} · Area ${fA(Math.PI*s.r*s.r)}`;
+  if(s.type === 'poly')   return `Perimetro ${fD(len(s.pts.concat([s.pts[0]])))} · Area ${fA(area(s.pts))}`;
+  return `Lunghezza ${fD(len(s.pts))}`;
+}
+function ring(s){ return s.type === 'circle' ? circ(s.pts[0], s.r) : s.pts.concat([s.pts[0]]); }
+
+/* ---------- persistenza ---------- */
+function persist(){ try{ localStorage.setItem('mapstudio-pro', JSON.stringify(S)); }catch(e){} }
+let snackTimer;
+function snack(m){
+  const el = $('snack'); el.textContent = m; el.classList.add('show');
+  clearTimeout(snackTimer); snackTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+/* ---------- cronologia ---------- */
+const snap = () => JSON.stringify({places:S.places, shapes:S.shapes, route:S.route, sel:S.sel});
+function hist(){ undoStack.push(snap()); if(undoStack.length > 100) undoStack.shift(); redoStack.length = 0; histBtns(); }
+function histBtns(){ $('undoB').disabled = !undoStack.length; $('redoB').disabled = !redoStack.length; }
+function applyState(st){ S.places = st.places; S.shapes = st.shapes; S.route = st.route; S.sel = st.sel; render(); histBtns(); }
+function undo(){ if(!undoStack.length) return; redoStack.push(snap()); applyState(JSON.parse(undoStack.pop())); }
+function redo(){ if(!redoStack.length) return; undoStack.push(snap()); applyState(JSON.parse(redoStack.pop())); }
+
+/* =========================================================
+   MAPPA
+   ========================================================= */
+function initMap(){
+  map = L.map('lmap', {zoomControl:false, doubleClickZoom:false}).setView([45.07,7.69], 12);
+  L.control.scale({imperial:false, position:'bottomleft'}).addTo(map);
+  grp = L.layerGroup().addTo(map);
+  sg  = L.layerGroup().addTo(map);
+  rg  = L.layerGroup().addTo(map);
+  dg  = L.layerGroup().addTo(map);
+  mLine = L.polyline([], {color:'#6750A4', weight:4, dashArray:'8 6'}).addTo(map);
+  setTile();
+
+  map.on('click', e => {
+    const t = S.tool, lat = e.latlng.lat, lng = e.latlng.lng;
+    if(t === 'measure'){ mPts.push(e.latlng); drawM(); }
+    else if(t === 'add'){ addPlace(lat, lng, 'Punto ' + (S.places.length + 1)); }
+    else if(t === 'line' || t === 'poly'){ dp.push([lat,lng]); drawDraft(); }
+    else if(t === 'circle'){
+      if(!dp.length){ dp = [[lat,lng]]; drawDraft(); }
+      else{
+        const r = L.latLng(dp[0]).distanceTo(e.latlng);
+        if(r > 1) endShape({type:'circle', pts:[dp[0]], r:Math.round(r)});
+        else snack('Raggio troppo piccolo');
+      }
+    }
+  });
+
+  map.on('dblclick', () => { if(S.tool === 'line' || S.tool === 'poly'){ dp.pop(); finish(); } });
+  map.on('mousemove', e => {
+    hover = e.latlng;
+    $('cL').textContent = e.latlng.lat.toFixed(5) + ', ' + e.latlng.lng.toFixed(5);
+    if(dp.length) drawDraft();
+  });
+  map.on('zoomend', () => {
+    S.zoom = map.getZoom();
+    $('zoom').value = S.zoom; $('zoomV').textContent = S.zoom;
+    code(); persist();
+  });
+  map.on('move zoom', () => { $('zL').textContent = 'z' + map.getZoom(); });
+
+  $('zL').textContent = 'z' + map.getZoom();
+}
+
+function setTile(){
+  if(!map) return;
+  if(tile) map.removeLayer(tile);
+  const t = TILES[S.style] || TILES.road;
+  tile = L.tileLayer(t[0], {maxZoom:19, attribution:t[1]}).addTo(map);
+}
+
+/* =========================================================
+   MARKER
+   ========================================================= */
+function makeIcon(p){
+  const c = COL[p.color] || p.color;
+  const dot = p.icon === 'dot';
+  let inner;
+  if(dot){
+    inner = `<circle cx="12" cy="12" r="8" fill="${c}" stroke="#fff" stroke-width="3"/>`;
+  }else{
+    inner = `<path d="M12 1C5.9 1 1 5.9 1 12c0 8.3 11 25 11 25s11-16.7 11-25C23 5.9 18.1 1 12 1z" fill="${c}" stroke="#fff" stroke-width="1.5"/>`;
+    inner += p.icon === 'star'
+      ? `<polygon points="12,5 14,10 19.5,10 15,13.5 16.8,19 12,15.6 7.2,19 9,13.5 4.5,10 10,10" fill="#fff"/>`
+      : `<circle cx="12" cy="12" r="4.5" fill="#fff"/>`;
+  }
+  return L.divIcon({
+    className:'',
+    html:`<svg width="${dot?24:30}" height="${dot?24:47}" viewBox="0 0 ${dot?24:24} ${dot?24:38}" style="filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))">${inner}</svg>`,
+    iconSize: dot ? [24,24] : [30,47],
+    iconAnchor: dot ? [12,12] : [15,46],
+    popupAnchor: [0, dot ? -12 : -42]
+  });
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function render(){
+  if(!map) return;
+  grp.clearLayers(); sg.clearLayers(); rg.clearLayers(); mk = {};
+
+  const interactive = S.tool === 'move';
+
+  S.shapes.forEach(s => {
+    const o = {color: COL[s.color] || s.color, weight:4, fillOpacity:.18, interactive};
+    let layer;
+    if(s.type === 'circle')      layer = L.circle(s.pts[0], Object.assign({}, o, {radius:s.r}));
+    else if(s.type === 'poly')   layer = L.polygon(s.pts, o);
+    else                         layer = L.polyline(s.pts, o);
+    layer.addTo(sg).bindPopup('<b>' + esc(s.name) + '</b><br>' + shapeInfo(s));
+  });
+
+  if(S.route && S.route.coords.length){
+    L.polyline(S.route.coords, {color:'#1A73E8', weight:5, opacity:.85, interactive:false}).addTo(rg);
+  }
+
+  S.places.forEach(p => {
+    const m = L.marker([p.lat, p.lon], {icon: makeIcon(p), draggable:true, riseOnHover:true}).addTo(grp);
+    m.bindPopup('<b>' + esc(p.popup || p.name) + '</b>');
+    m.on('click', () => { S.sel = p.id; renderList(); renderProps(); code(); });
+    m.on('dragstart', () => hist());
+    m.on('dragend', e => {
+      const ll = e.target.getLatLng();
+      p.lat = ll.lat; p.lon = ll.lng;
+      reverseGeocode(p);
+      renderList(); renderProps(); code(); persist();
+    });
+    mk[p.id] = m;
+  });
+
+  renderList();
+  renderShapes();
+  renderRouteInfo();
+  renderProps();
+  code();
+  persist();
+  histBtns();
+}
+
+function renderList(){
+  $('pcount').textContent = S.places.length;
+  const el = $('list');
+  if(!S.places.length){
+    el.innerHTML = '<div class="empty">Nessun luogo.<br>Cerca un indirizzo oppure attiva lo strumento <b>Aggiungi</b> e clicca sulla mappa.</div>';
+    return;
+  }
+  el.innerHTML = S.places.map((p,i) => `
+    <div class="row ${p.id === S.sel ? 'on' : ''}" data-id="${p.id}">
+      <span class="dot" style="background:${COL[p.color] || p.color}"></span>
+      <input class="row-name" data-a="name" value="${esc(p.name)}" placeholder="Nome del luogo" aria-label="Nome">
+      <button class="icon-btn sm" data-a="up" ${i ? '' : 'disabled'} title="Sposta su"><span class="ms">arrow_upward</span></button>
+      <button class="icon-btn sm" data-a="dn" ${i < S.places.length-1 ? '' : 'disabled'} title="Sposta giù"><span class="ms">arrow_downward</span></button>
+      <button class="icon-btn sm" data-a="go" title="Vai al luogo"><span class="ms">my_location</span></button>
+      <button class="icon-btn sm" data-a="del" title="Elimina"><span class="ms">delete</span></button>
+    </div>`).join('');
+}
+
+function renderShapes(){
+  $('scount').textContent = S.shapes.length;
+  const el = $('slist');
+  if(!S.shapes.length){
+    el.innerHTML = '<div class="empty">Nessun disegno. Usa linea, area, cerchio o righello.</div>';
+    return;
+  }
+  el.innerHTML = S.shapes.map(s => `
+    <div class="row" data-id="${s.id}">
+      <span class="dot" style="background:${COL[s.color] || s.color}"></span>
+      <div style="flex:1;min-width:0">
+        <input class="row-name" data-a="name" value="${esc(s.name)}" aria-label="Nome">
+        <small>${esc(shapeInfo(s))}</small>
+      </div>
+      <button class="icon-btn sm" data-a="go" title="Vai al disegno"><span class="ms">my_location</span></button>
+      <button class="icon-btn sm" data-a="del" title="Elimina"><span class="ms">delete</span></button>
+    </div>`).join('');
+}
+
+function renderRouteInfo(){
+  const r = S.route;
+  $('rinfo').textContent = r
+    ? `Percorso ${{car:'in auto', bike:'in bici', foot:'a piedi'}[r.mode]}: ${fD(r.dist)} · ${fT(r.dur)}`
+    : 'Servono almeno 2 luoghi. Usa ↑ ↓ nella lista per cambiare l\'ordine.';
+}
+
+function renderProps(){
+  const p = cur();
+  const box = $('props');
+  if(!p){ box.hidden = true; return; }
+  box.hidden = false;
+  $('popup').value = p.popup || '';
+  $('coord').textContent = p.lat.toFixed(6) + ', ' + p.lon.toFixed(6);
+  document.querySelectorAll('#colors .chip').forEach(b => b.classList.toggle('on', b.dataset.c === p.color));
+  document.querySelectorAll('#iconSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === p.icon));
+}
+
+/* =========================================================
+   AZIONI LUOGHI
+   ========================================================= */
+function addPlace(lat, lon, name){
+  hist();
+  const p = {id: nid++, lat:+lat, lon:+lon, name: name || ('Punto ' + (S.places.length+1)), color:'red', icon:'pin', popup:''};
+  S.places.push(p);
+  S.sel = p.id;
+  map.setView([p.lat, p.lon], Math.max(map.getZoom(), 14));
+  reverseGeocode(p);
+  render();
+  snack('Luogo aggiunto');
+}
+
+function delPlace(id){
+  S.places = S.places.filter(p => p.id !== id);
+  if(S.sel === id) S.sel = S.places.length ? S.places[S.places.length-1].id : null;
+  render();
+}
+
+/* =========================================================
+   GEOCODIFICA
+   ========================================================= */
+async function nominatim(url){
+  const wait = Math.max(0, 1100 - (Date.now() - lastReq));
+  if(wait) await new Promise(r => setTimeout(r, wait));
+  lastReq = Date.now();
+  const res = await fetch(url, {headers:{'Accept':'application/json'}});
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+async function reverseGeocode(p){
+  try{
+    const d = await nominatim(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&accept-language=it&lat=${p.lat}&lon=${p.lon}`);
+    const a = d.address || {};
+    const nm = [a.road || a.pedestrian || a.suburb || a.neighbourhood, a.house_number].filter(Boolean).join(' ')
+            || (d.display_name || '').split(',')[0];
+    if(nm && /^Punto \d+$/.test(p.name)){
+      p.name = nm;
+      renderList(); renderProps(); code(); persist();
+    }
+  }catch(e){ /* silenzioso */ }
+}
+
+function hideSug(){ $('sug').classList.remove('on'); }
+
+function chooseSug(x){
+  hideSug();
+  const nm = (x.display_name || '').split(',')[0].trim() || 'Luogo';
+  addPlace(+x.lat, +x.lon, nm);
+  $('qmsg').textContent = 'Aggiunto: ' + x.display_name;
+}
+
+async function doSearch(pick){
+  const q = $('q').value.trim();
+  if(!q) return;
+
+  const c = q.match(/^(-?\d+(?:[.,]\d+)?)\s*[,; ]\s*(-?\d+(?:[.,]\d+)?)$/);
+  if(c && pick){
+    const lat = parseFloat(c[1].replace(',','.')), lon = parseFloat(c[2].replace(',','.'));
+    if(Math.abs(lat) <= 90 && Math.abs(lon) <= 180){
+      hideSug(); $('qmsg').textContent = '';
+      addPlace(lat, lon, 'Coordinate');
+      return;
+    }
+  }
+
+  $('qmsg').textContent = 'Ricerca in corso…';
+  try{
+    const d = await nominatim('https://nominatim.openstreetmap.org/search?format=json&limit=6&accept-language=it&q=' + encodeURIComponent(q));
+    if(!Array.isArray(d) || !d.length){
+      $('qmsg').textContent = 'Nessun risultato. Prova con un indirizzo più preciso.';
+      hideSug(); return;
+    }
+    $('qmsg').textContent = '';
+    if(pick){ chooseSug(d[0]); return; }
+
+    $('sug').innerHTML = d.map((x,i) =>
+      `<button class="sug-item" data-i="${i}"><span class="ms">place</span><span>${esc(x.display_name)}</span></button>`).join('');
+    $('sug').classList.add('on');
+    $('sug').onclick = ev => {
+      const b = ev.target.closest('.sug-item');
+      if(b) chooseSug(d[+b.dataset.i]);
+    };
+  }catch(err){
+    $('qmsg').textContent = 'Errore di rete durante la ricerca. Controlla la connessione.';
+    hideSug();
+  }
+}
+
+/* =========================================================
+   DISEGNO
+   ========================================================= */
+function drawDraft(){
+  dg.clearLayers();
+  if(!dp.length) return;
+  const color = COL[S.dcol] || S.dcol;
+  const o = {color, weight:3, dashArray:'6 6', fillOpacity:.12, interactive:false};
+
+  if(S.tool === 'circle'){
+    if(hover) L.circle(dp[0], Object.assign({}, o, {radius: L.latLng(dp[0]).distanceTo(hover)})).addTo(dg);
+  }else{
+    const pts = dp.concat(hover ? [[hover.lat, hover.lng]] : []);
+    if(pts.length > 1) (S.tool === 'poly' ? L.polygon : L.polyline)(pts, o).addTo(dg);
+  }
+  dp.forEach(p => L.circleMarker(p, {
+    radius:5, color:'#fff', weight:2, fillColor:color, fillOpacity:1, interactive:false
+  }).addTo(dg));
+}
+
+function finish(){
+  if(S.tool === 'line' && dp.length >= 2)      endShape({type:'line', pts: dp.slice()});
+  else if(S.tool === 'poly' && dp.length >= 3) endShape({type:'poly', pts: dp.slice()});
+  else if(dp.length) snack(S.tool === 'poly' ? 'Servono almeno 3 punti' : 'Servono almeno 2 punti');
+  else cancelDraw();
+}
+
+function endShape(o){
+  hist();
+  const base = {line:'Linea', poly:'Area', circle:'Cerchio'}[o.type];
+  const n = S.shapes.filter(x => x.type === o.type).length + 1;
+  S.shapes.push(Object.assign({id: nid++, color: S.dcol, name: base + ' ' + n}, o));
+  dp = []; dg.clearLayers();
+  render();
+  snack('Disegno aggiunto');
+}
+
+function cancelDraw(){ dp = []; if(dg) dg.clearLayers(); }
+
+/* =========================================================
+   RIGHE (eventi delegati)
+   ========================================================= */
+function wireList(listId, getArr, isPlace){
+  const el = $(listId);
+
+  el.addEventListener('input', e => {
+    const inp = e.target.closest('.row-name');
+    if(!inp) return;
+    const row = inp.closest('.row');
+    const item = getArr().find(x => x.id === +row.dataset.id);
+    if(!item) return;
+    item.name = inp.value;
+    if(isPlace && mk[item.id]) mk[item.id].setPopupContent('<b>' + esc(item.popup || item.name) + '</b>');
+    if(!isPlace){
+      const row2 = inp.closest('.row');
+      const small = row2.querySelector('small');
+      if(small) small.textContent = shapeInfo(item);
+    }
+    code(); persist();
+  });
+
+  el.addEventListener('click', e => {
+    const row = e.target.closest('.row');
+    if(!row) return;
+    const id = +row.dataset.id;
+    const btn = e.target.closest('button[data-a]');
+    const a = btn ? btn.dataset.a : null;
+
+    if(a === 'del'){
+      hist();
+      if(isPlace) delPlace(id);
+      else { S.shapes = S.shapes.filter(s => s.id !== id); render(); }
+      return;
+    }
+    if(a === 'up' || a === 'dn'){
+      if(!isPlace) return;
+      const k = S.places.findIndex(p => p.id === id);
+      const j = k + (a === 'up' ? -1 : 1);
+      if(j < 0 || j >= S.places.length) return;
+      hist();
+      const tmp = S.places[k]; S.places[k] = S.places[j]; S.places[j] = tmp;
+      render();
+      return;
+    }
+    if(a === 'go'){
+      if(isPlace){
+        const p = S.places.find(x => x.id === id);
+        if(!p) return;
+        S.sel = id;
+        map.setView([p.lat, p.lon], Math.max(map.getZoom(), 14));
+        renderList(); renderProps();
+        if(mk[id]) mk[id].openPopup();
+      }else{
+        const s = S.shapes.find(x => x.id === id);
+        if(!s) return;
+        const pts = s.type === 'circle' ? circ(s.pts[0], s.r, 24) : s.pts;
+        map.fitBounds(L.latLngBounds(pts).pad(0.3));
+      }
+      return;
+    }
+    if(isPlace){ S.sel = id; renderList(); renderProps(); code(); }
+  });
+}
+
+/* =========================================================
+   PERCORSO
+   ========================================================= */
+async function route(){
+  if(S.places.length < 2) return snack('Servono almeno 2 luoghi');
+  const mode = S.rm;
+  const ep = {car:'routed-car', bike:'routed-bike', foot:'routed-foot'}[mode];
+  $('rinfo').textContent = 'Calcolo del percorso…';
+  try{
+    const coords = S.places.map(p => p.lon + ',' + p.lat).join(';');
+    const url = `https://routing.openstreetmap.de/${ep}/route/v1/driving/${coords}?overview=full&geometries=geojson`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const d = await res.json();
+    if(!d.routes || !d.routes.length) throw new Error('no route');
+    const x = d.routes[0];
+    hist();
+    S.route = {
+      mode,
+      dist: x.distance,
+      dur: x.duration,
+      coords: x.geometry.coordinates.map(c => [c[1], c[0]])
+    };
+    render();
+    map.fitBounds(L.latLngBounds(S.route.coords).pad(0.1));
+    snack('Percorso calcolato');
+  }catch(e){
+    $('rinfo').textContent = 'Percorso non disponibile: servizio irraggiungibile o luoghi non collegati da strade.';
+    snack('Impossibile calcolare il percorso');
+  }
+}
+
+function clearRoute(){
+  if(!S.route) return;
+  hist();
+  S.route = null;
+  render();
+  snack('Percorso rimosso');
+}
+
+/* =========================================================
+   RIGHELLO
+   ========================================================= */
+function drawM(){
+  mLine.setLatLngs(mPts);
+  let d = 0;
+  for(let i=1;i<mPts.length;i++) d += mPts[i-1].distanceTo(mPts[i]);
+  $('dL').textContent = 'Righello: ' + fD(d);
+}
+function clearM(){ mPts = []; drawM(); }
+function undoM(){ mPts.pop(); drawM(); }
+
+/* =========================================================
+   EXPORT
+   ========================================================= */
+const TTL = {osm:'Mappa OpenStreetMap', google:'Mappa Google Maps', streetview:'Google Street View', bing:'Mappa Bing Maps'};
+
+function embedUrl(p){
+  const z = S.zoom;
+  const d = 360 / Math.pow(2, z) * 0.7;
+  const t = {road:'m', sat:'k', terrain:'p', dark:'m'}[S.style];
+  switch(S.provider){
+    case 'osm':
+      return `https://www.openstreetmap.org/export/embed.html?bbox=${p.lon-d},${p.lat-d*0.7},${p.lon+d},${p.lat+d*0.7}&layer=${S.style==='terrain'?'cyclemap':'mapnik'}&marker=${p.lat},${p.lon}`;
+    case 'google':
+      return `https://maps.google.com/maps?q=${p.lat},${p.lon}&z=${z}&t=${t}&hl=it&output=embed`;
+    case 'streetview':
+      return `https://maps.google.com/maps?q=&layer=c&cbll=${p.lat},${p.lon}&cbp=11,0,0,0,0&output=embed`;
+    case 'bing':
+      return `https://www.bing.com/maps/embed?h=${S.h}&w=900&cp=${p.lat}~${p.lon}&lvl=${z}&typ=d&sty=${S.style==='sat'?'a':'r'}&src=SHELL&FORM=MBEDV8`;
+  }
+  return '';
+}
+const nearLink = p => `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}`;
+const llStr = a => a.map(q => q[1] + ',' + q[0]).join(' ');
+
+function geoJSON(){
+  const ft = S.places.map(q => ({
+    type:'Feature',
+    properties:{name:q.name, popup:q.popup, color:COL[q.color] || q.color},
+    geometry:{type:'Point', coordinates:[q.lon, q.lat]}
+  }));
+  S.shapes.forEach(s => ft.push({
+    type:'Feature',
+    properties:{name:s.name, kind:s.type, info:shapeInfo(s), color:COL[s.color] || s.color},
+    geometry: s.type === 'line'
+      ? {type:'LineString', coordinates:s.pts.map(q => [q[1], q[0]])}
+      : {type:'Polygon', coordinates:[ring(s).map(q => [q[1], q[0]])]}
+  }));
+  if(S.route) ft.push({
+    type:'Feature',
+    properties:{name:'Percorso', distanza_m:Math.round(S.route.dist), durata_s:Math.round(S.route.dur)},
+    geometry:{type:'LineString', coordinates:S.route.coords.map(q => [q[1], q[0]])}
+  });
+  return {type:'FeatureCollection', features:ft};
+}
+
+function leafletDoc(){
+  const t = TILES[S.style] || TILES.road;
+  const D  = S.places.map(p => ({lat:+p.lat.toFixed(6), lon:+p.lon.toFixed(6), t:p.popup || p.name, c:COL[p.color] || p.color}));
+  const SH = S.shapes.map(s => ({t:s.type, p:s.pts, r:s.r, c:COL[s.color] || s.color, n:s.name + ' — ' + shapeInfo(s)}));
+  const RT = S.route ? S.route.coords : [];
+  return `<!DOCTYPE html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mappa</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>html,body,#m{height:100%;margin:0}</style></head><body><div id="m"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>
+<script>
+var D=${JSON.stringify(D)},SH=${JSON.stringify(SH)},RT=${JSON.stringify(RT)};
+function E(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+var m=L.map('m'),g=L.featureGroup().addTo(m);
+L.tileLayer('${t[0]}',{maxZoom:19,attribution:'${t[1]}'}).addTo(m);
+SH.forEach(function(s){var o={color:s.c,weight:4,fillOpacity:.18},l;
+  if(s.t==='circle'){l=L.circle(s.p[0],Object.assign({},o,{radius:s.r}));}
+  else if(s.t==='poly'){l=L.polygon(s.p,o);}
+  else {l=L.polyline(s.p,o);}
+  l.addTo(g).bindPopup(E(s.n));});
+if(RT.length){L.polyline(RT,{color:'#1A73E8',weight:5}).addTo(g);}
+D.forEach(function(d){L.circleMarker([d.lat,d.lon],{radius:9,color:'#fff',weight:3,fillColor:d.c,fillOpacity:1}).addTo(g).bindPopup('<b>'+E(d.t)+'</b>');});
+var b=g.getBounds();
+if((D.length+SH.length+RT.length)>1&&b.isValid()){m.fitBounds(b.pad(.1));}
+else if(D.length){m.setView([D[0].lat,D[0].lon],${S.zoom});}
+else {m.setView([45,9],5);}
+<\/script></body></html>`;
+}
+
+function build(){
+  const p = cur();
+  if(!p && !S.shapes.length) return '// Aggiungi un luogo o un disegno per generare il codice.';
+
+  const f = S.fmt;
+  const br = S.radius ? 'border-radius:16px;' : '';
+  const lz = S.lazy ? ' loading="lazy"' : '';
+  const wpx = S.w === 100 ? '100%' : Math.round(S.w * 9) + 'px';
+
+  if(f === 'iframe' || f === 'resp'){
+    if(!p) return '// Gli embed richiedono almeno un luogo.';
+    const src = embedUrl(p);
+    if(f === 'iframe'){
+      return `<iframe\n  src="${src}"${lz}\n  width="${S.w === 100 ? '100%' : wpx}" height="${S.h}"\n  style="border:0;${br}"\n  allowfullscreen\n  referrerpolicy="no-referrer-when-downgrade"\n  title="${TTL[S.provider]}"\n></iframe>`;
+    }
+    return `<div style="position:relative;width:100%;max-width:${S.w === 100 ? '100%' : wpx};aspect-ratio:900/${S.h};">\n  <iframe src="${src}"${lz}\n    style="position:absolute;inset:0;width:100%;height:100%;border:0;${br}"\n    allowfullscreen referrerpolicy="no-referrer-when-downgrade" title="${TTL[S.provider]}"></iframe>\n</div>`;
+  }
+
+  if(f === 'leaflet') return leafletDoc();
+
+  if(f === 'link'){
+    if(!S.places.length) return '// Nessun luogo da condividere.';
+    return S.places.map(q =>
+`${q.name}
+  Google Maps: ${nearLink(q)}
+  Apple Maps:  https://maps.apple.com/?ll=${q.lat},${q.lon}&q=${encodeURIComponent(q.name)}
+  Waze:        https://waze.com/ul?ll=${q.lat},${q.lon}&navigate=yes
+  OSM:         https://www.openstreetmap.org/?mlat=${q.lat}&mlon=${q.lon}#map=${S.zoom}/${q.lat}/${q.lon}
+  geo URI:     geo:${q.lat},${q.lon}`).join('\n\n');
+  }
+
+  if(f === 'geojson') return JSON.stringify(geoJSON(), null, 2);
+
+  if(f === 'kml'){
+    return `<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document>\n` +
+      S.places.map(q => `  <Placemark><name>${esc(q.name)}</name><description>${esc(q.popup || '')}</description><Point><coordinates>${q.lon},${q.lat},0</coordinates></Point></Placemark>`).join('\n') +
+      (S.places.length && S.shapes.length ? '\n' : '') +
+      S.shapes.map(s => `  <Placemark><name>${esc(s.name)}</name><description>${esc(shapeInfo(s))}</description>` +
+        (s.type === 'line'
+          ? `<LineString><coordinates>${llStr(s.pts)}</coordinates></LineString>`
+          : `<Polygon><outerBoundaryIs><LinearRing><coordinates>${llStr(ring(s))}</coordinates></LinearRing></outerBoundaryIs></Polygon>`) +
+        `</Placemark>`).join('\n') +
+      (S.route ? `\n  <Placemark><name>Percorso</name><LineString><coordinates>${llStr(S.route.coords)}</coordinates></LineString></Placemark>` : '') +
+      '\n</Document></kml>';
+  }
+
+  if(f === 'gpx'){
+    return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="MapStudio Pro" xmlns="http://www.topografix.com/GPX/1/1">\n` +
+      S.places.map(q => `  <wpt lat="${q.lat}" lon="${q.lon}"><name>${esc(q.name)}</name></wpt>`).join('\n') +
+      S.shapes.filter(s => s.type === 'line').map(s =>
+        `\n  <trk><name>${esc(s.name)}</name><trkseg>${s.pts.map(q => `<trkpt lat="${q[0]}" lon="${q[1]}"/>`).join('')}</trkseg></trk>`).join('') +
+      (S.route ? `\n  <trk><name>Percorso</name><trkseg>${S.route.coords.map(q => `<trkpt lat="${q[0]}" lon="${q[1]}"/>`).join('')}</trkseg></trk>` : '') +
+      '\n</gpx>';
+  }
+
+  if(f === 'csv'){
+    return 'nome,latitudine,longitudine,descrizione\n' +
+      S.places.map(q => [q.name, q.lat, q.lon, q.popup || '']
+        .map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+  }
+  return '';
+}
+
+function code(){
+  clearTimeout(codeTimer);
+  codeTimer = setTimeout(() => {
+    $('code').value = build();
+    const multi = S.places.length > 1 && (S.fmt === 'iframe' || S.fmt === 'resp');
+    $('note').textContent = multi ? 'Gli embed mostrano un solo luogo. Usa "Pagina Leaflet" per tutto.' : '';
+
+    if(S.view === 'embed'){
+      const p = cur();
+      if(p){
+        const u = embedUrl(p);
+        if($('frame').dataset.u !== u){ $('frame').src = u; $('frame').dataset.u = u; }
+      }else{
+        $('frame').removeAttribute('src'); $('frame').dataset.u = '';
+      }
+    }
+  }, 200);
+}
+
+function copyCode(){
+  const txt = $('code').value;
+  const done = () => snack('Codice copiato negli appunti');
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(txt).then(done, () => { $('code').select(); document.execCommand('copy'); done(); });
+  }else{
+    $('code').select(); document.execCommand('copy'); done();
+  }
+}
+
+function download(){
+  const ext = {iframe:'html', resp:'html', leaflet:'html', link:'txt', geojson:'geojson', kml:'kml', gpx:'gpx', csv:'csv'}[S.fmt] || 'txt';
+  const body = $('code').value;
+  const content = (S.fmt === 'iframe' || S.fmt === 'resp')
+    ? `<!DOCTYPE html><html lang="it"><head><meta charset="utf-8"><title>Mappa</title></head><body>\n${body}\n</body></html>`
+    : body;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], {type:'text/plain;charset=utf-8'}));
+  a.download = 'mappa.' + ext;
+  document.body.appendChild(a); a.click(); a.remove();
+  snack('File scaricato: mappa.' + ext);
+}
+
+/* =========================================================
+   LAYOUT / UI
+   ========================================================= */
+function layout(){
+  const st = $('stage');
+  st.style.height = S.h + 'px';
+  st.style.width = S.device === '100%' ? S.w + '%' : S.device;
+  $('lmap').style.display = S.view === 'leaflet' ? 'block' : 'none';
+  $('frame').style.display = S.view === 'embed' ? 'block' : 'none';
+  setTimeout(() => { if(map) map.invalidateSize(); }, 280);
+}
+
+function syncRange(id){
+  const el = $(id);
+  const v = S[id];
+  el.value = v;
+  $(id + 'V').textContent = id === 'w' ? v + '%' : id === 'h' ? v + ' px' : v;
+}
+
+function seg(id, key, onChange){
+  const el = $(id);
+  const mark = () => el.querySelectorAll('button[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === S[key]));
+  el.onclick = e => {
+    const b = e.target.closest('button[data-v]');
+    if(!b) return;
+    S[key] = b.dataset.v;
+    mark();
+    if(onChange) onChange(S[key]);
+    code(); persist();
+  };
+  mark();
+}
+
+function buildChips(el, onPick){
+  el.innerHTML = Object.keys(COL).map(k =>
+    `<button class="chip" data-c="${k}" style="--c:${COL[k]}" title="${k}" aria-label="Colore ${k}"></button>`).join('');
+  el.onclick = e => {
+    const b = e.target.closest('.chip');
+    if(b) onPick(b.dataset.c);
+  };
+}
+
+function updateTool(){
+  document.querySelectorAll('#tb [data-tool]').forEach(b => b.classList.toggle('on', b.dataset.tool === S.tool));
+  if(map) map.getContainer().style.cursor = S.tool === 'move' ? '' : 'crosshair';
+  const h = $('hint');
+  if(HINTS[S.tool]){ h.style.display = 'block'; h.textContent = HINTS[S.tool]; }
+  else h.style.display = 'none';
+}
+
+function setTool(t){
+  S.tool = t;
+  cancelDraw();
+  updateTool();
+  if(map) render();
+  persist();
+}
+
+function openTab(id){
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === id));
+  document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === id));
+}
+
+/* =========================================================
+   STRUMENTI EXTRA
+   ========================================================= */
+function fitAll(){
+  const pts = [];
+  S.places.forEach(p => pts.push([p.lat, p.lon]));
+  S.shapes.forEach(s => {
+    if(s.type === 'circle') pts.push(...circ(s.pts[0], s.r, 24));
+    else pts.push(...s.pts);
+  });
+  if(S.route) pts.push(...S.route.coords);
+  if(!pts.length) return snack('Niente da mostrare sulla mappa');
+  if(pts.length === 1) map.setView(pts[0], Math.max(S.zoom, 14));
+  else map.fitBounds(L.latLngBounds(pts), {padding:[60,60]});
+}
+
+function locate(){
+  if(!navigator.geolocation) return snack('Geolocalizzazione non supportata');
+  snack('Ricerca della posizione…');
+  navigator.geolocation.getCurrentPosition(
+    r => { addPlace(r.coords.latitude, r.coords.longitude, 'La mia posizione'); snack('Posizione trovata'); },
+    () => snack('Posizione non disponibile: controlla i permessi')
+  );
+}
+
+function fullscreenStage(){
+  const st = $('stage');
+  if(!document.fullscreenElement){
+    if(st.requestFullscreen) st.requestFullscreen().catch(() => snack('Schermo intero non disponibile'));
+    else snack('Schermo intero non disponibile');
+  }else{
+    document.exitFullscreen();
+  }
+}
+
+function share(k){
+  const p = cur();
+  if(!p) return snack('Aggiungi prima un luogo');
+  const urls = {
+    g: nearLink(p),
+    a: `https://maps.apple.com/?ll=${p.lat},${p.lon}&q=${encodeURIComponent(p.name)}`,
+    w: `https://waze.com/ul?ll=${p.lat},${p.lon}&navigate=yes`,
+    o: `https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lon}#map=${S.zoom}/${p.lat}/${p.lon}`
+  };
+  if(urls[k]){ window.open(urls[k], '_blank', 'noopener'); return; }
+  const txt = k === 'c' ? `${p.lat.toFixed(6)}, ${p.lon.toFixed(6)}` : nearLink(p);
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(txt).then(() => snack('Copiato: ' + txt), () => snack(txt));
+  }else{
+    snack(txt);
+  }
+}
+
+/* =========================================================
+   PROGETTO / IMPORT / RESET
+   ========================================================= */
+function saveProject(){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(S, null, 2)], {type:'application/json'}));
+  a.download = 'mapstudio-progetto.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  snack('Progetto salvato');
+}
+
+$('imp').onchange = e => {
+  const f = e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try{
+      const s = JSON.parse(r.result);
+      if(!s || !Array.isArray(s.places)) throw new Error('bad');
+      S = Object.assign(clone(DEF), s);
+      nid = 1;
+      S.places.concat(S.shapes).forEach(x => { if(+x.id >= nid) nid = +x.id + 1; });
+      undoStack = []; redoStack = []; histBtns();
+      cancelDraw(); clearM();
+      uiSync(); render(); fitAll();
+      snack('Progetto aperto');
+    }catch(err){
+      snack('File non valido: scegli un .json salvato da MapStudio');
+    }
+  };
+  r.readAsText(f);
+  e.target.value = '';
+};
+
+$('gj').onchange = e => {
+  const f = e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try{
+      const g = JSON.parse(r.result);
+      const feats = g.features || (g.type ? [g] : []);
+      const P = [], Sh = [];
+      const swap = a => a.map(q => [q[1], q[0]]);
+      let n = 0;
+
+      feats.forEach(ft => {
+        const G = ft.geometry || ft;
+        const pr = ft.properties || {};
+        if(!G || !G.type) return;
+        if(G.type === 'Point'){
+          P.push({id:nid++, lat:G.coordinates[1], lon:G.coordinates[0], name:pr.name || 'Punto importato', color:'red', icon:'pin', popup:pr.popup || ''});
+          n++;
+        }else if(G.type === 'LineString'){
+          Sh.push({id:nid++, type:'line', color:S.dcol, name:pr.name || 'Linea importata', pts:swap(G.coordinates)});
+          n++;
+        }else if(G.type === 'Polygon'){
+          Sh.push({id:nid++, type:'poly', color:S.dcol, name:pr.name || 'Area importata', pts:swap(G.coordinates[0].slice(0, -1))});
+          n++;
+        }else if(G.type === 'MultiPolygon'){
+          G.coordinates.forEach((poly, i) => {
+            Sh.push({id:nid++, type:'poly', color:S.dcol, name:(pr.name || 'Area importata') + ' ' + (i+1), pts:swap(poly[0].slice(0, -1))});
+            n++;
+          });
+        }
+      });
+
+      if(!n) throw new Error('empty');
+      hist();
+      S.places.push(...P);
+      S.shapes.push(...Sh);
+      render(); fitAll();
+      snack('Importati ' + n + ' elementi');
+    }catch(err){
+      snack('GeoJSON non valido o senza elementi supportati');
+    }
+  };
+  r.readAsText(f);
+  e.target.value = '';
+};
+
+function resetAll(){
+  if(!confirm('Eliminare luoghi, disegni, percorso e impostazioni?')) return;
+  S = clone(DEF);
+  S.theme = document.documentElement.dataset.theme;
+  nid = 1;
+  undoStack = []; redoStack = []; histBtns();
+  cancelDraw(); clearM();
+  uiSync(); render();
+  snack('Tutto azzerato');
+}
+
+/* =========================================================
+   TEMA
+   ========================================================= */
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  S.theme = t;
+  const ic = $('themeBtn').querySelector('.ms');
+  ic.textContent = t === 'dark' ? 'light_mode' : 'dark_mode';
+  persist();
+}
+
+/* =========================================================
+   SYNC UI
+   ========================================================= */
+function uiSync(){
+  ['zoom','w','h'].forEach(syncRange);
+  $('lazy').checked = S.lazy;
+  $('radius').checked = S.radius;
+  $('fmt').value = S.fmt;
+
+  seg('prov', 'provider');
+  seg('style', 'style', () => setTile());
+  seg('view', 'view', () => layout());
+  seg('dev', 'device', () => layout());
+  seg('rm', 'rm', () => { if(S.route) snack('Ricalcola il percorso per applicare la modalità'); });
+
+  buildChips($('colors'), c => {
+    const p = cur();
+    if(!p) return;
+    hist();
+    p.color = c;
+    render();
+  });
+
+  buildChips($('dcols'), c => {
+    S.dcol = c;
+    document.querySelectorAll('#dcols .chip').forEach(b => b.classList.toggle('on', b.dataset.c === S.dcol));
+    persist();
+  });
+  document.querySelectorAll('#dcols .chip').forEach(b => b.classList.toggle('on', b.dataset.c === S.dcol));
+
+  updateTool();
+  layout();
+  histBtns();
+}
+
+/* =========================================================
+   EVENTI UI
+   ========================================================= */
+document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => openTab(b.dataset.t));
+document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => setTool(b.dataset.go));
+
+$('tb').onclick = e => {
+  const b = e.target.closest('[data-tool]');
+  if(!b) return;
+  const t = b.dataset.tool;
+  setTool(S.tool === t && t !== 'move' ? 'move' : t);
+};
+
+$('undoB').onclick = undo;
+$('redoB').onclick = redo;
+
+$('themeBtn').onclick = () => applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+
+$('q').addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => doSearch(false), 700);
+});
+$('q').addEventListener('keydown', e => {
+  if(e.key === 'Enter'){ e.preventDefault(); clearTimeout(searchTimer); doSearch(true); }
+});
+$('qClear').onclick = () => { $('q').value = ''; $('qmsg').textContent = ''; hideSug(); $('q').focus(); };
+document.addEventListener('click', e => { if(!e.target.closest('.search') && !e.target.closest('#sug')) hideSug(); });
+
+$('iconSeg').onclick = e => {
+  const b = e.target.closest('button[data-v]');
+  if(!b) return;
+  const p = cur();
+  if(!p) return;
+  hist();
+  p.icon = b.dataset.v;
+  render();
+};
+
+$('popup').addEventListener('input', e => {
+  const p = cur();
+  if(!p) return;
+  p.popup = e.target.value;
+  if(mk[p.id]) mk[p.id].setPopupContent('<b>' + esc(p.popup || p.name) + '</b>');
+  code(); persist();
+});
+
+['zoom','w','h'].forEach(id => {
+  $(id).addEventListener('input', () => {
+    S[id] = +$(id).value;
+    syncRange(id);
+    if(id === 'zoom'){ if(map) map.setZoom(S.zoom); }
+    else layout();
+    code(); persist();
+  });
+});
+
+$('lazy').onchange = e => { S.lazy = e.target.checked; code(); persist(); };
+$('radius').onchange = e => { S.radius = e.target.checked; code(); persist(); };
+$('fmt').onchange = e => { S.fmt = e.target.value; code(); persist(); };
+
+$('dockToggle').onclick = () => {
+  const d = $('dock');
+  d.classList.toggle('min');
+  $('dockToggle').querySelector('.ms').textContent = d.classList.contains('min') ? 'expand_less' : 'expand_more';
+  setTimeout(() => { if(map) map.invalidateSize(); }, 260);
+};
+
+/* ---------- tastiera ---------- */
+document.addEventListener('keydown', e => {
+  const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
+
+  if((e.ctrlKey || e.metaKey) && !typing){
+    const k = e.key.toLowerCase();
+    if(k === 'z'){ e.preventDefault(); e.shiftKey ? redo() : undo(); }
+    else if(k === 'y'){ e.preventDefault(); redo(); }
+    return;
+  }
+  if(typing) return;
+
+  if(e.key === '/'){ e.preventDefault(); openTab('p1'); $('q').focus(); $('q').select(); }
+  else if(e.key === 'Escape'){ dp.length ? cancelDraw() : setTool('move'); }
+  else if(e.key === 'Enter'){ if(dp.length) finish(); }
+  else if(e.key === 'Delete' && S.sel){ hist(); delPlace(S.sel); }
+  else{
+    const t = {v:'move', a:'add', l:'line', g:'poly', c:'circle', r:'measure'}[e.key.toLowerCase()];
+    if(t) setTool(t);
+  }
+});
+
+/* ---------- ripple ---------- */
+document.addEventListener('pointerdown', e => {
+  const b = e.target.closest('.btn, .icon-btn, .seg button, .chip, .tabs button, .sug-item, .chip');
+  if(!b) return;
+  const rect = b.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  const r = document.createElement('span');
+  r.className = 'rip';
+  r.style.width = r.style.height = size + 'px';
+  r.style.left = (e.clientX - rect.left - size/2) + 'px';
+  r.style.top  = (e.clientY - rect.top  - size/2) + 'px';
+  b.appendChild(r);
+  setTimeout(() => r.remove(), 560);
+});
+
+/* ---------- fullscreen change ---------- */
+document.addEventListener('fullscreenchange', () => setTimeout(() => { if(map) map.invalidateSize(); }, 200));
+
+/* =========================================================
+   AVVIO
+   ========================================================= */
+(function boot(){
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(S.theme || (prefersDark ? 'dark' : 'light'));
+
+  initMap();
+  wireList('list', () => S.places, true);
+  wireList('slist', () => S.shapes, false);
+  uiSync();
+  render();
+
+  if(S.places.length || S.shapes.length) fitAll();
+  else snack('Benvenuto! Cerca un indirizzo o attiva lo strumento Aggiungi');
+})();
+</script>
+</body>
+</html>

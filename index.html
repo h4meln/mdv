@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDV APS/ETS</title>
+<meta name="description" content="Mondo delle uoVa — associazione culturale no profit ad Arosio (CO). Sale prove, eventi, musica e comunità dal 1999.">
+<link rel="icon" type="image/png" href="assets/img/logo.svg">
+<link rel="stylesheet" href="public/css/base.css">
+<link rel="stylesheet" href="public/css/pages/home.css">
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+</head>
+<body class="nav-hidden">
+
+<main class="page">
+
+  <!-- ── socialbar ── -->
+  <div class="socialbar-wrap">
+    <mdv-socialbar
+      instagram="https://instagram.com/tuonome"
+      facebook="https://facebook.com/tuonome"
+      telegram="https://t.me/tuonome"
+      email="info@esempio.it"
+    ></mdv-socialbar>
+  </div>
+
+  <!-- ── caption ── -->
+  <div class="hero-caption" id="heroCaption">
+    <p class="hero-caption__kicker">Associazione Culturale • No Profit</p>
+    <h1 class="hero-caption__title">Mondo delle Uova APS/ETS</h1>
+    <p class="hero-caption__sub">Via Alessandro Volta 38, Arosio (CO)</p>
+  </div>
+
+  <!-- ── logo hero ── -->
+  <div class="logo-hero" id="logoHero">
+    <a href="index.html" class="logo-glitch" aria-label="Logo MDV">
+      <span class="logo-layer logo-layer--r" aria-hidden="true"></span>
+      <span class="logo-layer logo-layer--b" aria-hidden="true"></span>
+      <img class="logo-layer logo-layer--main"
+          src="assets/img/logo.svg"
+          alt="Logo MDV" />
+    </a>
+  </div>
+
+  <!-- ── hero ── -->
+  <div class="hero-spacer"></div>
+
+  <!-- ── intro ── -->
+  <!-- <section class="intro">
+    <h2>Una casa per chi fa musica</h2>
+    <p>
+      Nato nel 1999 come spazio per provare, il Mondo delle uoVa è diventato un punto di riferimento
+      per band, giovani musicisti e il quartiere. Gestito da volontari, sostenuto dalle quote associative,
+      aperto a chiunque abbia qualcosa da suonare o da dire.
+    </p>
+    <div class="stats">
+      <div class="stat"><b>2</b><span>sale attrezzate</span></div>
+      <div class="stat"><b>27</b><span>anni di attività</span></div>
+      <div class="stat"><b>€5</b><span>tessera annuale</span></div>
+      <div class="stat"><b>∞</b><span>concerti e serate</span></div>
+    </div>
+  </section> -->
+
+  <!-- ── timeline ── -->
+  <div class="timeline-wrap">
+    <mdv-timeline id="tl"></mdv-timeline>
+  </div>
+</main>
+
+<!-- ── 3D model   src-low="assets/models/gallo.glb" ── -->
+<mdv-model
+  src="assets/models/topo.glb" 
+  height="1.4" 
+  head-y="0.14" 
+  cam-z="0.8"
+></mdv-model>
+
+<!-- ── nav ── -->
+<mdv-eggbar active="home"></mdv-eggbar>
+
+<!-- ── toast ── -->
+<mdv-toast
+  icon="heart"
+  title="SALVA IL MONDO!"
+  sub-title="Una piccola azione può fare la differenza"
+  text="Dai un occhio alla nostra raccolta fondi al seguente {link} e di seguito trovi il nostro documento di buona causa."
+  link="https://www.google.it"
+  link-label="link"
+  pdf="public/Mondo delle uova Presentazione.pdf"
+  pdf-label="Documento di buona causa"
+  pdf-meta="PDF · Apri documento"
+  delay="0.35"
+></mdv-toast>
+
+<!-- ── components ── -->
+<script type="module" src="components/model/model.js"></script>
+<script type="module" src="components/timeline/timeline.js"></script>
+<script type="module">
+  import { TIMELINE } from './data/timeline.js';
+  document.querySelector('#tl').data = TIMELINE;
+</script>
+<script type="module" src="components/eggbar/eggbar.js"></script>
+<script type="module" src="components/socialbar/socialbar.js"></script>
+<script type="module" src="components/toast/toast.js"></script>
+
+<!-- ── scripts ── -->
+<script type="module" src="public/js/pages/home.js"></script>
+</body>
+</html>
