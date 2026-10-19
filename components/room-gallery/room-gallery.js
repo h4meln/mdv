@@ -92,8 +92,10 @@ figcaption { position:absolute; bottom:172px; left:110px; right:110px; padding:6
     box-shadow: 0 30px 90px rgba(0,0,0,.7);
 }
 .lightbox-close {
-    position: fixed; top: 18px; right: 22px; z-index: 2;
-    width: 30px; height: 30px; padding: 0; display: grid; place-items: center;
+    position: absolute; top: 18px; right: 22px; z-index: 3;
+    width: 30px; height: 30px; min-height: 0; min-width: 0;
+    box-sizing: border-box; padding: 0; display: grid; place-items: center;
+    line-height: 0; font-size: 0;
     color: rgba(255,255,255,.76); cursor: pointer;
     border: 1px solid rgba(255,255,255,.12); border-radius: 50%;
     background: rgba(255,255,255,.07);

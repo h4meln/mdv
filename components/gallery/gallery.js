@@ -76,17 +76,24 @@ class MdvGallery extends BaseElement {
 
   _showSkeleton() {
     const cols = Math.max(2, Math.min(5, Math.round(innerWidth / 340)));
-    const tiles = [];
-    const heights = [78, 56, 66, 48, 72, 60, 84, 52, 64, 58, 70, 46];
-    for (let i = 0; i < cols * 4; i++) {
-      const h = heights[i % heights.length];
-      tiles.push(`<span class="sk-tile" style="--h:${h}%;--d:${(i % 7) * 0.18}s"></span>`);
+    const heights = [1.45, 1.0, 1.3, 0.9, 1.4, 1.15, 1.55, 0.95];
+    let html = '';
+    let k = 0;
+    for (let c = 0; c < cols; c++) {
+      html += '<div class="sk-col">';
+      for (let r = 0; r < 3; r++) {
+        const h = heights[k % heights.length];
+        const d = ((k * 3) % 7) * 0.16;
+        html += '<span class="sk-tile" style="--h:' + h + ';--d:' + d.toFixed(2) + 's"></span>';
+        k++;
+      }
+      html += '</div>';
     }
     const wrap = document.createElement('div');
     wrap.className = 'gallery-skeleton';
     wrap.setAttribute('aria-hidden', 'true');
     wrap.style.setProperty('--sk-cols', cols);
-    wrap.innerHTML = tiles.join('');
+    wrap.innerHTML = html;
     this.shadowRoot.appendChild(wrap);
     this._skeleton = wrap;
   }

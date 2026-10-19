@@ -45,10 +45,11 @@ export const GALLERY_STYLES = `
   pointer-events: none;
   animation: gallery-sk-fade .35s ease both;
 }
+.sk-col { display: flex; flex-direction: column; gap: clamp(10px, 1.6vw, 22px); }
 .sk-tile {
   position: relative;
   display: block;
-  height: calc(28vh * var(--h, 60) / 60);
+  height: calc(20vh * var(--h, 1));
   border-radius: 10px;
   overflow: hidden;
   background:

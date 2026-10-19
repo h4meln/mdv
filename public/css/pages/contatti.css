@@ -87,7 +87,10 @@ html, body {
     display: block;
     background: #1b2230;
     pointer-events: auto;
+    opacity: 0;
+    transition: opacity .5s ease;
 }
+.map-wrap iframe.is-ready { opacity: 1; }
 
 /* ── Contenuti SX (Binario di scorrimento) ── */
 .content {
