@@ -2,7 +2,7 @@ export const TIMELINE = [
   {
     "year": "2027",
     "title": "Il futuro del Mondo si costruisce adesso",
-    "text": "Entro il 31 marzo 2027 dovremo lasciare la sede se non riusciremo a presentare una proposta concreta di acquisto. La raccolta fondi serve a provarci e a dare continuità all’associazione, anche in un altro spazio. Aiutaci a tenere aperta questa possibilità.",
+    "text": "Siamo arrivati a un bivio. Entro il 31 marzo 2027, saremo costretti a lasciare la nostra storica sede se non riusciremo a presentare una proposta d'acquisto concreta per l'immobile. Abbiamo lanciato una grande raccolta fondi per provarci con tutte le nostre forze o, se necessario, per dare continuità all’associazione in un nuovo spazio. Non possiamo permettere che la musica si fermi. Aiutaci a tenere aperta questa possibilità: salva il Mondo.",
     "color": "#e63946",
     "media": [
       {
@@ -25,7 +25,7 @@ export const TIMELINE = [
   {
     "year": "2026",
     "title": "Una casa per chi ha qualcosa da condividere",
-    "text": "Musica, arte, giochi, studio e incontri: il Mondo è fatto dalle persone che lo vivono. Siamo un’associazione senza scopo di lucro, portata avanti dai volontari. Qui puoi trovare uno spazio per esprimerti, conoscere qualcuno e costruire qualcosa insieme.",
+    "text": "Oggi il Mondo è fatto dalle persone che lo vivono quotidianamente. Musica, arte, giochi, aule studio e incontri: siamo un’associazione senza scopo di lucro mandata avanti unicamente dal motore inarrestabile dei nostri volontari. Se hai qualcosa da dire, qui troverai uno spazio per esprimerti; se cerchi qualcuno con cui costruire qualcosa di bello, qui troverai una famiglia.",
     "color": "#f07167",
     "media": [
       {
@@ -48,7 +48,7 @@ export const TIMELINE = [
   {
     "year": "2017",
     "title": "Nuove energie, porte aperte",
-    "text": "Dal 2017 una quarta generazione porta avanti il Mondo: concerti con artisti anche internazionali, nuovi spazi e un laboratorio di serigrafia. Il percorso continua fino alla trasformazione in APS/ETS, con la stessa idea di partenza: fare cultura insieme.",
+    "text": "Il vento soffia ancora e porta con sé la “quarta generazione”. Il respiro del Mondo si fa più ampio: ospitiamo concerti con artisti internazionali, apriamo nuovi spazi creativi e diamo vita a un vero laboratorio di serigrafia. È anche l'anno della maturità organizzativa: il percorso ci porta alla trasformazione in APS/ETS. Ma l'idea di base non è cambiata di una virgola rispetto al '99: vogliamo fare cultura, e vogliamo farla insieme.",
     "color": "#2a9d8f",
     "media": [
       {
@@ -66,7 +66,7 @@ export const TIMELINE = [
   {
     "year": "2009",
     "title": "Il testimone passa, la musica continua",
-    "text": "Nel decennale dell’associazione arriva una terza generazione. Crescono gli eventi, nasce l’esperienza del Lambrock e viene inaugurata la seconda sala prove. Responsabilità e idee si condividono: ognuno contribuisce a far vivere la casa.",
+    "text": "Dieci anni dopo la fondazione, l'orologio gira e avviene un nuovo cambio di guardia. La “terza generazione” fa il suo ingresso. Si condividono responsabilità, nascono nuove idee e si inaugura la seconda sala prove. L'anima dell'associazione esplode: prendono vita grandi eventi, nasce l'esperienza del Lambrock. Al Mondo non si suona e basta: nascono amori, legami profondi, e chiunque passi di qui finisce per lasciarci un pezzo di cuore.",
     "color": "#457b9d",
     "media": [
       {
@@ -84,7 +84,7 @@ export const TIMELINE = [
   {
     "year": "2002",
     "title": "Molto più di una sala prove",
-    "text": "Una seconda generazione affianca i fondatori. Si rinnovano le attrezzature, si organizzano concerti e si dà spazio alla registrazione delle demo. Tra prove, lavori e serate insieme, la casa di via Volta diventa una seconda casa per tanti.",
+    "text": "Cresciamo noi, cresce il Mondo. Mentre i fondatori iniziano a confrontarsi con la vita adulta, una “seconda generazione” prende in mano le chiavi di casa. Arrivano i primi concerti dal vivo, attrezzature migliori e la possibilità di registrare demo. Tra serate infinite e lavori strutturali, via Volta non è più solo un'associazione: per tanti diventa una seconda casa. Un porto sicuro aperto a tutti, capace persino di dare asilo temporaneo a chi un tetto non l'aveva.",
     "color": "#b56576",
     "media": [
       {
@@ -102,7 +102,7 @@ export const TIMELINE = [
   {
     "year": "1999",
     "title": "Tutto comincia con una casa e un’idea",
-    "text": "Un gruppo di giovani di Lurago d’Erba e dintorni trova una casa in via Volta, ad Arosio. La sistema, costruisce una sala prove e crea spazi per stare insieme. Il nome viene dai cartoni delle uova usati per rivestire le pareti: nasce così il Mondo delle Uova.",
+    "text": "Tutto è iniziato con un gruppo di amici di Lurago d’Erba e dintorni, una vecchia casa ad Arosio salvata dalla demolizione e una quantità infinita di cartoni delle uova. Lì dentro, tra pareti insonorizzate alla buona e tanta voglia di fare, abbiamo costruito la nostra prima sala prove e i primi spazi per stare insieme. Non era solo un luogo dove suonare: era il seme di una comunità. Nasceva così il Mondo delle Uova.",
     "color": "#f6bd60",
     "media": [
       {

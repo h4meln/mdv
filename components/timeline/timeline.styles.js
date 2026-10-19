@@ -22,7 +22,7 @@ export const TIMELINE_STYLES = `
 .year-section {
   position: sticky; top: 0; height: 100vh;
   display: flex; align-items: center; justify-content: center;
-  padding: clamp(4.5rem, 10vh, 7.5rem) clamp(1rem, 3vw, 3rem) clamp(1rem, 2vw, 2rem);
+  padding: clamp(4.5rem, 10vh, 7.5rem) clamp(0.5rem, 1vw, 1rem) clamp(1rem, 2vw, 2rem);
   box-sizing: border-box;
 }
 
@@ -44,12 +44,12 @@ export const TIMELINE_STYLES = `
   display: flex; flex-direction: column;
   justify-content: center; align-items: center;
   text-align: center;
-  padding-inline: clamp(0.5rem, 2vw, 1.5rem);
+  padding-inline: clamp(0.125rem, 0.5vw, 0.5rem);
   will-change: opacity, transform;
   z-index: 2;
 }
 
-.year-text > div { width: 100%; max-width: 55ch; margin: 0 auto; }
+.year-text > div { width: 100%; max-width: 78ch; margin: 0 auto; }
 
 .media-stack {
   grid-area: 1 / 1;
@@ -69,18 +69,18 @@ export const TIMELINE_STYLES = `
 }
 
 .year-title {
-  margin: 0 0 0.35em; font-size: clamp(2.2rem, 5vw, 3.8rem);
+  margin: 0 0 0.35em; font-size: clamp(1.9rem, 4.2vw, 3.2rem);
   font-weight: 900; line-height: 0.9; letter-spacing: -0.045em;
   text-wrap: balance; color: #fff; text-align: center;
 }
-.year-title.is-sm { font-size: clamp(1.8rem, 3.8vw, 2.8rem); }
+.year-title.is-sm { font-size: clamp(1.6rem, 3.2vw, 2.4rem); }
 .year-title strong { font-weight: 900; color: var(--color-strong, #D9451E); }
 .year-title em { font-style: italic; font-weight: 900; color: var(--color-em, #1A56DB); }
 
 .year-text p {
-  margin: 0 auto; font-size: clamp(0.95rem, 1.6vw, 1.2rem);
+  margin: 0 auto; font-size: clamp(0.85rem, 1.4vw, 1.05rem);
   line-height: 1.25; letter-spacing: -0.01em;
-  max-width: 50ch; text-wrap: pretty; color: #fff; text-align: center;
+  max-width: 72ch; text-wrap: pretty; color: #fff; text-align: center;
 }
 
 .word { display: inline-block; opacity: 0.1; will-change: opacity; }
@@ -91,7 +91,7 @@ export const TIMELINE_STYLES = `
     grid-template-rows: 1fr;
     grid-template-columns: 1fr 1.15fr;
     align-items: center;
-    gap: clamp(1.5rem, 3vw, 3rem);
+    gap: clamp(1rem, 2vw, 2rem);
   }
   .year-text {
     grid-area: auto;
@@ -101,23 +101,23 @@ export const TIMELINE_STYLES = `
   .year-text > div { margin: 0; }
   .media-stack { grid-area: auto; }
   .year-title {
-    font-size: clamp(2.8rem, 5vw, 4.5rem);
+    font-size: clamp(2.3rem, 4.2vw, 3.8rem);
     line-height: 0.88; letter-spacing: -0.05em; text-align: left;
   }
-  .year-title.is-sm { font-size: clamp(2.2rem, 3.5vw, 3rem); }
+  .year-title.is-sm { font-size: clamp(1.9rem, 3vw, 2.6rem); }
   .year-text p {
-    font-size: clamp(1.1rem, 1.8vw, 1.35rem);
-    line-height: 1.2; max-width: 48ch; margin: 0; text-align: left;
+    font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+    line-height: 1.2; max-width: 70ch; margin: 0; text-align: left;
   }
 }
 
 @media (min-width: 1280px) {
   .year-section { padding-top: clamp(5.5rem, 11vh, 8.5rem); }
-  .year-grid { gap: clamp(2rem, 4vw, 4rem); max-width: 1900px; }
-  .year-text p { font-size: clamp(1.2rem, 2vw, 1.5rem); max-width: 52ch; }
+  .year-grid { gap: clamp(1.5rem, 3vw, 3rem); max-width: 1900px; }
+  .year-text p { font-size: clamp(1rem, 1.6vw, 1.25rem); max-width: 74ch; }
 }
 
-.year-text p { font-family:Manrope,sans-serif; font-size:clamp(15px,1.3vw,19px); line-height:1.7; letter-spacing:0; }
+.year-text p { font-family:Manrope,sans-serif; font-size:clamp(13px,1.1vw,16px); line-height:1.7; letter-spacing:0; max-width:56ch; }
 .year-title { font-family:'Amatic SC',cursive; letter-spacing:0; line-height:1.1; }
 .polaroid { margin:0; padding:12px 12px 16px; background:#f4eddf; box-shadow:0 16px 40px #0007; width:min(440px,80%); box-sizing:border-box; }
 .polaroid img { display:block; width:100%; max-height:48vh; object-fit:contain; background:#e2dacb; }
@@ -126,9 +126,9 @@ export const TIMELINE_STYLES = `
  .year-grid { grid-template-rows:auto minmax(180px,1fr); gap:12px; }
  .year-text { grid-area:1/1; }
  .media-stack { grid-area:2/1; }
- .year-section { padding:90px 16px 120px; }
- .year-text p { font-size:14px; line-height:1.55; }
- .year-title { font-size:30px; }
+ .year-section { padding:90px 6px 120px; }
+ .year-text p { font-size:13px; line-height:1.55; }
+ .year-title { font-size:26px; }
  .polaroid { max-width:80%; padding:8px 8px 12px; }
  .polaroid img { max-height:23vh; }
  .polaroid figcaption { font-size:11px; padding-top:8px; }
@@ -137,22 +137,22 @@ export const TIMELINE_STYLES = `
 :host { font-family:'Amatic SC',cursive; }
 .pin-wrap { height:380vh; }
 .year-number { font-family:'Amatic SC',cursive; font-weight:700; }
-.year-title { font-size:clamp(44px,5vw,76px); line-height:1.08; }
-.year-text p { font:400 clamp(25px,2.1vw,32px)/1.4 'Amatic SC',cursive; max-width:36ch; }
-.year-grid { gap:5vw; }
+.year-title { font-size:clamp(36px,4.2vw,62px); line-height:1.08; }
+.year-text p { font:400 clamp(21px,1.8vw,27px)/1.4 'Amatic SC',cursive; max-width:54ch; }
+.year-grid { gap:4vw; }
 .media-stack { isolation:isolate; }
 .polaroid { width:min(370px,65%); max-height:74%; padding:14px 14px 0; background:#f7f7f2; box-shadow:0 2px 3px #0003,0 20px 35px #0006; border:1px solid #ddd; }
 .polaroid img { width:100%; aspect-ratio:1; max-height:43vh; object-fit:cover; background:#15151b; border:1px solid #ddd; }
-.polaroid figcaption { min-height:68px; display:grid; place-items:center; padding:10px 2px; font:700 22px/1.2 'Amatic SC',cursive; color:#242530; }
+.polaroid figcaption { min-height:68px; display:grid; place-items:center; padding:10px 2px; font:700 20px/1.2 'Amatic SC',cursive; color:#242530; }
 .reel { width:min(340px,66%); height:min(65vh,600px); background:#111; box-shadow:0 20px 60px #0006; }
 .reel video { width:100%; height:100%; object-fit:contain; }
 .reel-sound { position:absolute; left:12px; bottom:12px; padding:7px 14px; color:white; border:1px solid #ffffff70; background:#111c; border-radius:30px; font:700 23px 'Amatic SC',cursive; cursor:pointer; }
 @media(max-width:767px) {
  .pin-wrap { height:400vh; }
- .year-section { padding:75px 12px 95px; }
+ .year-section { padding:75px 6px 95px; }
  .year-grid { grid-template-rows:auto minmax(180px,1fr); gap:10px; }
- .year-text p { font-size:22px; line-height:1.3; }
- .year-title { font-size:36px; margin-bottom:10px; }
+ .year-text p { font-size:19px; line-height:1.3; }
+ .year-title { font-size:30px; margin-bottom:10px; }
  .polaroid { width:52%; padding:8px 8px 0; max-height:90%; }
  .polaroid img { max-height:24vh; }
  .polaroid figcaption { font-size:17px; min-height:44px; padding:6px 0; }
@@ -163,8 +163,8 @@ export const TIMELINE_STYLES = `
 @media(max-width:767px) {
  .year-number { top:20px; font-size:48px; height:50px; }
  .year-section { padding-top:100px; }
- .year-title { font-size:34px; }
- .year-text p { font-size:21px; }
+ .year-title { font-size:30px; }
+ .year-text p { font-size:18px; }
  .reel { width:60%; max-height:38vh; }
  .reel-sound { font-size:20px; left:8px; bottom:8px; }
 }
@@ -182,7 +182,7 @@ export const TIMELINE_STYLES = `
     position: relative; top: auto;
     height: auto; min-height: 0;
     display: block;
-    padding: 92px 18px 64px;
+    padding: 92px 8px 64px;
   }
   .year-grid {
     display: flex; flex-direction: column;
@@ -194,11 +194,11 @@ export const TIMELINE_STYLES = `
   }
   .year-text { opacity: 1 !important; align-items: center; text-align: center; padding-inline: 0; }
   .word { opacity: 1 !important; }
-  .year-title { font-size: clamp(28px, 8vw, 38px) !important; margin-bottom: 12px; }
-  .year-title.is-sm { font-size: clamp(24px, 6.4vw, 32px) !important; }
+  .year-title { font-size: clamp(24px, 7vw, 32px) !important; margin-bottom: 12px; }
+  .year-title.is-sm { font-size: clamp(21px, 5.6vw, 28px) !important; }
   .year-text p {
-    font-size: clamp(17px, 4.6vw, 21px) !important;
-    line-height: 1.42; max-width: 34ch;
+    font-size: clamp(15px, 4vw, 18px) !important;
+    line-height: 1.42; max-width: 52ch;
   }
   .media-stack {
     position: relative; display: block;
