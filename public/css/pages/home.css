@@ -233,3 +233,15 @@ mdv-eggbar.is-visible{opacity:1;visibility:visible;pointer-events:auto}
     filter: drop-shadow(0 18px 40px rgba(0,0,0,.55));
 }
 
+/* ── Uova in home: su mobile più grandi (sotto metà viewport, ma ben visibili) ──
+   L'immagine è 3200×675 (rapporto 4,74:1): la larghezza è il parametro utile.
+   260vw ≈ 55vw di altezza, con tetto a 42svh per non invadere lo schermo
+   (e per non esplodere in landscape). Resta centrata e ritagliata ai lati. */
+@media (max-width: 700px) {
+    .egg-parallax__art { width: 100%; display: flex; justify-content: center; }
+    .egg-parallax__img {
+        width: min(260vw, 199svh);
+        max-width: none;
+        height: auto;
+    }
+}

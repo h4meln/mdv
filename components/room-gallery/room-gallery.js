@@ -66,10 +66,12 @@ figcaption { position:absolute; bottom:172px; left:110px; right:110px; padding:6
     background:rgba(255,255,255,.05); border:1px solid rgba(245,234,216,.16); border-radius:50%;
     display:flex; align-items:center; justify-content:center; transition:all .15s; }
 .controls button:hover { background:rgba(232,100,60,.2); border-color:rgba(232,100,60,.5); }
-.thumbs { overflow:visible; gap:0; align-items:center; justify-content:center; max-width:180px; flex-wrap:wrap; }
+.thumbs { overflow-x:auto; gap:2px; align-items:center; justify-content:center; max-width:none; flex-wrap:nowrap; scrollbar-width:none; }
+.thumbs::-webkit-scrollbar { display:none; }
 .thumbs button { min-width:16px; width:16px; height:24px; min-height:24px; padding:5px; border:0; background:transparent; opacity:.55; }
 .thumbs button span { display:block; width:6px; height:6px; border-radius:50%; background:white; }
-.thumbs button[aria-current=true] { border:0; opacity:1; } .thumbs button[aria-current=true] span { transform:scale(1.6); }
+.thumbs button[aria-current=true] { border:0; opacity:1; width:auto; min-width:26px; }
+.thumbs button[aria-current=true] span { width:20px; height:10px; border-radius:999px; background:#ffc98a; transform:none; }
 .photo::before { content:''; position:absolute; z-index:1; inset:55% 0 0; background:linear-gradient(transparent,#080910b0); pointer-events:none; }
 @media(max-width:980px) { .photo { top:86px; bottom:168px; max-width: calc(100% - 70px); } header { padding:18px 14px; gap:6px; } header h1 { font-size:28px; } header p { font-size:18px; } .switch button { font-size:21px; padding:6px 9px; } .thumbs { max-width:92px; } figcaption { bottom:14px; font-size:23px; } }
 .lightbox {
@@ -106,6 +108,67 @@ figcaption { position:absolute; bottom:172px; left:110px; right:110px; padding:6
 }
 .lightbox-close svg { width: 13px; height: 13px; display: block; }
 .photo { cursor: zoom-in; }
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE: galleria più grande + dots a scomparsa sul lato
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 980px) {
+  header {
+    position: absolute; inset: 0;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    padding: 14px;
+    background: linear-gradient(#090a12cc, transparent 150px);
+    pointer-events: none;
+  }
+  header > * { pointer-events: auto; }
+  h1 { font-size: 30px; }
+  header p { font-size: 18px; }
+  .switch button { font-size: 20px; padding: 6px 10px; }
+
+  /* foto: occupa quasi tutta la larghezza e tutta l'altezza utile */
+  .photo {
+    top: 72px; bottom: 94px;
+    left: 10px; right: 10px;
+    transform: none;
+    width: auto;
+    max-width: none;
+    aspect-ratio: auto;
+  }
+  .photo img { object-fit: cover; }
+  figcaption {
+    bottom: 24px; left: 16px; right: 16px;
+    font-size: 21px;
+  }
+
+  /* dots: colonna verticale sul lato destro, a scomparsa */
+  .thumbs {
+    position: absolute;
+    right: 6px; top: 50%; left: auto;
+    transform: translateY(-50%);
+    z-index: 6;
+    display: flex; flex-direction: column;
+    flex-wrap: nowrap; align-items: center;
+    max-width: none; max-height: 62%;
+    overflow-y: auto; overflow-x: hidden;
+    gap: 0; padding: 6px 3px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 999px;
+    background: rgba(10,10,16,.45);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .thumbs button { min-width: 24px; width: 24px; height: 22px; min-height: 22px; padding: 6px; }
+  .thumbs button span { width: 8px; height: 8px; background: rgba(255,255,255,.75); }
+  .thumbs button[aria-current=true] { min-width: 24px; width: 24px; }
+  .thumbs button[aria-current=true] span { width: 10px; height: 18px; border-radius: 6px; }
+  .room:hover .thumbs, .thumbs:focus-within { opacity: 1; pointer-events: auto; }
+
+  @media (hover: none) {
+    .thumbs { opacity: .85; pointer-events: auto; }
+  }
+}
 
 `;
 class MdvRoomGallery extends BaseElement {

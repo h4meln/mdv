@@ -348,6 +348,7 @@ class MdvTimeline extends BaseElement {
   }
 
   _measureSections() {
+    this._isMobileLayout = window.matchMedia('(max-width: 767px)').matches;
     const scrollY = window.scrollY;
     this._sections.forEach(section => {
       const rect = section.wrap.getBoundingClientRect();
@@ -577,8 +578,21 @@ class MdvTimeline extends BaseElement {
     for (let j = 0; j < mediaCount; j++) {
       this._renderMediaItem(section.mediaItems[j], timelineTime, mediaCount, j);
       const video = section.mediaItems[j].querySelector('video');
-      if (video) this._setVideoVisible(video, totalEasing > .8 && timelineTime > section.mediaItems[j]._scrubStart + .08 && scrollY < section.top + section.height - section.sectionHeight);
+      if (video) {
+        // Su mobile le sezioni non sono sticky: i media restano sempre visibili,
+        // quindi il criterio basato sullo scrub non vale più. Si usa la posizione
+        // reale dell'elemento nel viewport.
+        const visible = this._isMobileLayout
+          ? this._isInViewport(video, vh)
+          : (totalEasing > .8 && timelineTime > section.mediaItems[j]._scrubStart + .08 && scrollY < section.top + section.height - section.sectionHeight);
+        this._setVideoVisible(video, visible);
+      }
     }
+  }
+
+  _isInViewport(el, vh) {
+    const rect = el.getBoundingClientRect();
+    return rect.top < vh * 0.85 && rect.bottom > vh * 0.15;
   }
 
   _renderMediaItem(item, timelineTime, totalItems, index) {

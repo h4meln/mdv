@@ -168,4 +168,69 @@ export const TIMELINE_STYLES = `
  .reel { width:60%; max-height:38vh; }
  .reel-sound { font-size:20px; left:8px; bottom:8px; }
 }
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE: parole e media in due blocchi distinti.
+   Niente sezioni sticky sovrapposte (il testo non finisce più
+   sopra le immagini), niente scrub: i media restano visibili.
+   Gli !important vincono sugli stili inline scritti dal render.
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .timeline { padding-top: 0; }
+  .pin-wrap { height: auto; }
+  .year-section {
+    position: relative; top: auto;
+    height: auto; min-height: 0;
+    display: block;
+    padding: 92px 18px 64px;
+  }
+  .year-grid {
+    display: flex; flex-direction: column;
+    align-items: stretch; height: auto;
+    gap: 22px;
+    transform: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+  }
+  .year-text { opacity: 1 !important; align-items: center; text-align: center; padding-inline: 0; }
+  .word { opacity: 1 !important; }
+  .year-title { font-size: clamp(28px, 8vw, 38px) !important; margin-bottom: 12px; }
+  .year-title.is-sm { font-size: clamp(24px, 6.4vw, 32px) !important; }
+  .year-text p {
+    font-size: clamp(17px, 4.6vw, 21px) !important;
+    line-height: 1.42; max-width: 34ch;
+  }
+  .media-stack {
+    position: relative; display: block;
+    height: auto; min-height: 0; padding: 0;
+    isolation: auto;
+  }
+  .media-item {
+    position: relative !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    margin: 0 auto 18px !important;
+    z-index: auto !important;
+  }
+  .polaroid { width: min(100%, 420px); max-height: none; padding: 10px 10px 0; }
+  .polaroid img { max-height: none !important; aspect-ratio: 4 / 3; object-fit: cover; }
+  .polaroid figcaption { font-size: 17px; min-height: 44px; padding: 8px 0; }
+  .reel { width: min(100%, 340px); height: auto; aspect-ratio: 9 / 16; max-height: 68svh; }
+  .reel video { height: 100%; }
+  .reel-sound { font-size: 20px; left: 10px; bottom: 10px; }
+  .year-number {
+    top: 14px;
+    font-size: clamp(30px, 9vw, 44px);
+    height: 46px;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: rgba(16, 16, 23, .72);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+}
 `;
