@@ -4,7 +4,7 @@
     --color-text: #f5ead8;
     --color-muted: rgba(240,230,214,.70);
     --color-muted-soft: rgba(240,230,214,.60);
-    --color-accent: #ffc98a;
+    --color-accent: #a9caff;
     --color-accent-2: #ff5c5c;
     --color-border: rgba(245,234,216,.10);
     --color-surface: rgba(255,255,255,.035);
@@ -114,3 +114,45 @@ mdv-eggbar.is-visible{opacity:1;visibility:visible;pointer-events:auto}
 @keyframes logo-glitch-b{0%{transform:translate(calc(var(--glitch)*-1),calc(var(--glitch)*-1.5))}25%{transform:translate(var(--glitch),var(--glitch))}50%{transform:translate(calc(var(--glitch)*-1.6),var(--glitch))}75%{transform:translate(calc(var(--glitch)*-1),calc(var(--glitch)*-1))}100%{transform:translate(var(--glitch),calc(var(--glitch)*-1))}}
 
 @media(prefers-reduced-motion:reduce){.logo-glitch .logo-layer--r,.logo-glitch .logo-layer--b{animation:none!important}.logo-glitch:hover,.logo-glitch:focus-visible{transform:none}}
+.home-intro, .campaign { position:relative; max-width:1100px; margin:0 auto 80px; padding:40px 28px; }
+.home-intro { text-align:center; }
+.section-kicker { font:700 12px/1.6 Manrope,sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#a9caff; margin-bottom:16px; }
+.home-intro h2, .campaign h2 { font-size:clamp(40px,6vw,68px); line-height:1.1; margin-bottom:24px; }
+.home-intro > p:not(.section-kicker), .campaign p:not(.section-kicker) { font:16px/1.8 Manrope,sans-serif; max-width:65ch; color:#ded4c5; margin:0 auto 24px; }
+.home-actions { display:flex; gap:14px; flex-wrap:wrap; }
+.home-intro .home-actions { justify-content:center; }
+.home-actions a { display:inline-block; padding:13px 18px; border:1px solid #d7b58b70; border-radius:10px; font:600 14px/1.5 Manrope,sans-serif; color:#ffe0ae; text-decoration:none; }
+.home-actions .donate { background:#a9caff; color:#25211c; }
+.campaign { display:grid; grid-template-columns:1.4fr 1fr; align-items:center; gap:40px; border-top:1px solid #ffffff24; border-bottom:1px solid #ffffff24; }
+.campaign-photo { margin:0; background:#f4eddf; padding:12px 12px 20px; transform:rotate(3deg); box-shadow:0 12px 30px #0006; }
+.campaign-photo img { display:block; width:100%; aspect-ratio:1; object-fit:cover; }
+.campaign-photo figcaption { color:#38302a; font:13px/1.6 Manrope,sans-serif; margin-top:12px; }
+.hero-caption__kicker, .hero-caption__sub { font-family:Manrope,sans-serif; letter-spacing:.08em; }
+@media(max-width:700px) { .campaign { grid-template-columns:1fr; margin:0 16px 40px; padding:32px 12px; } .campaign-photo { max-width:300px; justify-self:center; } }
+
+:root { --color-accent:#ed626f; --color-accent-2:#508cf1; --color-shadow:transparent; }
+.hero-caption__title { color:#f4f1ed; background:none; filter:none; }
+.hero-caption__kicker, .hero-caption__sub { font-family:'Amatic SC',cursive; font-size:24px; letter-spacing:.06em; }
+.home-intro, .campaign { max-width:1180px; padding:80px 40px; }
+.home-intro { max-width:900px; }
+.home-intro h2, .campaign h2 { font-weight:700; font-size:clamp(52px,7vw,92px); }
+.section-kicker { font:700 24px/1.3 'Amatic SC',cursive; letter-spacing:.08em; color:#ed626f; }
+.home-intro > p:not(.section-kicker), .campaign p:not(.section-kicker) { font:400 28px/1.5 'Amatic SC',cursive; max-width:42ch; color:#e5e2e6; }
+.home-actions { gap:20px; }
+.home-actions a, .home-actions .donate { background:none; border:0; border-radius:0; border-bottom:1px solid #508cf1; padding:8px 0; color:#a9caff; font:700 25px/1.4 'Amatic SC',cursive; }
+.home-actions .donate { color:#ff99a2; border-color:#ed626f; }
+.campaign { border:0; gap:70px; }
+.campaign-widget { width:100%; min-width:0; min-height:430px; }
+.gfm-embed { width:100%; }
+@media(max-width:700px) { .home-intro,.campaign { padding:50px 20px; } .campaign { margin:0 0 40px; gap:35px; } .home-intro > p:not(.section-kicker), .campaign p:not(.section-kicker) { font-size:25px; }}
+
+.campaign p:not(.section-kicker) { margin-left:0; } .campaign-widget iframe { display:block; border-radius:12px; }
+
+/* ── Normalizzazione tipografica (dimensioni equilibrate) ── */
+.hero-caption__title { font-size: clamp(28px, 4vw, 48px); }
+.hero-caption__kicker { font-size: clamp(11px, 1.2vw, 14px); }
+.hero-caption__sub { font-size: clamp(12px, 1.3vw, 16px); }
+.home-intro h2, .campaign h2 { font-size: clamp(40px, 6vw, 68px); }
+.section-kicker { font-size: clamp(13px, 1.4vw, 17px); letter-spacing: .14em; }
+.home-intro > p:not(.section-kicker), .campaign p:not(.section-kicker) { font-size: clamp(16px, 1.6vw, 19px); }
+.home-actions a, .home-actions .donate { font-size: clamp(14px, 1.4vw, 16px); }

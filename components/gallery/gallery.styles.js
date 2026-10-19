@@ -78,4 +78,12 @@ export const GALLERY_STYLES = `
   from { opacity: 0; transform: scale(.94); }
   to   { opacity: 1; transform: scale(1); }
 }
+
+.gallery-item { background:#20263a; border-radius:0; }
+.gallery-item::before { content:''; position:absolute; inset:-8px; background-image:var(--preview); background-size:cover; background-position:center; filter:blur(8px); opacity:1; transition:opacity .6s; animation:photo-breathe 2s ease-in-out infinite alternate; }
+.gallery-item img { opacity:0; filter:blur(6px); transition:opacity .65s,filter .65s; }
+.gallery-item.is-loaded img { opacity:1; filter:none; }
+.gallery-item.is-loaded::before { opacity:0; animation:none; }
+@keyframes photo-breathe { to { filter:blur(12px); opacity:.65; } }
+@media(prefers-reduced-motion:reduce) { .gallery-item::before { animation:none; } .gallery-item img { transition:none; } }
 `;

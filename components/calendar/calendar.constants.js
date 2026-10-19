@@ -1,11 +1,9 @@
 export const CATEGORIES = {
-  team:     { label: 'Team',     color: 'green'  },
-  design:   { label: 'Design',   color: 'lime'   },
-  meeting:  { label: 'Meeting',  color: 'sky'    },
-  oneOnOne: { label: '1:1',      color: 'violet' },
-  critical: { label: 'Critico',  color: 'rose'   },
-  deadline: { label: 'Scadenza', color: 'amber'  },
-  social:   { label: 'Social',   color: 'sand'   },
+  concert: { label: 'Concerti', color: 'rose' },
+  workshop: { label: 'Laboratori', color: 'amber' },
+  meeting: { label: 'Vita associativa', color: 'sky' },
+  social: { label: 'Incontri e giochi', color: 'sand' },
+  deadline: { label: 'Scadenze', color: 'violet' },
 };
 
 export const MONTHS_IT = [

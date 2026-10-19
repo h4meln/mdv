@@ -7,6 +7,7 @@ export const NAVBAR_STYLES = `
   transform: translateX(-50%);
   width: 520px;
   aspect-ratio: 520 / 150;
+  font-family: 'Amatic SC', cursive;
   font-size: 1.72rem;
   --nav-transition: 0.65s;
   --nav-hover: 0.45s;           /* scale hover: lento e delicato */
@@ -62,13 +63,13 @@ export const NAVBAR_STYLES = `
 }
 
 .navbar-label {
-  position: absolute; left: 50%;
+  position: absolute; left: 50%; bottom: 8%;
   transform: translateX(-50%);
   font-size: 0.65em;
   font-weight: 700;
   letter-spacing: 0.12em; white-space: nowrap;
   opacity: 0; color: var(--navbar-clr);
-  transition: opacity var(--nav-transition), bottom var(--nav-transition);
+  transition: opacity var(--nav-transition);
 }
 .navbar-items li.active .navbar-label { opacity: 1; bottom: 8%;}
 
@@ -91,4 +92,8 @@ export const NAVBAR_STYLES = `
   }
   #navbar-bg { rx: 0; }
 }
+
+.navbar-items li a:focus-visible { outline: 2px solid #ad5524; outline-offset: -3px; border-radius: 10px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+
 `;

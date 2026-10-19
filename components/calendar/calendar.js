@@ -7,9 +7,6 @@ import { CATEGORIES } from './calendar.constants.js';
 import { CALENDAR_STYLES } from './calendar.styles.js';
 import * as views from './calendar.views.js';
 
-const TEAR_DURATION = 480;
-const WHEEL_COOLDOWN = 240;
-const SCROLLABLE_SEL = '.cal-cell-events, .cal-agenda-view, .cal-week-events, .cal-modal-body, .cal-agenda-list-inner, .cal-strip-list';
 const RING_COUNT = 8;
 
 class MdvCalendar extends BaseElement {
@@ -24,18 +21,17 @@ class MdvCalendar extends BaseElement {
     this._modalDate = null;
     this._mounted = false;
     this._stripScroll = 0;
-    this._navLocked = false;
-    this._navTimer = null;
-    this._lastWheelNav = 0;
 
     this._keyHandler = (e) => {
       if (!this.isConnected) return;
       if (e.key === 'Escape' && this._modalDate) { this._closeModal(); return; }
-      if (this._modalDate) return;
+      if (this._modalDate) {
+        if (e.key === 'Tab') { e.preventDefault(); this.shadowRoot.querySelector('.cal-modal-close')?.focus(); }
+        return;
+      }
       if (e.key === 'ArrowLeft')  this._navigate(-1);
       if (e.key === 'ArrowRight') this._navigate(1);
     };
-    this._wheelHandler = (e) => this._onWheelGlobal(e);
   }
 
   async connectedCallback() {
@@ -50,8 +46,6 @@ class MdvCalendar extends BaseElement {
   }
 
   disconnectedCallback() {
-    window.removeEventListener('wheel', this._wheelHandler);
-    if (this._navTimer) { clearTimeout(this._navTimer); this._navTimer = null; }
     if (typeof super.disconnectedCallback === 'function') {
       super.disconnectedCallback();
     }
@@ -122,10 +116,6 @@ class MdvCalendar extends BaseElement {
         <div class="cal-strip-slot"></div>
         <div class="cal-body">
           <div class="cal-panel-stack">
-            <div class="cal-panel-behind">
-              ${this._holesZoneHTML()}
-              <div class="cal-content-slot behind-slot"></div>
-            </div>
             <div class="cal-panel-front">
               ${this._holesZoneHTML()}
               <div class="cal-content-slot front-slot"></div>
@@ -139,10 +129,8 @@ class MdvCalendar extends BaseElement {
 
     this._toolbarSlot   = this.shadowRoot.querySelector('.cal-toolbar-slot');
     this._stripSlot     = this.shadowRoot.querySelector('.cal-strip-slot');
-    this._behindSlot    = this.shadowRoot.querySelector('.cal-panel-behind');
     this._frontSlot     = this.shadowRoot.querySelector('.cal-panel-front');
     this._frontContent  = this.shadowRoot.querySelector('.front-slot');
-    this._behindContent = this.shadowRoot.querySelector('.behind-slot');
     this._sidebarSlot   = this.shadowRoot.querySelector('.cal-sidebar-slot');
     this._modalSlot     = this.shadowRoot.querySelector('.cal-modal-slot');
     this._mounted = true;
@@ -154,11 +142,15 @@ class MdvCalendar extends BaseElement {
       if (el.closest('.cal-modal')) return;
       const targetDate = parseYmd(el.dataset.date);
       this._selected = targetDate;
-      this._openModal(targetDate);
+      if (this._eventsOn(targetDate).length) this._openModal(targetDate);
+      else { this._updateSidebar(); this._updateStrip(); }
     });
 
-    this._on(document, 'keydown', this._keyHandler);
-    window.addEventListener('wheel', this._wheelHandler, { passive: false });
+    this._on(this.shadowRoot, 'keydown', this._keyHandler);
+    this._on(this.shadowRoot, 'keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-date]')) { e.preventDefault(); e.target.click(); }
+    });
+    // Leave wheel scrolling to the page and calendar lists.
 
     let touchStartX = 0, touchStartY = 0, touchActive = false;
     this._on(this.shadowRoot, 'touchstart', (e) => {
@@ -177,30 +169,6 @@ class MdvCalendar extends BaseElement {
       if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy)) return;
       this._navigate(dx < 0 ? 1 : -1);
     }, { passive: true });
-  }
-
-  _onWheelGlobal(e) {
-    const path = e.composedPath ? e.composedPath() : [];
-    if (!path.includes(this)) return;
-    if (e.ctrlKey) return;
-
-    const target = e.target;
-    if (!target || typeof target.closest !== 'function') return;
-
-    if (target.closest('.cal-modal')) return;
-    if (!target.closest('.cal-panel-stack')) return;
-    if (target.closest(SCROLLABLE_SEL)) return;
-    if (this._view === 'agenda') return;
-
-    e.preventDefault();
-
-    const now = performance.now();
-    if (now - this._lastWheelNav < WHEEL_COOLDOWN) return;
-
-    const dy = e.deltaY;
-    if (Math.abs(dy) < 2) return;
-    this._lastWheelNav = now;
-    this._navigate(dy > 0 ? 1 : -1);
   }
 
   _updateAll() {
@@ -233,8 +201,6 @@ class MdvCalendar extends BaseElement {
 
   _setFront(html) {
     this._frontContent.innerHTML = html;
-    this._behindContent.innerHTML = '';
-    this._frontSlot.classList.remove('cal-panel--tearing', 'cal-panel--enter');
   }
 
   _updateSidebar() {
@@ -259,14 +225,6 @@ class MdvCalendar extends BaseElement {
     else if (a === 'modal-bg') { if (e.target === el) this._closeModal(); }
   }
 
-  _finishPending() {
-    if (!this._navLocked) return;
-    if (this._navTimer) { clearTimeout(this._navTimer); this._navTimer = null; }
-    this._frontSlot.classList.remove('cal-panel--tearing');
-    this._frontContent.innerHTML = this._behindContent.innerHTML;
-    this._behindContent.innerHTML = '';
-    this._navLocked = false;
-  }
 
   _setView(v) {
     if (v === this._view) return;
@@ -275,7 +233,6 @@ class MdvCalendar extends BaseElement {
   }
 
   _navigate(dir) {
-    this._finishPending();
 
     const c = this._cursor;
     if (this._view === 'week') {
@@ -296,47 +253,17 @@ class MdvCalendar extends BaseElement {
   }
 
   _animateAndUpdate() {
-    this._finishPending();
-
-    const nextHtml = this._viewHTML();
-    const useTear = (this._view === 'month' || this._view === 'week');
-
-    if (!useTear) {
-      this._updateToolbar();
-      this._updateStrip();
-      this._frontContent.innerHTML = nextHtml;
-      this._behindContent.innerHTML = '';
-      this._frontSlot.classList.remove('cal-panel--tearing');
-      this._frontSlot.classList.add('cal-panel--enter');
-      this._frontSlot.addEventListener('animationend', () => {
-        this._frontSlot.classList.remove('cal-panel--enter');
-      }, { once: true });
-      this._updateSidebar();
-      requestAnimationFrame(() => this._centerStrip(false));
-      return;
-    }
-
-    this._navLocked = true;
-    this._behindContent.innerHTML = nextHtml;
-    this._frontSlot.classList.add('cal-panel--tearing');
-
-    this._navTimer = setTimeout(() => {
-      this._navTimer = null;
-      this._frontSlot.classList.remove('cal-panel--tearing');
-      this._frontContent.innerHTML = this._behindContent.innerHTML;
-      this._behindContent.innerHTML = '';
-      this._updateToolbar();
-      this._updateStrip();
-      this._updateSidebar();
-      this._navLocked = false;
-      requestAnimationFrame(() => this._centerStrip(false));
-    }, TEAR_DURATION);
+    this._updateAll();
+    requestAnimationFrame(() => this._centerStrip(false));
   }
 
   _openModal(date) {
+    if (!this._eventsOn(date).length) return;
     this._selected = date;
+    this._focusBeforeModal = this.shadowRoot.activeElement;
     this._modalDate = date;
     this._updateModal();
+    this.shadowRoot.querySelector('.cal-modal-close')?.focus();
     this._updateStrip();
     this._updateSidebar();
     requestAnimationFrame(() => this._centerStrip(true));
@@ -345,6 +272,7 @@ class MdvCalendar extends BaseElement {
   _closeModal() {
     this._modalDate = null;
     this._updateModal();
+    this._focusBeforeModal?.focus();
     this._updateStrip();
     this._updateSidebar();
   }

@@ -45,33 +45,31 @@
   <!-- ── hero ── -->
   <div class="hero-spacer"></div>
 
-  <!-- ── intro ── -->
-  <!-- <section class="intro">
-    <h2>Una casa per chi fa musica</h2>
-    <p>
-      Nato nel 1999 come spazio per provare, il Mondo delle uoVa è diventato un punto di riferimento
-      per band, giovani musicisti e il quartiere. Gestito da volontari, sostenuto dalle quote associative,
-      aperto a chiunque abbia qualcosa da suonare o da dire.
-    </p>
-    <div class="stats">
-      <div class="stat"><b>2</b><span>sale attrezzate</span></div>
-      <div class="stat"><b>27</b><span>anni di attività</span></div>
-      <div class="stat"><b>€5</b><span>tessera annuale</span></div>
-      <div class="stat"><b>∞</b><span>concerti e serate</span></div>
+  <section class="home-intro" aria-labelledby="intro-title">
+    <p class="section-kicker">Dal 1999 · Arosio, Brianza</p>
+    <h2 id="intro-title">Un posto per suonare.<br>Una casa da condividere.</h2>
+    <p>Siamo il Mondo delle Uova: un’associazione culturale senza scopo di lucro, fatta di volontari, musicisti e persone che hanno voglia di esserci. Sale prove, concerti, arte e incontri: qui le idee prendono forma insieme.</p>
+    <div class="home-actions"><a href="sala_prove.html">Scopri le sale prove →</a><a href="tesseramento.html">Diventa socio →</a></div>
+  </section>
+  <section class="campaign" id="salva-il-mondo" aria-labelledby="campaign-title">
+    <div><p class="section-kicker">#SalvaIlMondo</p><h2 id="campaign-title">Diamo un futuro a questa casa.</h2>
+      <p>La nostra sede è a rischio: entro il 31 marzo 2027 dovremo lasciarla. Stiamo raccogliendo fondi per provare ad acquistarla e per far continuare l’esperienza del Mondo, anche altrove. Una donazione, una condivisione, una mano agli eventi: ogni contributo conta.</p>
+      <div class="home-actions"><a class="donate" href="https://gofund.me/b99d7e8c9" target="_blank" rel="noopener noreferrer">Sostieni su GoFundMe ↗</a><a href="assets/doc/documento-di-buona-causa.pdf" target="_blank" rel="noopener noreferrer">Leggi il progetto · PDF ↗</a></div>
     </div>
-  </section> -->
+    <div class="campaign-widget"><iframe class="gfm-embed-iframe" title="Salva il Mondo — raccolta fondi su GoFundMe" src="https://www.gofundme.com/f/salva-il-mondo-mux6q/widget/large?attribution_id=sl%3A0e829294-e589-4fbf-8a8f-cf92aa6332f4&amp;utm_medium=referral&amp;utm_source=widget" width="100%" height="560" loading="lazy" style="border:0"></iframe></div>
+  </section>
 
   <!-- ── timeline ── -->
   <div class="timeline-wrap">
-    <mdv-timeline id="tl"></mdv-timeline>
+    <mdv-timeline id="tl" no-smooth-scroll></mdv-timeline>
   </div>
 </main>
 
 <!-- ── 3D model   src-low="assets/models/gallo.glb" ── -->
 <!-- <mdv-model
-  src="assets/models/topo.glb" 
-  height="1.4" 
-  head-y="0.14" 
+  src="assets/models/topo.glb"
+  height="1.4"
+  head-y="0.14"
   cam-z="0.8"
 ></mdv-model> -->
 
@@ -82,11 +80,11 @@
 <mdv-toast
   icon="heart"
   title="SALVA IL MONDO!"
-  sub-title="Una piccola azione può fare la differenza"
-  text="Dai un occhio alla nostra raccolta fondi al seguente {link} e di seguito trovi il nostro documento di buona causa."
-  link="https://www.google.it"
-  link-label="link"
-  pdf="public/Mondo delle uova Presentazione.pdf"
+  sub-title="Una casa per la musica. Un futuro da costruire insieme."
+  text="La nostra sede è a rischio. Aiutaci a dare un futuro al Mondo delle Uova: {link}, condividi la campagna e scopri il progetto."
+  link="https://gofund.me/b99d7e8c9"
+  link-label="sostieni la raccolta fondi"
+  pdf="assets/doc/documento-di-buona-causa.pdf"
   pdf-label="Documento di buona causa"
   pdf-meta="PDF · Apri documento"
   delay="0.35"
@@ -105,5 +103,6 @@
 
 <!-- ── scripts ── -->
 <script type="module" src="public/js/pages/home.js"></script>
+
 </body>
 </html>

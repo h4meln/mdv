@@ -67,7 +67,7 @@ class MdvToast extends BaseElement {
       'icon', 'title', 'sub-title', 'text',
       'link', 'link-label',
       'pdf', 'pdf-label', 'pdf-meta',
-      'delay', 'auto-close',
+      'delay', 'auto-close', 'warn-text',
     ];
   }
 
@@ -76,9 +76,11 @@ class MdvToast extends BaseElement {
     this._built = false;
     this._autoCloseTimer = null;
     this._closing = false;
+    this._warned = false;
   }
 
   connectedCallback() {
+    try { if (sessionStorage.getItem('mdv-cause-dismissed') === '1') { this.remove(); return; } } catch {}
     this.shadowRoot.adoptedStyleSheets = [sheet(TOAST_STYLES)];
     this._render();
     this._built = true;
@@ -86,6 +88,8 @@ class MdvToast extends BaseElement {
 
   disconnectedCallback() {
     clearTimeout(this._autoCloseTimer);
+    clearTimeout(this._closeTimer);
+    this._cleanup();
   }
 
   attributeChangedCallback() {
@@ -94,15 +98,39 @@ class MdvToast extends BaseElement {
 
   close() {
     if (this._closing) return;
+
+    if (!this._warned) {
+      this._warned = true;
+      this._showWarning();
+      return;
+    }
+
     this._closing = true;
+    clearTimeout(this._autoCloseTimer);
+    try { sessionStorage.setItem('mdv-cause-dismissed', '1'); } catch {}
 
     const toast = this.shadowRoot.querySelector('.cause-toast');
     if (!toast) return this._finishClose();
 
+    toast.style.animationDelay = '0s';
     toast.classList.add('is-closing');
-    toast.addEventListener('animationend', () => this._finishClose(), { once: true });
+    toast.addEventListener('animationend', (event) => {
+      if (event.target === toast && event.animationName === 'causeToastOut') this._finishClose();
+    });
     // Fallback per prefers-reduced-motion (animation: none)
-    setTimeout(() => this._finishClose(), 700);
+    this._closeTimer = setTimeout(() => this._finishClose(), 500);
+  }
+
+  _showWarning() {
+    const toast = this.shadowRoot.querySelector('.cause-toast');
+    if (!toast) return;
+    toast.classList.add('is-warning');
+    const btn = this.shadowRoot.querySelector('.cause-toast__close');
+    if (btn) btn.setAttribute('aria-label', 'Chiudi comunque');
+    if (navigator.vibrate) { try { navigator.vibrate([40, 60, 40]); } catch {} }
+    this.dispatchEvent(new CustomEvent('mdv-toast-warn', {
+      bubbles: true, composed: true,
+    }));
   }
 
   _finishClose() {
@@ -114,6 +142,7 @@ class MdvToast extends BaseElement {
   }
 
   _render() {
+    if (this._closing) return;
     const icon      = resolveIcon(this.getAttribute('icon'), 'heart');
     const title     = this.getAttribute('title')      || 'Title';
     const subTitle  = this.getAttribute('sub-title')  || '';
@@ -125,6 +154,7 @@ class MdvToast extends BaseElement {
     const pdfMeta   = this.getAttribute('pdf-meta')   || 'Open';
     const delay     = parseFloat(this.getAttribute('delay') || '0.35');
     const autoClose = parseFloat(this.getAttribute('auto-close') || '0');
+    const warnText  = this.getAttribute('warn-text')  || 'Leggi prima di chiudere: il tuo aiuto puo fare la differenza.';
 
     // Testo con placeholder {link}
     let textHtml = escapeHtml(textRaw);
@@ -162,6 +192,7 @@ class MdvToast extends BaseElement {
           </div>
         </div>
         <p class="cause-toast__text">${textHtml}</p>
+        <p class="cause-toast__warn" role="alert">${escapeHtml(warnText)}</p>
         ${pdfHtml}
       </aside>`;
 
@@ -174,7 +205,8 @@ class MdvToast extends BaseElement {
 
     clearTimeout(this._autoCloseTimer);
     if (autoClose > 0) {
-      this._autoCloseTimer = setTimeout(() => this.close(), autoClose * 1000);
+      // chiusura automatica: non deve mostrare il warning
+      this._autoCloseTimer = setTimeout(() => { this._warned = true; this.close(); }, autoClose * 1000);
     }
   }
 }

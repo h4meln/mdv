@@ -114,6 +114,7 @@ class MdvTimeline extends BaseElement {
   }
 
   disconnectedCallback() {
+    this.shadowRoot.querySelectorAll('video').forEach(v => { this._setVideoVisible(v, false); });
     this._stopRenderLoop();
     clearTimeout(this._resizeTimer);
     this._cleanup();
@@ -179,9 +180,9 @@ class MdvTimeline extends BaseElement {
 
   _generateMediaHtml(media) {
     if (media.type === 'video') {
-      return `<video class="media-item" src="${escapeHtml(media.src)}" autoplay loop preload="auto"></video>`;
+      return `<div class="media-item reel"><video src="${escapeHtml(media.src)}" poster="${escapeHtml(media.src.replace(/\.mp4$/, '-poster.jpg'))}" playsinline loop preload="none" aria-label="${escapeHtml(media.alt || 'Video del Mondo')}"></video><button class="reel-sound" type="button" aria-label="Attiva audio">Attiva audio ↗</button></div>`;
     }
-    return `<img class="media-item" src="${escapeHtml(media.src)}" alt="${escapeHtml(media.alt || '')}">`;
+    return `<figure class="media-item polaroid"><img src="${escapeHtml(media.src)}" alt="${escapeHtml(media.alt || '')}" loading="lazy" decoding="async"><figcaption>${escapeHtml(media.alt || '')}</figcaption></figure>`;
   }
 
   // --- Sections & Animations Setup ---
@@ -220,42 +221,34 @@ class MdvTimeline extends BaseElement {
 
   _setupTextAnimations(timeline, words, yearTextElement) {
     const wordCount = words.length;
-    const maxStart = 0.42 - 0.18;
+    const maxStart = 0.20 - 0.12;
 
     // Words reveal animation
     words.forEach((word, index) => {
       const start = wordCount > 1 ? (index / (wordCount - 1)) * maxStart : 0;
-      timeline.to(start, 0.18, progress => {
+      timeline.to(start, 0.12, progress => {
         word.style.opacity = (0.1 + 0.9 * progress).toFixed(3);
       }, easeOutPow2);
     });
 
-    // Mobile text fade out
-    timeline.to(0.48, 0.12, progress => {
-      if (window.innerWidth < 768) {
-        yearTextElement.style.opacity = (1 - progress).toFixed(3);
-        yearTextElement.style.transform = `translateY(${-progress * 35}px)`;
-        yearTextElement.style.pointerEvents = progress > 0.8 ? 'none' : 'auto';
-      } else {
-        yearTextElement.style.opacity = '1';
-        yearTextElement.style.transform = 'none';
-        yearTextElement.style.pointerEvents = 'auto';
-      }
-    });
+    // Keep the copy readable throughout the scene, including its hold interval.
+    yearTextElement.style.opacity = '1';
   }
 
   _setupMediaAnimations(timeline, mediaItems) {
     const mediaCount = mediaItems.length;
-    const maxMediaStart = 0.40 - 0.25;
+    const maxMediaStart = 0.24;
 
     mediaItems.forEach((item, index) => {
-      const rotation = (Math.random() * 8) - 4;
-      const start = 0.52 + (mediaCount > 1 ? (index / (mediaCount - 1)) * maxMediaStart : 0);
+      const rotation = item.classList.contains('reel') ? 0 : (index % 2 ? 9 : -9);
+      const start = 0.12 + (mediaCount > 1 ? (index / (mediaCount - 1)) * maxMediaStart : 0);
       
       // Store scrub metadata directly on the element for fast access during RAF
       item._rot = rotation;
       item._scrubStart = start;
-      item._scrubDur = 0.25;
+      item._scrubDur = 0.13;
+      item._offsetX = item.classList.contains('reel') ? 0 : (index % 2 ? 9 : -12);
+      item._offsetY = item.classList.contains('reel') ? 0 : (index % 2 ? 10 : -6);
       
       item.style.opacity = '0';
       item.style.zIndex = String(index);
@@ -264,9 +257,53 @@ class MdvTimeline extends BaseElement {
     });
   }
 
+  _setVideoVisible(video, visible) {
+    visible = visible && !document.hidden;
+    if (video._visible === visible) return;
+    video._visible = visible;
+    cancelAnimationFrame(video._fadeFrame);
+    if (!visible) { video.pause(); video.muted = true; return; }
+    video.muted = !!video._userMuted;
+    video.volume = .01;
+    const button = video.parentElement.querySelector('.reel-sound');
+    const update = () => {
+      button.textContent = video.muted ? 'Attiva audio ↗' : 'Disattiva audio ×';
+      button.setAttribute('aria-label', video.muted ? 'Attiva audio' : 'Disattiva audio');
+    };
+    video.play().then(() => {
+      if (!video._visible) { video.pause(); return; }
+      const start = performance.now();
+      const fade = now => {
+        if (!video._visible) return;
+        video.volume = Math.max(0, Math.min(1, (now - start) / 700));
+        if (video.volume < 1) video._fadeFrame = requestAnimationFrame(fade);
+      };
+      video._fadeFrame = requestAnimationFrame(fade); update();
+    }).catch(() => {
+      if (!video._visible) return;
+      video.muted = true; video.volume = 1; video.play().catch(() => {}); update();
+    });
+  }
+
   // --- Event Handling ---
 
   _wireEvents() {
+    this._on(this.shadowRoot, 'click', e => {
+      const button = e.target.closest('.reel-sound');
+      if (!button) return;
+      const video = button.parentElement.querySelector('video');
+      const audible = !video.muted && video.volume > 0;
+      video._userMuted = audible;
+      video.muted = audible;
+      video.volume = audible ? 0 : 1;
+      video.play().catch(() => {});
+      button.textContent = audible ? 'Attiva audio ↗' : 'Disattiva audio ×';
+      button.setAttribute('aria-label', audible ? 'Attiva audio' : 'Disattiva audio');
+    });
+    this._on(document, 'visibilitychange', () => {
+      if (document.hidden) this.shadowRoot.querySelectorAll('video').forEach(v => this._setVideoVisible(v, false));
+      else { this._lastScrollY = -1; }
+    });
     if (!this.hasAttribute('no-smooth-scroll')) {
       this._on(window, 'wheel', this._handleWheel.bind(this), { passive: false });
     }
@@ -539,6 +576,8 @@ class MdvTimeline extends BaseElement {
     
     for (let j = 0; j < mediaCount; j++) {
       this._renderMediaItem(section.mediaItems[j], timelineTime, mediaCount, j);
+      const video = section.mediaItems[j].querySelector('video');
+      if (video) this._setVideoVisible(video, totalEasing > .8 && timelineTime > section.mediaItems[j]._scrubStart + .08 && scrollY < section.top + section.height - section.sectionHeight);
     }
   }
 
@@ -546,7 +585,7 @@ class MdvTimeline extends BaseElement {
     const rawProgress = clamp((timelineTime - item._scrubStart) / item._scrubDur, 0, 1);
     const easing = easeOutPow2(rawProgress);
     
-    item.style.transform = `rotate(${(item._rot * (1 - easing)).toFixed(3)}deg) scale(${(0.4 + 0.6 * easing).toFixed(4)})`;
+    item.style.transform = `translate(${item._offsetX}%, ${item._offsetY}%) rotate(${item._rot.toFixed(3)}deg) scale(${(0.8 + 0.2 * easing).toFixed(4)})`;
     item.style.filter = `blur(${((1 - easing) * 20).toFixed(2)}px)`;
     item.style.opacity = easing.toFixed(3);
     

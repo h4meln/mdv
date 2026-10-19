@@ -3,7 +3,7 @@
 
     const hero = document.getElementById('logoHero');
     const caption = document.getElementById('heroCaption');
-    const nav = document.querySelector('eggbar');
+    const nav = document.querySelector('mdv-eggbar');
 
     if (!hero) return;
 
@@ -171,3 +171,13 @@
     measure();
     if (document.fonts?.ready) document.fonts.ready.then(measure);
 })();
+
+// GoFundMe's widget reports its height after loading; accept only its own messages.
+addEventListener('message', event => {
+  const widget=document.querySelector('.gfm-embed-iframe');
+  if(event.origin !== 'https://www.gofundme.com' || event.source !== widget?.contentWindow) return;
+  if(event.data?.type === 'gfm-embed-widget-resize') {
+    const height=Number(event.data.offsetHeight);
+    if(Number.isFinite(height) && height > 0) widget.height=String(Math.min(1800,Math.max(200,height)));
+  }
+});

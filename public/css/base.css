@@ -15,11 +15,11 @@ mdv-eggbar {
   --active-clr:   var(--brand-active-clr);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Amatic SC', cursive, sans-serif; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 html {
   /* fallback: se anche il gradiente non fosse ancora dipinto, niente banda bianca */
-  background: #1d1c1d;
+  background: #101017;
   min-height: 100dvh;
 }
 
@@ -39,7 +39,7 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(135deg, #0f3460 0%, #1d1c1d 50%, #582020 100%);
+  background: linear-gradient(135deg, #0f3460 0%, #101017 50%, #582020 100%);
 }
 
 html, body { overflow-x: clip; }
@@ -48,4 +48,13 @@ html, body { overflow-x: clip; }
   from { opacity: 0; }
   to   { opacity: 1; }
 }
-body { animation: page-in .28s ease both; }
+body { animation: page-in .28s ease; }
+h1, h2, h3 { font-family: 'Amatic SC', cursive; }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid #a9caff; outline-offset: 4px; }
+
+.ui-icon { width:1.25em; height:1.25em; flex-shrink:0; display:inline-block; vertical-align:middle; }
+
+:root { --blue:#508cf1; --red:#ed626f; --paper:#f4f1ed; --accent:#ed626f; }
+body { font-size:24px; }
+button, input, select { font:inherit; }
+a:focus-visible, button:focus-visible { outline-color:var(--blue); }

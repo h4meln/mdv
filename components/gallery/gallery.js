@@ -17,6 +17,7 @@
 import { BaseElement } from '../shared/base-element.js';
 import { sheet } from '../shared/styles.js';
 import { getGallery } from '../shared/gallery-store.js';
+import { GALLERY_PREVIEWS } from '../../data/gallery-previews.js';
 import { GALLERY_STYLES } from './gallery.styles.js';
 
 const TARGET_COL_W     = 340;
@@ -39,14 +40,6 @@ function normalizeItem(x) {
   return null;
 }
 
-function loadDimensions(src) {
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload  = () => resolve({ src, w: img.naturalWidth  || 1, h: img.naturalHeight || 1 });
-    img.onerror = () => resolve({ src, w: 4, h: 3 });
-    img.src = src;
-  });
-}
 
 class MdvGallery extends BaseElement {
   constructor() {
@@ -83,7 +76,7 @@ class MdvGallery extends BaseElement {
 
   async connectedCallback() {
     this.shadowRoot.adoptedStyleSheets = [sheet(GALLERY_STYLES)];
-    this.shadowRoot.innerHTML = `<div class="gallery-stage"></div>`;
+    this.shadowRoot.innerHTML = `<div class="gallery-stage" aria-label="Galleria fotografica" aria-busy="true"></div>`;
     this._stage = this.shadowRoot.querySelector('.gallery-stage');
 
     if (!this._itemsData.length) {
@@ -91,7 +84,8 @@ class MdvGallery extends BaseElement {
       this._itemsData = (raw || []).map(normalizeItem).filter(Boolean);
     }
     if (!this._itemsData.length) {
-      console.warn('[mdv-gallery] nessuna immagine in data/gallery.js');
+      this._stage.setAttribute('aria-label', 'Galleria fotografica vuota');
+      this._stage.setAttribute('aria-busy', 'false');
       return;
     }
 
@@ -143,7 +137,7 @@ class MdvGallery extends BaseElement {
 
   async _ensureDims() {
     if (this._dimsCache) return this._dimsCache;
-    this._dimsCache = await Promise.all(this._itemsData.map(x => loadDimensions(x.src)));
+    this._dimsCache = this._itemsData.map(x => ({ src:x.src, w:GALLERY_PREVIEWS[x.src]?.w || 4, h:GALLERY_PREVIEWS[x.src]?.h || 3 }));
     this._dimsCache.forEach((d, i) => { d.alt = this._itemsData[i].alt || ''; });
     return this._dimsCache;
   }
@@ -236,8 +230,13 @@ class MdvGallery extends BaseElement {
         fig.style.left   = it.left + 'px';
         fig.style.top    = it.top  + 'px';
         fig.dataset.src  = it.d.src;
+        const preview = GALLERY_PREVIEWS[it.d.src]?.preview;
+        if (preview) fig.style.setProperty('--preview', `url("${preview}")`);
         const img = document.createElement('img');
+        img.addEventListener('load', () => fig.classList.add('is-loaded'), { once: true });
+        img.addEventListener('error', () => { fig.classList.add('is-error'); fig.setAttribute('aria-label', 'Foto non disponibile'); }, { once: true });
         img.src = it.d.src;
+        if (img.complete && img.naturalWidth) fig.classList.add('is-loaded');
         img.alt = it.d.alt || '';
         img.loading = 'lazy';
         img.decoding = 'async';
@@ -247,6 +246,7 @@ class MdvGallery extends BaseElement {
       }
     }
     this._stage.appendChild(frag);
+    this._stage.setAttribute('aria-busy', 'false');
     this._tiles = next;
     this._L = { periodX, offsetX, offsetY };
 

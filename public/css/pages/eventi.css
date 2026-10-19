@@ -3,3 +3,11 @@ body { padding-bottom: 220px; }
 .page { max-width: 1500px; margin: 0 auto; padding: 36px 20px 0; }
 .page > h1 { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 36px; color: #ebebeb; margin: 0 0 24px; }
 @media (max-width: 480px) { .page > h1 { font-size: 26px; } }
+.events-intro { font: 16px/1.7 Manrope, sans-serif; color: #d1c7b8; max-width: 65ch; margin-bottom: 28px; }
+@media(max-width:480px) { .page { padding: 24px 12px 0; } }
+
+.page > h1 { font:700 52px/1.1 'Amatic SC',cursive; } .events-intro { font:400 26px/1.4 'Amatic SC',cursive; }
+
+/* ── Normalizzazione tipografica (dimensioni equilibrate) ── */
+.page > h1 { font-size: clamp(38px, 5vw, 56px); }
+.events-intro { font-size: clamp(18px, 2vw, 24px); }

@@ -27,7 +27,7 @@ export function renderToolbar(cal) {
     <div class="cal-toolbar">
       <div class="cal-toolbar-left">
         <div class="cal-title">${title}</div>
-        <div class="cal-title-badge">Event Planner</div>
+        <div class="cal-title-badge">Al Mondo</div>
       </div>
       <div class="cal-toolbar-right">
         <button type="button" class="cal-view-btn ${cal._view==='month'?'active':''}"  data-action="view" data-view="month">Mese</button>
@@ -59,7 +59,7 @@ function eventRow(cal, ev, opts = {}) {
   if (variant) cls.push(`cal-event-row--${variant}`);
 
   return `
-    <div class="${cls.join(' ')}" data-date="${ev.date || ''}">
+    <div class="${cls.join(' ')}" role="button" tabindex="0" data-date="${ev.date || ''}">
       ${date ? `
         <div class="cal-event-date">
           <div class="cal-event-day">${dNum}</div>
@@ -126,7 +126,7 @@ export function renderCell(cal, date, other) {
   const badgeClass = cal._badgeClass(events);
 
   return `
-    <div class="${cls.join(' ')}" data-date="${ymd(date)}">
+    <div class="${cls.join(' ')}" role="button" tabindex="0" data-date="${ymd(date)}">
       <div class="cal-cell-top">
         <div class="cal-cell-num">${date.getDate()}</div>
         ${events.length > 0 ? `<div class="cal-cell-badge cal-cell-badge--${badgeClass}">${events.length}</div>` : ''}
@@ -158,7 +158,7 @@ export function renderWeekCol(cal, date) {
   const events = cal._eventsOn(date);
   const isToday = sameDay(date, cal._today);
   return `
-    <div class="cal-week-col ${isToday ? 'today' : ''}" data-date="${ymd(date)}">
+    <div class="cal-week-col ${isToday ? 'today' : ''}" role="button" tabindex="0" data-date="${ymd(date)}">
       <div class="cal-week-head">
         <div class="cal-week-dow">${DOW_IT_SHORT[date.getDay()]}</div>
         <div class="cal-week-num">${date.getDate()}</div>
@@ -180,7 +180,7 @@ export function renderAgenda(cal) {
   });
 
   if (!all.length) {
-    return `<div class="cal-panel"><div class="cal-empty">Nessun evento in archivio</div></div>`;
+    return `<div class="cal-panel"><div class="cal-empty">I prossimi appuntamenti stanno prendendo forma. Torna a trovarci presto!</div></div>`;
   }
   return `
     <div class="cal-panel">
@@ -218,7 +218,7 @@ export function renderStrip(cal) {
             }).join('');
 
             return `
-              <div class="${cls.join(' ')}" data-date="${ymd(d)}">
+              <div class="${cls.join(' ')}" role="button" tabindex="0" data-date="${ymd(d)}">
                 <div class="cal-strip-day-dow">${DOW_IT_SHORT[d.getDay()]}</div>
                 <div class="cal-strip-day-num">${d.getDate()}</div>
                 <div class="cal-strip-day-mon">${MONTHS_IT[d.getMonth()].slice(0,3)}</div>
@@ -295,7 +295,7 @@ export function renderModal(cal) {
   const events = cal._eventsOn(date);
   return `
     <div class="cal-modal" data-action="modal-bg">
-      <div class="cal-modal-card">
+      <div class="cal-modal-card" role="dialog" aria-modal="true" aria-label="Appuntamenti del giorno">
         <div class="cal-modal-head">
           <div>
             <div class="cal-modal-dow">${DOW_IT_LONG[date.getDay()]}</div>
@@ -306,7 +306,7 @@ export function renderModal(cal) {
         </div>
         <div class="cal-modal-body">
           ${events.length === 0
-            ? `<div class="cal-empty">Nessun evento in questa data</div>`
+            ? `<div class="cal-empty">Non ci sono appuntamenti pubblicati per questo giorno.</div>`
             : events.map(ev => eventRow(cal, ev, { variant: 'modal' })).join('')}
         </div>
       </div>

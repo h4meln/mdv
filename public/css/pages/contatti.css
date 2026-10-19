@@ -1,12 +1,12 @@
 /* ── Variabili e Resets ── */
 :root {
-    --bg-dark: #120f0d;
+    --bg-dark: #101017;
     --card-glass: rgba(255, 255, 255, 0.035);
     --card-border: rgba(255, 255, 255, 0.08);
-    --text-main: #cfc4b2;
+    --text-main: #d4d8e7;
     --text-muted: #aba59e;
     --accent: #d6d1cc;
-    --wa-green: #25D366;
+    --wa-green: #6b9ee8;
 }
 
 html, body {
@@ -79,7 +79,7 @@ html, body {
     transform-origin: center;
     width: 100vw; 
     height: calc(100% + 200px);
-    margin-left: 0; 
+    margin-left: 9vw; 
     margin-right: -20vw;
     margin-top: -140px; 
     border: 0; 
@@ -353,6 +353,7 @@ html, body {
     width: 100%; 
     height: calc(130% + 150px); 
     transform: skewY(4deg) scale(1.15); 
+    margin-left: 6vw;
     margin-right: 0; 
     margin-top: -100px; 
 }
@@ -380,3 +381,24 @@ html, body {
     .cards-wrap { grid-template-columns: 1fr; }
     .card:first-child { grid-column: auto; }
 }
+.role, .hover-info .nome { font-family:'Amatic SC',cursive; }
+.hover-info .numero, .wa { font-size:16px; }
+.info-text { min-width:0; }
+.info-text strong { font-size:14px; line-height:1.6; }
+.info-text span, .info-text a, .info-text .cf-code { font-size:17px; line-height:1.7; overflow-wrap:anywhere; }
+.content { scroll-snap-type:none; }
+.section { min-height:100vh; height:auto; padding-top:32px; padding-bottom:160px; }
+@media(max-width:980px) { .section { min-height:0; padding-top:32px; padding-bottom:32px; } .map-wrap { margin-bottom:130px; } }
+
+.info-text strong { font:700 25px/1.4 'Amatic SC',cursive; color:#9abcf4; }
+.info-text span,.info-text a,.info-text .cf-code { font:400 29px/1.4 'Amatic SC',cursive; }
+.hover-info .numero,.wa { font:700 25px 'Amatic SC',cursive; }
+.card { background:transparent; box-shadow:none; border-color:#508cf144; }
+.wa { color:#9abcf4; }
+
+/* ── Normalizzazione tipografica (dimensioni equilibrate) ── */
+.info-text strong { font-size: clamp(18px, 2vw, 23px); }
+.info-text span, .info-text a, .info-text .cf-code { font-size: clamp(20px, 2.4vw, 27px); }
+.hover-info .numero, .wa { font-size: clamp(18px, 2vw, 23px); }
+.role, .hover-info .nome { font-size: clamp(1.4rem, 2.2vw, 2rem); }
+.info-minimal h1 { font-size: clamp(40px, 6vw, 80px); }
