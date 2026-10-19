@@ -79,6 +79,7 @@ figcaption { position:absolute; bottom:172px; left:110px; right:110px; padding:6
     display: flex; align-items: center; justify-content: center;
 }
 .lightbox:not([open]) { display: none; }
+.lightbox { overscroll-behavior: contain; }
 .lightbox::backdrop {
     background: rgba(6, 7, 12, .95);
     backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
@@ -182,6 +183,8 @@ this._on(this.shadowRoot,'click', e => {
     const r=rooms[this.room], [id,alt]=r.photos[this.index], s=this.shadowRoot;
     s.querySelector('.photo').classList.add('is-loading');
     const img=s.querySelector('.photo img'); img.alt=`${r.name} — ${alt}`; img.src=`public/img/sala_prove/${id}.png`;
+    img.loading = this.index === 0 ? 'eager' : 'lazy';
+    img.decoding = 'async';
     if(img.complete && img.naturalWidth) s.querySelector('.photo').classList.remove('is-loading');
     s.querySelector('.caption').textContent=alt; s.querySelector('.counter').textContent=`${this.index+1} / ${r.photos.length}`;
     s.querySelectorAll('[data-index]').forEach(b=>b.setAttribute('aria-current',String(Number(b.dataset.index)===this.index)));

@@ -11,7 +11,7 @@
     --color-shadow: rgba(232,100,60,.60);
 
     /* ---------- layout ---------- */
-    --max-width: 80wv;
+    --max-width: 100%;
     --timeline-width: 100vw;
     --side-pad: 1.5rem;
     --content-spacing: 8vh;

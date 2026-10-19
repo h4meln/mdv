@@ -52,7 +52,7 @@
   .sp-content {
     position: relative; z-index: 2;
     width: 45vw; height: 100vh;
-    overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth;
+    overflow-y: auto; scroll-snap-type: none; scroll-behavior: auto;
     overscroll-behavior-y: none;
     -ms-overflow-style: none; scrollbar-width: none;
   }

@@ -59,7 +59,7 @@
             height,
             scale0,
             startX: vw / 2,
-            startY: vh / 2.75,
+            startY: vh / 3.15,
             endX: CFG.endX() + width / 2,
             endY: CFG.endY() + height / 2,
             distance: CFG.distance()
