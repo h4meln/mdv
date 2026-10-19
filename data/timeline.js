@@ -12,8 +12,8 @@ export const TIMELINE = [
       },
       {
         "type": "img",
-        "src": "public/img/album/rrrfestival21/1.webp",
-        "alt": "RRR Festival, 2021"
+        "src": "assets/img/qr.png",
+        "alt": "QR Code Campagna di raccolta fondi"
       },
       {
         "type": "video",
