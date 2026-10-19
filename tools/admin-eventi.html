@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Officina eventi — Mondo delle Uova</title><meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="../assets/fonts/fonts.css"><link rel="stylesheet" href="admin-eventi.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../index.html" aria-label="Mondo delle Uova"><img src="../assets/img/logo.svg" alt=""></a>
+  <div class="masthead"><span>DIETRO LE QUINTE / MDV</span><h1>Officina eventi</h1></div>
+  <div class="project-actions"><button id="undo" title="Annulla">↶ <span>Annulla</span></button><button id="redo" title="Ripeti">↷ <span>Ripeti</span></button><button id="import">Apri file ↗</button><button id="export" class="primary">Esporta events.js ↓</button></div>
+  <input id="file" type="file" accept=".js,.json,application/json,text/javascript" hidden>
+</header>
+<main class="workbench">
+  <aside class="library" aria-label="Elenco eventi">
+    <div class="section-heading"><h2>Il programma</h2><span id="count">0</span></div>
+    <button id="add" class="add">＋ Nuovo evento</button>
+    <label class="search-label" for="search">Cerca nel programma</label><input id="search" type="search" placeholder="Titolo, data, luogo…">
+    <div id="event-list" class="event-list"></div>
+    <div class="library-footer"><span id="storage-status" role="status">Bozza locale</span><p>Le modifiche restano su questo dispositivo. Il sito cambia solo dopo aver sostituito il file esportato.</p></div>
+  </aside>
+  <section class="preview-area" aria-label="Anteprima">
+    <div class="preview-toolbar"><div class="preview-tabs" role="group" aria-label="Tipo di anteprima"><button id="show-card" aria-pressed="true">Scheda</button><button id="show-calendar" aria-pressed="false">Calendario</button></div><span>ANTEPRIMA LIVE</span></div>
+    <div id="card-preview" class="stage">
+      <article class="event-poster"><div class="poster-top"><span>MONDO DELLE UOVA</span><span id="preview-category">IL PROSSIMO INCONTRO</span></div><div class="poster-main"><span class="poster-date" id="preview-date">Ci vediamo qui.</span><h2 id="preview-title">Il prossimo evento<br>comincia con un’idea.</h2><p id="preview-description"></p></div><div class="poster-bottom"><span id="preview-location">Arosio · Via Volta 38</span><span id="preview-time"></span></div></article>
+      <p class="preview-caption">Una prova di impaginazione. Nel calendario pubblico, gli eventi seguono lo stile del sito.</p>
+    </div>
+    <div id="calendar-preview" hidden><mdv-calendar compact></mdv-calendar></div>
+    <div class="workspace-status"><span id="validation" role="status">Aggiungi un evento per iniziare.</span><span id="export-status">Nessuna modifica da esportare</span></div>
+  </section>
+  <aside class="inspector" aria-label="Modifica evento">
+    <div class="section-heading"><h2>Metti a fuoco</h2><span>01 — DETTAGLI</span></div>
+    <form id="event-form" autocomplete="off">
+      <fieldset id="fields" disabled>
+        <label for="title">Titolo <span>*</span></label><input id="title" name="title" maxlength="160" placeholder="Come si chiama l’evento?" required>
+        <label for="date">Data <span>*</span></label><input id="date" name="date" type="date" required>
+        <div class="two-fields"><div><label for="time">Inizio</label><input id="time" name="time" type="time"></div><div><label for="end">Fine</label><input id="end" name="end" type="time"></div></div>
+        <p class="field-note">Lascia gli orari vuoti per un appuntamento di tutta la giornata.</p>
+        <label for="category">Categoria</label><select id="category" name="category"></select>
+        <label for="location">Luogo</label><input id="location" name="location" maxlength="250" placeholder="Mondo delle Uova, Arosio">
+        <label for="description">Qualche parola in più</label><textarea id="description" name="description" rows="5" maxlength="4000" placeholder="Chi suona, cosa succede, come partecipare…"></textarea>
+        <div class="edit-actions"><button id="duplicate" type="button">Duplica</button><button id="delete" type="button" class="danger">Elimina</button></div>
+      </fieldset>
+    </form>
+    <details class="publish-help"><summary>Come portarlo sul sito</summary><ol><li>Completa gli eventi e controlla l’anteprima.</li><li>Scarica <strong>events.js</strong>.</li><li>Sostituisci <code>data/events.js</code> nel progetto e pubblica il sito con la procedura abituale.</li></ol><button id="backup">Scarica una copia JSON ↓</button></details>
+    <a class="site-link" href="../eventi.html" target="_blank" rel="noopener">Apri il calendario pubblico ↗</a>
+  </aside>
+</main>
+<div id="notice" class="notice" role="status" hidden></div>
+<script type="module" src="admin-eventi.js"></script>
+</body></html>

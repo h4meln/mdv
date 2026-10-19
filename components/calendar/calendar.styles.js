@@ -336,4 +336,11 @@ export const CALENDAR_STYLES = `
 .cal-cell:has(.cal-cell-events),.cal-strip-day:has(.cal-strip-pip) { cursor:pointer; }
 .cal-modal-card { background:#151825; }
 
+
+:host([compact]) .cal-body { grid-template-columns:minmax(0,1fr); }
+:host([compact]) .cal-sidebar-slot { display:none; }
+:host([compact]) .cal-toolbar-right { width:100%; justify-content:space-between; }
+:host([compact]) .cal-cell { min-height:80px; }
+:host([compact]) .cal-week { grid-template-columns:1fr; }
+:host([compact]) .cal-week-col { min-height:90px; }
 `;

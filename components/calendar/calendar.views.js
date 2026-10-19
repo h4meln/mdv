@@ -1,3 +1,4 @@
+import { escapeHtml } from '../shared/dom-utils.js';
 import { pad, ymd, sameDay, parseYmd } from '../shared/date-utils.js';
 import { CATEGORIES, MONTHS_IT, DOW_IT_SHORT, DOW_IT_LONG, PIP_MAP } from './calendar.constants.js';
 
@@ -59,16 +60,16 @@ function eventRow(cal, ev, opts = {}) {
   if (variant) cls.push(`cal-event-row--${variant}`);
 
   return `
-    <div class="${cls.join(' ')}" role="button" tabindex="0" data-date="${ev.date || ''}">
+    <div class="${cls.join(' ')}" role="button" tabindex="0" data-date="${escapeHtml(ev.date || '')}">
       ${date ? `
         <div class="cal-event-date">
           <div class="cal-event-day">${dNum}</div>
           <div class="cal-event-dow">${dDow}</div>
         </div>` : ''}
       <div class="cal-event-body">
-        <div class="cal-event-time">${time} · ${cat.label}</div>
-        <div class="cal-event-title">${ev.title}</div>
-        ${meta ? `<div class="cal-event-meta">${meta}</div>` : ''}
+        <div class="cal-event-time">${escapeHtml(time)} · ${cat.label}</div>
+        <div class="cal-event-title">${escapeHtml(ev.title)}</div>
+        ${meta ? `<div class="cal-event-meta">${escapeHtml(meta)}</div>` : ''}
       </div>
     </div>`;
 }
@@ -137,7 +138,7 @@ export function renderCell(cal, date, other) {
             const cat = cal._catOf(ev);
             return `
               <div class="cal-cell-event cal-cell-event--${cat.color}">
-                <span class="cal-cell-event-dot"></span>${ev.title}
+                <span class="cal-cell-event-dot"></span>${escapeHtml(ev.title)}
               </div>`;
           }).join('')}
           ${events.length > visible.length ? `<div class="cal-cell-more">+${events.length - visible.length} altri</div>` : ''}
@@ -243,7 +244,7 @@ export function renderSidebar(cal) {
 export function renderImageCard(cal) {
   return `
     <div class="cal-sb-card cal-image-card">
-      <img class="cal-sidebar-image" src="assets/img/gallina.png" alt="Sidebar decorative image" />
+      <img class="cal-sidebar-image" src="${new URL('../../assets/img/gallina.png', import.meta.url).href}" alt="Sidebar decorative image" />
     </div>`;
 }
 

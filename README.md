@@ -9,7 +9,7 @@ Avvia `python -m http.server 8765` dalla cartella del progetto e apri
 
 ## Contenuti
 
-- `data/events.js`: solo appuntamenti confermati. Al momento il calendario è vuoto.
+- `data/events.js`: solo appuntamenti confermati.
 - `data/timeline.js`: testi, foto e reel della home.
 - `data/gallery.js`: fotografie della galleria. Dopo aver aggiunto foto, esegui
   `python scripts/build-gallery-previews.py` (richiede Pillow) per rigenerare
@@ -28,3 +28,23 @@ la mappa e il calendario prenotazioni richiedono una connessione ai servizi este
 
 La breve esplorazione automatica di Info e Sale si interrompe al primo input
 (rotella, tocco, clic o tastiera) e non parte con movimento ridotto.
+
+## Officina eventi
+
+Apri `http://localhost:8765/tools/admin-eventi.html` dopo aver avviato il server.
+L’editor carica il programma corrente; una bozza salvata su questo browser ha la
+precedenza. Per caricare una versione più recente, usa **Apri file**.
+
+- Anteprima della scheda e del calendario pubblico, aggiornata mentre scrivi.
+- Ricerca, duplicazione, eliminazione reversibile, annulla/ripeti (60 passaggi).
+- Bozze automatiche in localStorage e backup JSON, anche di eventi incompleti.
+- Import di JSON e di array letterali `export const EVENTS` / `window.CALENDAR_EVENTS`,
+  senza eseguire il codice del file. Le vecchie categorie vengono tradotte.
+- Esportazione `events.js` con controllo dei campi obbligatori e delle date.
+
+L’esportazione scarica un file: non modifica il programma sul server. Sostituisci
+`data/events.js` e pubblica il progetto come di consueto. Le bozze sono locali,
+non sincronizzate tra operatori o dispositivi. **Ctrl/Cmd+S** esporta il programma.
+
+L’impostazione dell’editor è ispirata al flusso anteprima/controlli di
+[Interlinea](https://github.com/h4meln/interlinea); l’implementazione è specifica per MdV.

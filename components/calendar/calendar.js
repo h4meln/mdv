@@ -36,7 +36,8 @@ class MdvCalendar extends BaseElement {
 
   async connectedCallback() {
     this.shadowRoot.adoptedStyleSheets = [sheet(CALENDAR_STYLES)];
-    this._events = await getEvents();
+    const initialEvents = await getEvents();
+    if (!this._eventsProvided) this._events = initialEvents;
     this._indexEvents();
     this._initDates();
     this._buildShell();
@@ -46,18 +47,25 @@ class MdvCalendar extends BaseElement {
   }
 
   disconnectedCallback() {
-    if (typeof super.disconnectedCallback === 'function') {
-      super.disconnectedCallback();
-    }
+    this._cleanup();
   }
 
   set events(list) {
+    this._eventsProvided = true;
     this._events = Array.isArray(list) ? list : [];
     this._indexEvents();
     this._initDates();
     if (this._mounted) this._updateAll();
   }
   get events() { return this._events; }
+
+  showDate(value) {
+    const date = parseYmd(value);
+    if (!Number.isFinite(date.getTime())) return;
+    this._cursor = date;
+    this._selected = date;
+    if (this._mounted) this._updateAll();
+  }
 
   _indexEvents() {
     this._byDate = {};
