@@ -1,6 +1,6 @@
 import { EVENTS } from '../data/events.js';
 import { CATEGORIES } from '../components/calendar/calendar.constants.js';
-import { parseEventsFile, eventsModule, eventError, normalizeEvents } from './event-data.js';
+import { parseEventsFile, eventsModule, eventError, normalizeEvents } from './data.js';
 import '../components/calendar/calendar.js';
 const $=id=>document.getElementById(id);
 const KEY='mdv-event-workbench-v1';
