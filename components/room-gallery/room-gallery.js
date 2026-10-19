@@ -126,14 +126,19 @@ figcaption { position:absolute; bottom:172px; left:110px; right:110px; padding:6
   header p { font-size: 18px; }
   .switch button { font-size: 20px; padding: 6px 10px; }
 
-  /* foto: occupa quasi tutta la larghezza e tutta l'altezza utile */
+  /* La foto resta un UOVO anche su mobile: la forma viene dal rapporto
+     3/4 + i raggi percentuali, quindi il box non deve mai diventare
+     largo quanto lo schermo (veniva un ovale tondo). La larghezza la
+     ricaviamo dall'altezza: così l'uovo è il più grande possibile. */
   .photo {
-    top: 72px; bottom: 94px;
-    left: 10px; right: 10px;
-    transform: none;
+    top: 72px; bottom: auto;
+    left: 50%; right: auto;
+    transform: translateX(-50%);
+    height: calc(100% - 166px);   /* 72px sopra + 94px per la didascalia */
     width: auto;
-    max-width: none;
-    aspect-ratio: auto;
+    aspect-ratio: 3 / 4;
+    max-width: calc(100% - 24px);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
   }
   .photo img { object-fit: cover; }
   figcaption {

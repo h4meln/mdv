@@ -3,7 +3,7 @@ export const EVENTS = [
     { date: '2026-10-20', time: '18:30', end: '20:00', title: 'Riunione direttivo', category: 'team', location: 'Sala 2' },
     { date: '2026-10-21', time: '21:00', end: '23:00', title: 'Prove spettacolo', category: 'team', location: 'Sala prove' },
     { date: '2026-10-22', time: '19:00', title: 'Aperitivo soci', category: 'social', location: 'Bar Centrale' },
-  
+
     // Giornata affollata
     { date: '2026-10-23', time: '08:30', title: 'Apertura sede', category: 'team', location: 'Sede' },
     { date: '2026-10-23', time: '09:00', end: '10:00', title: 'Briefing volontari', category: 'team', location: 'Sala 1' },
@@ -15,17 +15,17 @@ export const EVENTS = [
     { date: '2026-10-23', time: '17:00', title: 'Consegna materiali', category: 'team', location: 'Magazzino' },
     { date: '2026-10-23', time: '18:30', end: '20:00', title: 'Prove generali', category: 'team', location: 'Auditorium' },
     { date: '2026-10-23', time: '20:30', title: 'Cena volontari', category: 'social', location: 'Pizzeria' },
-  
+
     { date: '2026-10-24', time: '09:30', end: '12:30', title: 'Corso nuovi volontari', category: 'work', location: 'Sala Conferenze' },
     { date: '2026-10-24', time: '15:00', title: 'Laboratorio ragazzi', category: 'social', location: 'Centro Civico' },
     { date: '2026-10-24', time: '21:00', title: 'Concerto benefico', category: 'concert', location: 'Teatro Comunale' },
-  
+
     { date: '2026-10-25', title: 'Giornata associazioni', category: 'social', location: 'Piazza Centrale' },
     { date: '2026-10-27', time: '18:00', end: '19:30', title: 'Riunione organizzativa', category: 'team', location: 'Sala 1' },
     { date: '2026-10-28', time: '20:30', title: 'Cena direttivo', category: 'social', location: 'Ristorante' },
     { date: '2026-10-29', time: '19:30', end: '21:30', title: 'Prove musicali', category: 'team', location: 'Sala prove' },
     { date: '2026-10-30', time: '17:00', title: 'Allestimento Halloween', category: 'work', location: 'Sede' },
-  
+
     // Molto affollato per test overflow
     { date: '2026-10-31', title: 'Halloween', category: 'social', location: 'Sede' },
     { date: '2026-10-31', time: '08:00', title: 'Apertura sede', category: 'team', location: 'Sede' },
@@ -43,7 +43,7 @@ export const EVENTS = [
     { date: '2026-10-31', time: '21:00', title: 'Live band', category: 'concert', location: 'Palco' },
     { date: '2026-10-31', time: '22:00', title: 'Halloween Party', category: 'social', location: 'Club' },
     { date: '2026-10-31', time: '23:30', title: 'DJ Set', category: 'concert', location: 'Club' },
-  
+
     // NOVEMBRE 2026
     { date: '2026-11-03', time: '18:30', end: '20:00', title: 'Riunione post-evento', category: 'team', location: 'Sala 2' },
     { date: '2026-11-05', time: '20:30', title: 'Cena soci', category: 'social', location: 'Ristorante Centrale' },
@@ -51,7 +51,7 @@ export const EVENTS = [
     { date: '2026-11-08', title: 'Gita sociale', category: 'travel', location: 'Bergamo' },
     { date: '2026-11-10', time: '19:00', end: '21:00', title: 'Prove', category: 'team', location: 'Sala 1' },
     { date: '2026-11-12', time: '18:00', title: 'Incontro nuovi soci', category: 'social', location: 'Sede' },
-  
+
     // Giornata molto piena
     { date: '2026-11-14', title: 'Convegno annuale', category: 'work', location: 'Centro Congressi' },
     { date: '2026-11-14', time: '07:30', title: 'Partenza staff', category: 'travel', location: 'Sede' },
@@ -67,7 +67,7 @@ export const EVENTS = [
     { date: '2026-11-14', time: '17:30', title: 'Premiazione', category: 'social', location: 'Auditorium' },
     { date: '2026-11-14', time: '18:30', title: 'Aperitivo', category: 'social', location: 'Foyer' },
     { date: '2026-11-14', time: '20:30', title: 'Cena staff', category: 'social', location: 'Centro città' },
-  
+
     { date: '2026-11-17', time: '18:30', title: 'Riunione sponsor', category: 'work', location: 'Sala 3' },
     { date: '2026-11-19', time: '21:00', title: 'Prove spettacolo', category: 'team', location: 'Teatro' },
     { date: '2026-11-21', time: '21:00', title: 'Spettacolo benefico', category: 'concert', location: 'Teatro Comunale' },
@@ -75,7 +75,7 @@ export const EVENTS = [
     { date: '2026-11-26', time: '20:00', title: 'Serata giochi', category: 'social', location: 'Sede' },
     { date: '2026-11-28', time: '09:30', title: 'Preparazione mercatino', category: 'team', location: 'Magazzino' },
     { date: '2026-11-29', time: '15:00', title: 'Foto di gruppo', category: 'social', location: 'Parco' },
-  
+
     // DICEMBRE 2026
     { date: '2026-12-01', time: '18:30', title: 'Riunione dicembre', category: 'team', location: 'Sala 2' },
     { date: '2026-12-03', time: '20:00', title: 'Prove concerto', category: 'team', location: 'Auditorium' },
@@ -88,7 +88,7 @@ export const EVENTS = [
     { date: '2026-12-15', time: '20:30', title: 'Prove generali', category: 'team', location: 'Teatro' },
     { date: '2026-12-18', time: '20:30', title: 'Cena associativa', category: 'social', location: 'Ristorante' },
     { date: '2026-12-19', time: '21:00', title: 'Concerto di Natale', category: 'concert', location: 'Teatro' },
-  
+
     // Altro test overflow
     { date: '2026-12-20', title: 'Festa di Natale', category: 'social', location: 'Sede' },
     { date: '2026-12-20', time: '09:00', title: 'Preparazione sala', category: 'team', location: 'Sede' },
@@ -103,7 +103,7 @@ export const EVENTS = [
     { date: '2026-12-20', time: '19:30', title: 'Cena sociale', category: 'social', location: 'Sede' },
     { date: '2026-12-20', time: '21:00', title: 'Musica dal vivo', category: 'concert', location: 'Sede' },
     { date: '2026-12-20', time: '23:00', title: 'Chiusura festa', category: 'team', location: 'Sede' },
-  
+
     { date: '2026-12-22', time: '18:00', title: 'Brindisi volontari', category: 'social', location: 'Sede' },
     { date: '2026-12-24', time: '18:00', title: 'Cena di Natale', category: 'family', location: 'Casa' },
     { date: '2026-12-26', title: 'Santo Stefano', category: 'family', location: 'Casa' },
@@ -111,7 +111,7 @@ export const EVENTS = [
     { date: '2026-12-31', time: '20:30', title: 'Cena di Capodanno', category: 'social', location: 'Sede' },
     { date: '2026-12-31', time: '22:30', title: 'Festa di Capodanno', category: 'social', location: 'Piazza' },
     { date: '2026-12-31', time: '23:59', title: 'Brindisi', category: 'social', location: 'Piazza' },
-  
+
     // GENNAIO 2027
     { date: '2027-01-01', title: 'Capodanno', category: 'personal' },
     { date: '2027-01-05', time: '18:30', title: 'Prima riunione dell’anno', category: 'team', location: 'Sala 2' },
@@ -122,7 +122,7 @@ export const EVENTS = [
     { date: '2027-01-24', title: 'Gita sulla neve', category: 'travel', location: 'Montagna' },
     { date: '2027-01-28', time: '18:30', title: 'Riunione direttivo', category: 'team', location: 'Sala Riunioni' },
     { date: '2027-01-30', time: '21:00', title: 'Serata musicale', category: 'concert', location: 'Auditorium' },
-  
+
     // FEBBRAIO 2027
     { date: '2027-02-02', time: '19:00', title: 'Riunione organizzativa', category: 'team', location: 'Sede' },
     { date: '2027-02-06', time: '15:00', title: 'Laboratorio creativo', category: 'work', location: 'Centro Civico' },
@@ -132,7 +132,7 @@ export const EVENTS = [
     { date: '2027-02-20', time: '21:00', title: 'Spettacolo', category: 'concert', location: 'Teatro' },
     { date: '2027-02-25', time: '18:30', title: 'Assemblea soci', category: 'team', location: 'Auditorium' },
     { date: '2027-02-28', title: 'Giornata volontari', category: 'social', location: 'Sede' },
-  
+
     // MARZO 2027
     { date: '2027-03-04', time: '18:30', title: 'Riunione direttivo', category: 'team', location: 'Sala 2' },
     { date: '2027-03-09', time: '20:30', title: 'Prove', category: 'team', location: 'Sala 1' },
@@ -141,7 +141,7 @@ export const EVENTS = [
     { date: '2027-03-20', time: '21:00', title: 'Concerto di primavera', category: 'concert', location: 'Teatro' },
     { date: '2027-03-25', time: '19:00', title: 'Aperitivo soci', category: 'social', location: 'Centro città' },
     { date: '2027-03-28', title: 'Escursione', category: 'travel', location: 'Lago' },
-  
+
     // APRILE 2027
     { date: '2027-04-03', time: '10:00', title: 'Open Day', category: 'social', location: 'Sede' },
     { date: '2027-04-08', time: '18:30', title: 'Riunione organizzativa', category: 'team', location: 'Sala 2' },
@@ -149,7 +149,7 @@ export const EVENTS = [
     { date: '2027-04-17', time: '15:00', title: 'Workshop', category: 'work', location: 'Centro Civico' },
     { date: '2027-04-24', title: 'Gita associativa', category: 'travel', location: 'Verona' },
     { date: '2027-04-29', time: '20:00', title: 'Cena volontari', category: 'social', location: 'Ristorante' },
-  
+
     // MAGGIO 2027
     { date: '2027-05-04', time: '18:30', title: 'Riunione direttivo', category: 'team', location: 'Sala Riunioni' },
     { date: '2027-05-08', time: '09:00', title: 'Corso volontari', category: 'work', location: 'Sala Conferenze' },
@@ -157,7 +157,7 @@ export const EVENTS = [
     { date: '2027-05-16', title: 'Festa delle associazioni', category: 'social', location: 'Piazza' },
     { date: '2027-05-22', time: '21:00', title: 'Concerto benefico', category: 'concert', location: 'Arena' },
     { date: '2027-05-29', time: '16:00', title: 'Festa anniversario', category: 'social', location: 'Sede' },
-  
+
     // GIUGNO 2027
     { date: '2027-06-03', time: '19:00', title: 'Riunione estate', category: 'team', location: 'Sala 1' },
     { date: '2027-06-08', time: '20:30', title: 'Prove', category: 'team', location: 'Sala prove' },
@@ -165,14 +165,14 @@ export const EVENTS = [
     { date: '2027-06-19', time: '21:00', title: 'Concerto estivo', category: 'concert', location: 'Arena' },
     { date: '2027-06-24', time: '19:30', title: 'Aperitivo volontari', category: 'social', location: 'Centro città' },
     { date: '2027-06-27', title: 'Gita sociale', category: 'travel', location: 'Lago' },
-  
+
     // Alcuni eventi più lontani per test navigazione
     { date: '2027-08-21', time: '10:45', end: '12:00', title: 'Escursione soci', category: 'personal', location: 'Montagna' },
     { date: '2027-09-18', title: 'Open Day associazione', category: 'social', location: 'Sede' },
     { date: '2027-11-05', time: '20:00', title: 'Spettacolo teatrale', category: 'social', location: 'Teatro' },
     { date: '2027-12-18', time: '20:30', title: 'Cena di Natale', category: 'social', location: 'Ristorante' },
-  
+
     { date: '2028-06-30', time: '06:30', end: '08:00', title: 'Partenza trasferta', category: 'travel', location: 'Stazione' },
     { date: '2028-09-09', time: '15:45', title: 'Evento annuale', category: 'team', location: 'Auditorium' },
     { date: '2028-12-31', time: '23:59', title: 'Capodanno', category: 'social', location: 'Piazza' },
-  ];
+];
