@@ -44,17 +44,29 @@
 
   <!-- ── hero ── -->
   <div class="hero-spacer"></div>
-
-  <section class="home-intro" aria-labelledby="intro-title">
-    <p class="section-kicker">Dal 1999 · Arosio, Brianza</p>
-    <h2 id="intro-title">Un posto per suonare.<br>Una casa da condividere.</h2>
-    <p>Siamo il Mondo delle Uova: un’associazione culturale senza scopo di lucro, fatta di volontari, musicisti e persone che hanno voglia di esserci. Sale prove, concerti, arte e incontri: qui le idee prendono forma insieme.</p>
-    <div class="home-actions"><a href="sala_prove.html">Scopri le sale prove →</a><a href="tesseramento.html">Diventa socio →</a></div>
+  <!-- ── parallasse: uova disposte ad arco (come il vecchio sito) ── -->
+  <section class="egg-parallax" aria-hidden="true">
+    <div class="egg-parallax__halo"></div>
+    <div class="egg-parallax__arc">
+      <img class="egg-parallax__img" src="assets/img/uova-arco.png" alt="" loading="eager" decoding="async">
+    </div>
   </section>
+
   <section class="campaign" id="salva-il-mondo" aria-labelledby="campaign-title">
     <div><p class="section-kicker">#SalvaIlMondo</p><h2 id="campaign-title">Diamo un futuro a questa casa.</h2>
       <p>La nostra sede è a rischio: entro il 31 marzo 2027 dovremo lasciarla. Stiamo raccogliendo fondi per provare ad acquistarla e per far continuare l’esperienza del Mondo, anche altrove. Una donazione, una condivisione, una mano agli eventi: ogni contributo conta.</p>
-      <div class="home-actions"><a class="donate" href="https://gofund.me/b99d7e8c9" target="_blank" rel="noopener noreferrer">Sostieni su GoFundMe ↗</a><a href="assets/doc/documento-di-buona-causa.pdf" target="_blank" rel="noopener noreferrer">Leggi il progetto · PDF ↗</a></div>
+      <div class="home-actions"><a class="home-pdf-btn" href="assets/doc/documento-di-buona-causa.pdf" target="_blank" rel="noopener noreferrer">
+        <span class="home-pdf-btn__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h4"/></svg>
+        </span>
+        <span class="home-pdf-btn__info">
+          <strong>Leggi il progetto</strong>
+          <small>PDF · Documento di buona causa</small>
+        </span>
+        <span class="home-pdf-btn__arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        </span>
+      </a></div>
     </div>
     <div class="campaign-widget"><iframe class="gfm-embed-iframe" title="Salva il Mondo — raccolta fondi su GoFundMe" src="https://www.gofundme.com/f/salva-il-mondo-mux6q/widget/large?attribution_id=sl%3A0e829294-e589-4fbf-8a8f-cf92aa6332f4&amp;utm_medium=referral&amp;utm_source=widget" width="100%" height="560" loading="lazy" style="border:0"></iframe></div>
   </section>
@@ -104,5 +116,25 @@
 <!-- ── scripts ── -->
 <script type="module" src="public/js/pages/home.js"></script>
 
+
+<script>
+/* eggParallax: le uova si muovono più lentamente della pagina */
+(() => {
+  const arc = document.querySelector('.egg-parallax__arc');
+  if (!arc) return;
+  let raf = 0;
+  const update = () => {
+    raf = 0;
+    const r = arc.parentElement.getBoundingClientRect();
+    const p = Math.max(-1, Math.min(1,
+      (window.innerHeight / 2 - (r.top + r.height / 2)) / window.innerHeight));
+    arc.style.transform = `translate3d(0, ${p * 46}px, 0)`;
+  };
+  const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', onScroll);
+  update();
+})();
+</script>
 </body>
 </html>

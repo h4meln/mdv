@@ -79,7 +79,7 @@ html, body {
     transform-origin: center;
     width: 100vw; 
     height: calc(100% + 200px);
-    margin-left: 9vw; 
+    margin-left: 0;
     margin-right: -20vw;
     margin-top: -140px; 
     border: 0; 
@@ -393,12 +393,20 @@ html, body {
 .info-text strong { font:700 25px/1.4 'Amatic SC',cursive; color:#9abcf4; }
 .info-text span,.info-text a,.info-text .cf-code { font:400 29px/1.4 'Amatic SC',cursive; }
 .hover-info .numero,.wa { font:700 25px 'Amatic SC',cursive; }
-.card { background:transparent; box-shadow:none; border-color:#508cf144; }
+.card {
+    background: var(--card-glass);
+    border: 1px solid var(--card-border);
+    box-shadow: 0 15px 35px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.05);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
 .wa { color:#9abcf4; }
 
 /* ── Normalizzazione tipografica (dimensioni equilibrate) ── */
 .info-text strong { font-size: clamp(18px, 2vw, 23px); }
 .info-text span, .info-text a, .info-text .cf-code { font-size: clamp(20px, 2.4vw, 27px); }
-.hover-info .numero, .wa { font-size: clamp(18px, 2vw, 23px); }
-.role, .hover-info .nome { font-size: clamp(1.4rem, 2.2vw, 2rem); }
+.hover-info .numero, .wa { font-size: clamp(15px, 1.6vw, 19px); }
+.hover-info .nome { font-size: clamp(1.15rem, 1.8vw, 1.6rem); }
+.role { font-size: clamp(12px, 1.3vw, 15px); }
+.hover-info { height: 34px; }
 .info-minimal h1 { font-size: clamp(40px, 6vw, 80px); }
+

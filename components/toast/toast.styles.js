@@ -104,7 +104,7 @@ export const TOAST_STYLES = `
     display: grid;
     place-items: center;
     color: #171717;
-    font-size: 18px;
+    font-size: 16px;
     border-radius: 13px;
     background: linear-gradient(135deg, #8db6fa, #ed626f);
     box-shadow: 0 8px 25px rgba(255, 179, 57, .22);
@@ -114,8 +114,8 @@ export const TOAST_STYLES = `
 .cause-toast h2 {
     margin: 0;
     font-family: "Amatic SC", cursive;
-    font-size: 30px;
-    line-height: .95;
+    font-size: 19px;
+    line-height: 1;
     letter-spacing: 1.1px;
     font-weight: 700;
 }
@@ -125,7 +125,7 @@ export const TOAST_STYLES = `
     margin-top: 5px;
     color: rgba(255, 255, 255, .58);
     font-family: "Amatic SC", cursive;
-    font-size: 1.1em;
+    font-size: .86em;
     letter-spacing: .8px;
     text-transform: uppercase;
 }
@@ -135,8 +135,8 @@ export const TOAST_STYLES = `
     margin: 16px 0;
     color: rgba(255, 255, 255, .78);
     font-family: "Amatic SC", cursive;
-    font-size: 1.5em;
-    line-height: 1.55;
+    font-size: .92em;
+    line-height: 1.5;
 }
 
 .cause-toast__text a {
@@ -161,8 +161,8 @@ export const TOAST_STYLES = `
     background: rgba(255, 60, 60, .14);
     color: #ffd0d0;
     font-family: "Amatic SC", cursive;
-    font-size: 1.4em;
-    line-height: 1.2;
+    font-size: .9em;
+    line-height: 1.25;
 }
 
 .cause-toast__pdf {
@@ -199,7 +199,7 @@ export const TOAST_STYLES = `
     display: grid;
     place-items: center;
     color: #ff6464;
-    font-size: 1.5em;
+    font-size: 1.12em;
     border: 1px solid rgba(255, 255, 255, .13);
     border-radius: 9px;
     background: rgba(255, 255, 255, .075);
@@ -218,13 +218,13 @@ export const TOAST_STYLES = `
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 1.25em;
+    font-size: .88em;
     font-weight: 700;
 }
 
 .cause-toast__pdf-info small {
     color: rgba(255, 255, 255, .48);
-    font-size: 1.1em;
+    font-size: .82em;
     letter-spacing: .4px;
 }
 
@@ -308,8 +308,8 @@ export const TOAST_STYLES = `
         width: calc(100vw - 24px);
     }
     .cause-toast { padding: 18px; border-radius: 16px; }
-    .cause-toast h2 { font-size: 27px; }
-    .cause-toast__text { font-size: 1.25em; }
+    .cause-toast h2 { font-size: 19px; }
+    .cause-toast__text { font-size: .92em; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -251,14 +251,24 @@
  .sp-content { padding-bottom:150px; }
  .sp-list-item { flex-direction:row; text-align:left; gap:20px; }
  .sp-text { align-items:flex-start; }
- .sp-egg { width:85px; height:115px; animation:none; }
- .sp-egg .egg-val { font-size:20px; }
+ .sp-egg { width:118px; height:164px; animation:none; }
+ .sp-egg .egg-val { font-size:26px; }
  .sp-info-list { gap:28px; }
 }
 
 .sp-left-wrap { width:50vw; box-shadow:none; }
 .sp-content { width:50vw; }
-.sp-egg { border:0; background:transparent; box-shadow:none; backdrop-filter:none; }
+.sp-egg {
+  width: 180px; height: 250px;
+  background: var(--card-glass); border: 1px solid var(--card-border);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  box-shadow: 0 15px 35px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.05);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  animation: floatEgg 4s ease-in-out infinite;
+}
+.sp-list-item:nth-child(1) .sp-egg { animation-delay: 0s; }
+.sp-list-item:nth-child(2) .sp-egg { animation-delay: .6s; }
+.sp-list-item:nth-child(3) .sp-egg { animation-delay: 1.2s; }
 .sp-egg h3 { font:700 24px 'Amatic SC',cursive; color:#f394a1; letter-spacing:.04em; }
 .sp-egg .egg-val { font:700 36px/1.1 'Amatic SC',cursive; color:#9abcf4; }
 .sp-text strong { font:700 25px 'Amatic SC',cursive; letter-spacing:.05em; color:#f5f0f4; }

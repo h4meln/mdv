@@ -48,7 +48,10 @@ header h1 { font-size:38px; } header p { font:20px 'Amatic SC',cursive; color:#e
 [data-room=blue] .switch button[aria-pressed=true] { background:#2b5da6; }
 figure { display:block; height:100%; }
 .photo {
-    position:absolute; inset:100px 90px 150px 90px;
+    position:absolute; top:96px; bottom:190px; left:50%;
+    transform:translateX(-50%);
+    aspect-ratio: 3 / 4;
+    max-width: calc(100% - 160px);
     background: var(--card-glass, rgba(255,255,255,.035));
     border:1px solid rgba(255,255,255,.10);
     border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
@@ -68,14 +71,58 @@ figcaption { position:absolute; bottom:172px; left:110px; right:110px; padding:6
 .thumbs button span { display:block; width:6px; height:6px; border-radius:50%; background:white; }
 .thumbs button[aria-current=true] { border:0; opacity:1; } .thumbs button[aria-current=true] span { transform:scale(1.6); }
 .photo::before { content:''; position:absolute; z-index:1; inset:55% 0 0; background:linear-gradient(transparent,#080910b0); pointer-events:none; }
-@media(max-width:980px) { .photo { inset: 92px 22px 150px 22px; } header { padding:18px 14px; gap:6px; } header h1 { font-size:28px; } header p { font-size:18px; } .switch button { font-size:21px; padding:6px 9px; } .thumbs { max-width:92px; } figcaption { bottom:14px; font-size:23px; } }
+@media(max-width:980px) { .photo { top:86px; bottom:168px; max-width: calc(100% - 70px); } header { padding:18px 14px; gap:6px; } header h1 { font-size:28px; } header p { font-size:18px; } .switch button { font-size:21px; padding:6px 9px; } .thumbs { max-width:92px; } figcaption { bottom:14px; font-size:23px; } }
+.lightbox {
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    padding: 3vmin;
+    background: rgba(6, 7, 12, .94);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    cursor: zoom-out;
+}
+.lightbox[hidden] { display: none; }
+.lightbox img {
+    max-width: 100%; max-height: 100%;
+    width: auto; height: auto;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 30px 90px rgba(0,0,0,.7);
+}
+.lightbox-close {
+    position: fixed; top: 18px; right: 22px;
+    width: 46px; height: 46px; display: grid; place-items: center;
+    font: 34px/1 'Amatic SC', cursive; color: #fff;
+    border: 1px solid rgba(255,255,255,.2); border-radius: 50%;
+    background: rgba(255,255,255,.06); cursor: pointer;
+}
+.photo { cursor: zoom-in; }
+
 `;
 class MdvRoomGallery extends BaseElement {
   constructor() { super(); this.room = 'red'; this.index = 0; this._autoTimer = null; this._autoplay = true; }
   connectedCallback() {
     this.shadowRoot.adoptedStyleSheets = [sheet(styles)];
-    this.shadowRoot.innerHTML = `<section class="room" aria-label="Foto delle sale prove"><header><div><h1></h1><p></p></div><div class="thumbs" aria-label="Scegli una foto"></div><div class="switch" aria-label="Scegli la sala"><button data-room="red">Rossa</button><button data-room="blue">Blu</button></div></header><figure><div class="photo"><img alt=""></div><figcaption aria-live="polite"><span class="caption"></span><span class="counter"></span></figcaption></figure><div class="controls"><button class="nav-btn" data-step="-1" aria-label="Foto precedente">‹</button><button class="nav-btn" data-step="1" aria-label="Foto successiva">›</button></div></section>`;
-    this._on(this.shadowRoot,'click', e => {
+    this.shadowRoot.innerHTML = `<section class="room" aria-label="Foto delle sale prove"><header><div><h1></h1><p></p></div><div class="thumbs" aria-label="Scegli una foto"></div><div class="switch" aria-label="Scegli la sala"><button data-room="red">Rossa</button><button data-room="blue">Blu</button></div></header><figure><div class="photo"><img alt=""></div><figcaption aria-live="polite"><span class="caption"></span><span class="counter"></span></figcaption></figure><div class="controls"><button class="nav-btn" data-step="-1" aria-label="Foto precedente">‹</button><button class="nav-btn" data-step="1" aria-label="Foto successiva">›</button></div></section><div class="lightbox" hidden><div class="lightbox-close" role="button" tabindex="0" aria-label="Chiudi">×</div><img alt=""></div>`;
+        const _lb = this.shadowRoot.querySelector('.lightbox');
+    const _lbImg = _lb.querySelector('img');
+    const _closeLb = () => { _lb.hidden = true; document.body.style.overflow = ''; };
+    this._on(this.shadowRoot, 'click', e => {
+      if (e.target.closest('.lightbox-close') || (e.target === _lb)) { _closeLb(); return; }
+      const _ph = e.target.closest('.photo');
+      if (_ph) {
+        const _im = _ph.querySelector('img');
+        if (_im && _im.src) {
+          _lbImg.src = _im.src;
+          _lb.hidden = false;
+          document.body.style.overflow = 'hidden';
+        }
+        return;
+      }
+    });
+    this._on(this.shadowRoot, 'keydown', e => {
+      if (e.key === 'Escape' && !_lb.hidden) _closeLb();
+    });
+this._on(this.shadowRoot,'click', e => {
       const b = e.target.closest('button'); if (!b) return;
       if (b.dataset.room) { this.room=b.dataset.room; this.index=0; this.updateRoom(); this._resetAuto(); }
       else { this._resetAuto(); this.index = b.dataset.index !== undefined ? Number(b.dataset.index) : (this.index + Number(b.dataset.step) + rooms[this.room].photos.length) % rooms[this.room].photos.length; this.updatePhoto(); }
