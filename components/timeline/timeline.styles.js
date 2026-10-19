@@ -2,6 +2,18 @@ export const TIMELINE_STYLES = `
 :host { display: block; position: relative; }
 .timeline { position: relative; padding-top: 15vw; }
 
+.year-inline {
+  margin: 0 0 .18em;
+  font-family: 'Amatic SC', cursive;
+  font-weight: 700;
+  font-size: clamp(2.6rem, 5.5vw, 5rem);
+  line-height: .95;
+  letter-spacing: -.01em;
+  color: #fff;
+  text-align: center;
+}
+@media (min-width: 768px) { .year-inline { text-align: left; } }
+
 .year-number {
   position: sticky; top: 3.9vh; z-index: 10;
   display: flex; align-items: center; justify-content: center;
@@ -221,6 +233,11 @@ export const TIMELINE_STYLES = `
   .reel { width: min(100%, 340px); height: auto; aspect-ratio: 9 / 16; max-height: 68svh; }
   .reel video { height: 100%; }
   .reel-sound { font-size: 20px; left: 10px; bottom: 10px; }
+  .year-inline {
+    font-size: clamp(34px, 11vw, 52px);
+    margin-bottom: .1em;
+    text-align: center;
+  }
   .year-number {
     top: 14px;
     font-size: clamp(30px, 9vw, 44px);

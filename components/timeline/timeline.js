@@ -152,7 +152,6 @@ class MdvTimeline extends BaseElement {
     
     this.shadowRoot.innerHTML = `
       <div class="timeline">
-        <div id="year-display" class="year-number" aria-hidden="true">${initialHtml}</div>
         ${yearsHtml}
       </div>
     `;
@@ -172,6 +171,7 @@ class MdvTimeline extends BaseElement {
           <div class="year-grid">
             <div class="year-text">
               <div>
+                <div class="year-inline">${year}</div>
                 <h2 class="year-title${titleClass}">${title}</h2>
                 <p class="intro">${text}</p>
               </div>
@@ -222,7 +222,7 @@ class MdvTimeline extends BaseElement {
     });
 
     this._digits = [...this.shadowRoot.querySelectorAll('.digit')];
-    this._yearDisplay = this.shadowRoot.getElementById('year-display');
+    this._yearDisplay = this.shadowRoot.getElementById('year-display'); // non esiste più: roll disattivato
   }
 
   _setupTextAnimations(timeline, words, yearTextElement) {
@@ -380,6 +380,7 @@ class MdvTimeline extends BaseElement {
   // --- Year / Digits Display Logic ---
 
   _setDigits(year) {
+    if (!this._yearDisplay) return;
     const yearStr = String(year).padStart(4, '0');
     
     if (this._digits.length !== 4) {
@@ -399,6 +400,7 @@ class MdvTimeline extends BaseElement {
   }
 
   _animateYearRoll(fromYear, toYear) {
+    if (!this._yearDisplay) return;
     if (toYear === CONFIG.INITIAL_LABEL) {
       this._showLabel();
       return;
@@ -471,7 +473,7 @@ class MdvTimeline extends BaseElement {
   }
 
   _showLabel() {
-    if (this._digits.length !== 4) return;
+    if (!this._yearDisplay || this._digits.length !== 4) return;
     
     // Animate digits out
     this._digits.forEach((el, index) => {

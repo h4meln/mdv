@@ -142,21 +142,17 @@
         const progress = reducedMotion ? 1 : clamp(scroll / metrics.distance, 0, 1);
         const eased = CFG.ease(progress);
 
-        // logo: dimensione + posizione
-        const scale = metrics.scale0 + (1 - metrics.scale0) * eased;
-        const cx = metrics.startX + (metrics.endX - metrics.startX) * eased;
-        const cy = metrics.startY + (metrics.endY - metrics.startY) * eased;
-        const x = cx - (metrics.width * scale) / 2;
-        const y = cy - (metrics.height * scale) / 2;
+        // logo hero: sempre grande e fermo. Niente rimpicciolimento né
+        // spostamento verso l'angolo: il logo scorre via con la pagina.
+        const scale = metrics.scale0;
+        const x = metrics.startX - (metrics.width * scale) / 2;
+        const y = metrics.startY - (metrics.height * scale) / 2;
 
         hero.style.transform =
             `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${scale.toFixed(4)})`;
 
-        // testo logo
-        if (text) {
-            const tp = clamp((eased - CFG.textFrom) / (1 - CFG.textFrom), 0, 1);
-            text.style.opacity = reducedMotion ? '1' : tp.toFixed(3);
-        }
+        // testo logo (sempre visibile)
+        if (text) text.style.opacity = '1';
 
         // caption
         if (caption) {
@@ -166,10 +162,9 @@
                 `translate3d(0, ${(-cp * CFG.captionDrift).toFixed(1)}px, 0)`;
         }
 
-        // interazione solo a logo "parcheggiato"
-        const parked = progress > 0.995;
-        hero.style.pointerEvents = parked ? 'auto' : 'none';
-        if (link) link.style.pointerEvents = parked ? 'auto' : 'none';
+        // il logo grande non ha funzione: nessuna interazione (resta il CSS)
+        hero.style.pointerEvents = 'none';
+        if (link) link.style.pointerEvents = 'none';
 
         if (!ready) {
             ready = true;

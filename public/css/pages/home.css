@@ -80,7 +80,7 @@ mdv-eggbar.is-visible{opacity:1;visibility:visible;pointer-events:auto}
 .page{margin:0 auto;max-width:var(--max-width)}
 
 /* ---------- logo ---------- */
-.logo-hero{position:fixed;top:var(--hero-logo-top);left:0;z-index:var(--logo-z-index);transform-origin:0 0;will-change:transform;pointer-events:none;opacity:0;transition:opacity var(--transition)}
+.logo-hero{position:absolute;top:var(--hero-logo-top);left:0;z-index:var(--logo-z-index);transform-origin:0 0;will-change:transform;pointer-events:none;opacity:0;transition:opacity var(--transition)}
 .logo-hero.is-ready{opacity:1}
 .logo-hero a{position:relative;display:block;text-decoration:none;pointer-events:none}
 .logo-hero img{display:block;width:auto;height:var(--logo-size)}
