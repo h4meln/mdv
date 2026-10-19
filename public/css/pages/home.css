@@ -213,13 +213,21 @@ mdv-eggbar.is-visible{opacity:1;visibility:visible;pointer-events:auto}
     justify-content: center;
     overflow: hidden;
     pointer-events: none;
-    will-change: transform, opacity;
+    animation: eggArcExit linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0 60vh;
+}
+@keyframes eggArcExit {
+    to { transform: translateY(65vh); opacity: 0; }
+}
+@supports not (animation-timeline: scroll()) {
+    /* fallback: resta ferma sul primo viewport */
+    .egg-parallax { animation: none; }
 }
 .egg-parallax__art {
     position: relative;
     width: 100vw;
     margin-bottom: -1px;
-    animation: eggArcFloat 9s ease-in-out infinite;
 }
 .egg-parallax__img {
     display: block;
@@ -227,21 +235,4 @@ mdv-eggbar.is-visible{opacity:1;visibility:visible;pointer-events:auto}
     height: auto;
     filter: drop-shadow(0 18px 40px rgba(0,0,0,.55));
 }
-/* tinta presa dallo sfondo: stessa idea del vecchio sito (azzurro → rosso) */
-.egg-parallax__tint {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg,
-        rgba(105, 211, 252, .95) 8%,
-        rgba(120, 170, 240, .90) 42%,
-        rgba(237, 98, 111, .92) 78%,
-        rgba(255, 92, 92, .95) 100%);
-    -webkit-mask: url('../../../assets/img/uova-arco.png') center / 100% 100% no-repeat;
-    mask: url('../../../assets/img/uova-arco.png') center / 100% 100% no-repeat;
-    mix-blend-mode: multiply;
-    pointer-events: none;
-}
-@keyframes eggArcFloat {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-10px); }
-}
+

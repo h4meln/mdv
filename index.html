@@ -17,9 +17,8 @@
   <!-- ── uova ad arco: layer in primo piano sul primo viewport ── -->
   <div class="egg-parallax" aria-hidden="true">
     <div class="egg-parallax__art">
-      <img class="egg-parallax__img" src="assets/img/uova-arco.png" alt=""
-           loading="eager" decoding="async">
-      <span class="egg-parallax__tint"></span>
+      <img class="egg-parallax__img" src="assets/img/uova-arco-colore.png" alt=""
+           width="3200" height="675" fetchpriority="high" decoding="async">
     </div>
   </div>
 
@@ -119,25 +118,5 @@
 <script type="module" src="public/js/pages/home.js"></script>
 
 
-<script>
-/* eggParallax: le uova restano sul primo viewport e scendono fuori dal fondo */
-(() => {
-  const layer = document.querySelector('.egg-parallax');
-  if (!layer) return;
-  let raf = 0;
-  const update = () => {
-    raf = 0;
-    const y = window.scrollY || 0;
-    const vh = window.innerHeight;
-    // si muovono più veloci dello scroll → escono dal basso
-    layer.style.transform = `translate3d(0, ${(y * 1.25).toFixed(1)}px, 0)`;
-    layer.style.opacity = Math.max(0, 1 - y / (vh * 0.55)).toFixed(3);
-  };
-  const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
-  addEventListener('scroll', onScroll, { passive: true });
-  addEventListener('resize', onScroll);
-  update();
-})();
-</script>
 </body>
 </html>

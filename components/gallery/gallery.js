@@ -74,10 +74,33 @@ class MdvGallery extends BaseElement {
   get forcedCols()  { return parseInt(this.getAttribute('cols'), 10) || 0; }
   get parallaxFactor() { return parseFloat(this.getAttribute('parallax')) || 0; }
 
+  _showSkeleton() {
+    const cols = Math.max(2, Math.min(5, Math.round(innerWidth / 340)));
+    const tiles = [];
+    const heights = [78, 56, 66, 48, 72, 60, 84, 52, 64, 58, 70, 46];
+    for (let i = 0; i < cols * 4; i++) {
+      const h = heights[i % heights.length];
+      tiles.push(`<span class="sk-tile" style="--h:${h}%;--d:${(i % 7) * 0.18}s"></span>`);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'gallery-skeleton';
+    wrap.setAttribute('aria-hidden', 'true');
+    wrap.style.setProperty('--sk-cols', cols);
+    wrap.innerHTML = tiles.join('');
+    this.shadowRoot.appendChild(wrap);
+    this._skeleton = wrap;
+  }
+
+  _hideSkeleton() {
+    if (this._skeleton) { this._skeleton.remove(); this._skeleton = null; }
+    this.shadowRoot.querySelector('.gallery-skeleton')?.remove();
+  }
+
   async connectedCallback() {
     this.shadowRoot.adoptedStyleSheets = [sheet(GALLERY_STYLES)];
     this.shadowRoot.innerHTML = `<div class="gallery-stage" aria-label="Galleria fotografica" aria-busy="true"></div>`;
     this._stage = this.shadowRoot.querySelector('.gallery-stage');
+    this._showSkeleton();
 
     if (!this._itemsData.length) {
       const raw = await getGallery();
@@ -86,6 +109,7 @@ class MdvGallery extends BaseElement {
     if (!this._itemsData.length) {
       this._stage.setAttribute('aria-label', 'Galleria fotografica vuota');
       this._stage.setAttribute('aria-busy', 'false');
+      this._hideSkeleton();
       return;
     }
 
@@ -247,6 +271,7 @@ class MdvGallery extends BaseElement {
     }
     this._stage.appendChild(frag);
     this._stage.setAttribute('aria-busy', 'false');
+    this._hideSkeleton();
     this._tiles = next;
     this._L = { periodX, offsetX, offsetY };
 

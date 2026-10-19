@@ -93,17 +93,16 @@ figcaption { position:absolute; bottom:172px; left:110px; right:110px; padding:6
 }
 .lightbox-close {
     position: fixed; top: 18px; right: 22px; z-index: 2;
-    width: 40px; height: 40px; padding: 0; display: grid; place-items: center;
-    color: rgba(255,255,255,.75); cursor: pointer;
-    border: 1px solid rgba(255,255,255,.16); border-radius: 50%;
-    background: rgba(255,255,255,.06);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    transition: background .2s ease, color .2s ease, border-color .2s ease;
+    width: 30px; height: 30px; padding: 0; display: grid; place-items: center;
+    color: rgba(255,255,255,.76); cursor: pointer;
+    border: 1px solid rgba(255,255,255,.12); border-radius: 50%;
+    background: rgba(255,255,255,.07);
+    transition: transform .2s ease, background .2s ease, color .2s ease;
 }
 .lightbox-close:hover {
-    color: #fff; background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.32);
+    color: #fff; background: rgba(255,255,255,.16); transform: rotate(90deg);
 }
-.lightbox-close svg { width: 16px; height: 16px; display: block; }
+.lightbox-close svg { width: 13px; height: 13px; display: block; }
 .photo { cursor: zoom-in; }
 
 `;

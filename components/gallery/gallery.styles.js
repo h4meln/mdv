@@ -32,6 +32,59 @@ export const GALLERY_STYLES = `
   pointer-events: none;
   -webkit-user-drag: none;
 }
+/* ── Skeleton di caricamento (glow/blur, stile toast) ── */
+.gallery-skeleton {
+  position: absolute;
+  inset: -4vh -2vw;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(var(--sk-cols, 4), minmax(0, 1fr));
+  gap: clamp(10px, 1.6vw, 22px);
+  align-content: start;
+  padding: 4vh 2vw;
+  pointer-events: none;
+  animation: gallery-sk-fade .35s ease both;
+}
+.sk-tile {
+  position: relative;
+  display: block;
+  height: calc(28vh * var(--h, 60) / 60);
+  border-radius: 10px;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(80,140,241,.16), rgba(237,98,111,.10) 60%, rgba(255,255,255,.04)),
+    rgba(255,255,255,.035);
+  border: 1px solid rgba(255,255,255,.07);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: gallery-sk-breathe 2.6s ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s);
+}
+.sk-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg,
+    transparent 20%,
+    rgba(255,255,255,.14) 45%,
+    transparent 70%);
+  transform: translateX(-120%);
+  animation: gallery-sk-shine 2.4s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes gallery-sk-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes gallery-sk-breathe {
+  from { filter: blur(0px); opacity: .55; }
+  to   { filter: blur(10px); opacity: .95; }
+}
+@keyframes gallery-sk-shine {
+  0%   { transform: translateX(-120%); }
+  60%  { transform: translateX(120%); }
+  100% { transform: translateX(120%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sk-tile, .sk-tile::after { animation: none; }
+}
 /* ── Lightbox ── */
 .gallery-lightbox {
   position: fixed; inset: 0; z-index: 200;
