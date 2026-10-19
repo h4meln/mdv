@@ -225,12 +225,8 @@ export const TIMELINE_STYLES = `
     top: 14px;
     font-size: clamp(30px, 9vw, 44px);
     height: 46px;
-    width: fit-content;
-    margin: 0 auto;
-    padding: 0 18px;
-    border-radius: 999px;
-    background: rgba(16, 16, 23, .72);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    /* niente pillola scura: solo il numero, leggibile grazie all'ombra */
+    text-shadow: 0 2px 14px rgba(0, 0, 0, .85), 0 0 2px rgba(0, 0, 0, .9);
   }
 }
 `;
