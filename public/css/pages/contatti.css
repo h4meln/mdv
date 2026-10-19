@@ -45,7 +45,7 @@ html, body {
     position: fixed;
     top: 0; 
     bottom: 0;
-    right: 2vw; /* INVERTITO: ancorato a destra */
+    right: -3vw; /* ancora più verso destra */
     left: auto;
     width: 62vw; 
     z-index: 1;
@@ -79,7 +79,7 @@ html, body {
     transform-origin: center;
     width: 100vw; 
     height: calc(100% + 200px);
-    margin-left: 0;
+    margin-left: 4vw;
     margin-right: -20vw;
     margin-top: -140px; 
     border: 0; 

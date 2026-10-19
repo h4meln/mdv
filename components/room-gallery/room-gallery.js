@@ -92,11 +92,17 @@ figcaption { position:absolute; bottom:172px; left:110px; right:110px; padding:6
 }
 .lightbox-close {
     position: fixed; top: 18px; right: 22px; z-index: 2;
-    width: 46px; height: 46px; padding: 0; display: grid; place-items: center;
-    font: 34px/1 'Amatic SC', cursive; color: #fff; cursor: pointer;
-    border: 1px solid rgba(255,255,255,.2); border-radius: 50%;
-    background: rgba(255,255,255,.08);
+    width: 40px; height: 40px; padding: 0; display: grid; place-items: center;
+    color: rgba(255,255,255,.75); cursor: pointer;
+    border: 1px solid rgba(255,255,255,.16); border-radius: 50%;
+    background: rgba(255,255,255,.06);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    transition: background .2s ease, color .2s ease, border-color .2s ease;
 }
+.lightbox-close:hover {
+    color: #fff; background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.32);
+}
+.lightbox-close svg { width: 16px; height: 16px; display: block; }
 .photo { cursor: zoom-in; }
 
 `;
@@ -104,7 +110,7 @@ class MdvRoomGallery extends BaseElement {
   constructor() { super(); this.room = 'red'; this.index = 0; this._autoTimer = null; this._autoplay = true; }
   connectedCallback() {
     this.shadowRoot.adoptedStyleSheets = [sheet(styles)];
-    this.shadowRoot.innerHTML = `<section class="room" aria-label="Foto delle sale prove"><header><div><h1></h1><p></p></div><div class="thumbs" aria-label="Scegli una foto"></div><div class="switch" aria-label="Scegli la sala"><button data-room="red">Rossa</button><button data-room="blue">Blu</button></div></header><figure><div class="photo"><img alt=""></div><figcaption aria-live="polite"><span class="caption"></span><span class="counter"></span></figcaption></figure><div class="controls"><button class="nav-btn" data-step="-1" aria-label="Foto precedente">‹</button><button class="nav-btn" data-step="1" aria-label="Foto successiva">›</button></div></section><dialog class="lightbox"><button class="lightbox-close" aria-label="Chiudi">×</button><img alt=""></dialog>`;
+    this.shadowRoot.innerHTML = `<section class="room" aria-label="Foto delle sale prove"><header><div><h1></h1><p></p></div><div class="thumbs" aria-label="Scegli una foto"></div><div class="switch" aria-label="Scegli la sala"><button data-room="red">Rossa</button><button data-room="blue">Blu</button></div></header><figure><div class="photo"><img alt=""></div><figcaption aria-live="polite"><span class="caption"></span><span class="counter"></span></figcaption></figure><div class="controls"><button class="nav-btn" data-step="-1" aria-label="Foto precedente">‹</button><button class="nav-btn" data-step="1" aria-label="Foto successiva">›</button></div></section><dialog class="lightbox"><button class="lightbox-close" aria-label="Chiudi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg></button><img alt=""></dialog>`;
     const _lb = this.shadowRoot.querySelector('.lightbox');
     const _lbImg = _lb.querySelector('img');
     const _closeLb = () => { if (_lb.open) _lb.close(); };
