@@ -12,7 +12,6 @@ export const TOAST_STYLES = `
     box-sizing: border-box;
     pointer-events: none;
     color: #fff;
-    font-family: Arial, sans-serif;
 }
 
 .cause-toast {
@@ -125,8 +124,8 @@ export const TOAST_STYLES = `
     display: block;
     margin-top: 5px;
     color: rgba(255, 255, 255, .58);
-    font-family: Arial, sans-serif;
-    font-size: 10px;
+    font-family: "Amatic SC", cursive;
+    font-size: 1.1em;;
     letter-spacing: .8px;
     text-transform: uppercase;
 }
@@ -135,8 +134,8 @@ export const TOAST_STYLES = `
     position: relative;
     margin: 16px 0;
     color: rgba(255, 255, 255, .78);
-    font-family: Arial, sans-serif;
-    font-size: 13px;
+    font-family: "Amatic SC", cursive;
+    font-size: 1.5em;
     line-height: 1.55;
 }
 
@@ -187,7 +186,7 @@ export const TOAST_STYLES = `
     display: grid;
     place-items: center;
     color: #ff6464;
-    font-size: 21px;
+    font-size: 1.5em;
     border: 1px solid rgba(255, 255, 255, .13);
     border-radius: 9px;
     background: rgba(255, 255, 255, .075);
@@ -199,20 +198,20 @@ export const TOAST_STYLES = `
     display: flex;
     flex-direction: column;
     gap: 3px;
-    font-family: Arial, sans-serif;
+    font-family: "Amatic SC", cursive;
 }
 
 .cause-toast__pdf-info strong {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 13px;
+    font-size: 1.25em;
     font-weight: 700;
 }
 
 .cause-toast__pdf-info small {
     color: rgba(255, 255, 255, .48);
-    font-size: 10px;
+    font-size: 1.1em;
     letter-spacing: .4px;
 }
 

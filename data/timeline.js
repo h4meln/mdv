@@ -7,7 +7,7 @@ export const TIMELINE = [
         media: [
             { type: 'img', src: 'https://placehold.co/700x700/e63946/FFFFFF?text=2027+01' },
             { type: 'img', src: 'https://placehold.co/1000x550/f07167/FFFFFF?text=2027+02' },
-            { type: 'video', src: 'https://lorem.media/video/1920/1080' },
+            { type: 'video', src: 'assets/video/reel_extended.mov' },
         ],
     },
 
@@ -19,6 +19,7 @@ export const TIMELINE = [
         media: [
             { type: 'img', src: 'https://placehold.co/850x500/f07167/FFFFFF?text=2026+01' },
             { type: 'img', src: 'https://placehold.co/500x750/f4a261/FFFFFF?text=2026+02' },
+            { type: 'video', src: 'assets/video/reel.mov' },
         ],
     },
 
@@ -96,7 +97,6 @@ export const TIMELINE = [
         color: '#457b9d',
         media: [
             { type: 'img', src: 'https://placehold.co/700x500/457b9d/FFFFFF?text=2009+01' },
-            { type: 'video', src: 'https://lorem.media/video/640/360' },
         ],
     },
 

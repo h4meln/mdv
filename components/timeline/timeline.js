@@ -179,7 +179,7 @@ class MdvTimeline extends BaseElement {
 
   _generateMediaHtml(media) {
     if (media.type === 'video') {
-      return `<video class="media-item" src="${escapeHtml(media.src)}" autoplay muted loop playsinline preload="auto"></video>`;
+      return `<video class="media-item" src="${escapeHtml(media.src)}" autoplay loop preload="auto"></video>`;
     }
     return `<img class="media-item" src="${escapeHtml(media.src)}" alt="${escapeHtml(media.alt || '')}">`;
   }
