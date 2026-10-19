@@ -14,6 +14,13 @@
 
 <main class="page">
 
+  <!-- ── uova ad arco: layer in primo piano sul primo viewport ── -->
+  <div class="egg-parallax" aria-hidden="true">
+    <img class="egg-parallax__img" src="assets/img/uova-arco.png" alt=""
+         loading="eager" decoding="async">
+  </div>
+
+
   <!-- ── socialbar ── -->
   <div class="socialbar-wrap">
     <mdv-socialbar
@@ -44,13 +51,6 @@
 
   <!-- ── hero ── -->
   <div class="hero-spacer"></div>
-  <!-- ── parallasse: uova disposte ad arco (come il vecchio sito) ── -->
-  <section class="egg-parallax" aria-hidden="true">
-    <div class="egg-parallax__halo"></div>
-    <div class="egg-parallax__arc">
-      <img class="egg-parallax__img" src="assets/img/uova-arco.png" alt="" loading="eager" decoding="async">
-    </div>
-  </section>
 
   <section class="campaign" id="salva-il-mondo" aria-labelledby="campaign-title">
     <div><p class="section-kicker">#SalvaIlMondo</p><h2 id="campaign-title">Diamo un futuro a questa casa.</h2>
@@ -118,17 +118,18 @@
 
 
 <script>
-/* eggParallax: le uova si muovono più lentamente della pagina */
+/* eggParallax: le uova restano sul primo viewport e scendono fuori dal fondo */
 (() => {
-  const arc = document.querySelector('.egg-parallax__arc');
-  if (!arc) return;
+  const layer = document.querySelector('.egg-parallax');
+  if (!layer) return;
   let raf = 0;
   const update = () => {
     raf = 0;
-    const r = arc.parentElement.getBoundingClientRect();
-    const p = Math.max(-1, Math.min(1,
-      (window.innerHeight / 2 - (r.top + r.height / 2)) / window.innerHeight));
-    arc.style.transform = `translate3d(0, ${p * 46}px, 0)`;
+    const y = window.scrollY || 0;
+    const vh = window.innerHeight;
+    // si muovono più veloci dello scroll → escono dal basso
+    layer.style.transform = `translate3d(0, ${(y * 1.25).toFixed(1)}px, 0)`;
+    layer.style.opacity = Math.max(0, 1 - y / (vh * 0.55)).toFixed(3);
   };
   const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
   addEventListener('scroll', onScroll, { passive: true });

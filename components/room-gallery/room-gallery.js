@@ -73,27 +73,29 @@ figcaption { position:absolute; bottom:172px; left:110px; right:110px; padding:6
 .photo::before { content:''; position:absolute; z-index:1; inset:55% 0 0; background:linear-gradient(transparent,#080910b0); pointer-events:none; }
 @media(max-width:980px) { .photo { top:86px; bottom:168px; max-width: calc(100% - 70px); } header { padding:18px 14px; gap:6px; } header h1 { font-size:28px; } header p { font-size:18px; } .switch button { font-size:21px; padding:6px 9px; } .thumbs { max-width:92px; } figcaption { bottom:14px; font-size:23px; } }
 .lightbox {
-    position: fixed; inset: 0; z-index: 9999;
+    border: 0; padding: 0; margin: 0;
+    width: 100vw; height: 100vh; max-width: none; max-height: none;
+    background: transparent; color: inherit; overflow: hidden;
     display: flex; align-items: center; justify-content: center;
-    padding: 3vmin;
-    background: rgba(6, 7, 12, .94);
-    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    cursor: zoom-out;
 }
-.lightbox[hidden] { display: none; }
+.lightbox:not([open]) { display: none; }
+.lightbox::backdrop {
+    background: rgba(6, 7, 12, .95);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+}
 .lightbox img {
-    max-width: 100%; max-height: 100%;
+    max-width: 96vw; max-height: 92vh;
     width: auto; height: auto;
     object-fit: contain;
     border-radius: 10px;
     box-shadow: 0 30px 90px rgba(0,0,0,.7);
 }
 .lightbox-close {
-    position: fixed; top: 18px; right: 22px;
-    width: 46px; height: 46px; display: grid; place-items: center;
-    font: 34px/1 'Amatic SC', cursive; color: #fff;
+    position: fixed; top: 18px; right: 22px; z-index: 2;
+    width: 46px; height: 46px; padding: 0; display: grid; place-items: center;
+    font: 34px/1 'Amatic SC', cursive; color: #fff; cursor: pointer;
     border: 1px solid rgba(255,255,255,.2); border-radius: 50%;
-    background: rgba(255,255,255,.06); cursor: pointer;
+    background: rgba(255,255,255,.08);
 }
 .photo { cursor: zoom-in; }
 
@@ -102,25 +104,25 @@ class MdvRoomGallery extends BaseElement {
   constructor() { super(); this.room = 'red'; this.index = 0; this._autoTimer = null; this._autoplay = true; }
   connectedCallback() {
     this.shadowRoot.adoptedStyleSheets = [sheet(styles)];
-    this.shadowRoot.innerHTML = `<section class="room" aria-label="Foto delle sale prove"><header><div><h1></h1><p></p></div><div class="thumbs" aria-label="Scegli una foto"></div><div class="switch" aria-label="Scegli la sala"><button data-room="red">Rossa</button><button data-room="blue">Blu</button></div></header><figure><div class="photo"><img alt=""></div><figcaption aria-live="polite"><span class="caption"></span><span class="counter"></span></figcaption></figure><div class="controls"><button class="nav-btn" data-step="-1" aria-label="Foto precedente">‹</button><button class="nav-btn" data-step="1" aria-label="Foto successiva">›</button></div></section><div class="lightbox" hidden><div class="lightbox-close" role="button" tabindex="0" aria-label="Chiudi">×</div><img alt=""></div>`;
-        const _lb = this.shadowRoot.querySelector('.lightbox');
+    this.shadowRoot.innerHTML = `<section class="room" aria-label="Foto delle sale prove"><header><div><h1></h1><p></p></div><div class="thumbs" aria-label="Scegli una foto"></div><div class="switch" aria-label="Scegli la sala"><button data-room="red">Rossa</button><button data-room="blue">Blu</button></div></header><figure><div class="photo"><img alt=""></div><figcaption aria-live="polite"><span class="caption"></span><span class="counter"></span></figcaption></figure><div class="controls"><button class="nav-btn" data-step="-1" aria-label="Foto precedente">‹</button><button class="nav-btn" data-step="1" aria-label="Foto successiva">›</button></div></section><dialog class="lightbox"><button class="lightbox-close" aria-label="Chiudi">×</button><img alt=""></dialog>`;
+    const _lb = this.shadowRoot.querySelector('.lightbox');
     const _lbImg = _lb.querySelector('img');
-    const _closeLb = () => { _lb.hidden = true; document.body.style.overflow = ''; };
+    const _closeLb = () => { if (_lb.open) _lb.close(); };
+    this._on(_lb, 'click', e => {
+      if (e.target === _lb || e.target.closest('.lightbox-close')) _closeLb();
+    });
+    this._on(_lb, 'close', () => { document.body.style.overflow = ''; });
     this._on(this.shadowRoot, 'click', e => {
-      if (e.target.closest('.lightbox-close') || (e.target === _lb)) { _closeLb(); return; }
       const _ph = e.target.closest('.photo');
-      if (_ph) {
-        const _im = _ph.querySelector('img');
-        if (_im && _im.src) {
-          _lbImg.src = _im.src;
-          _lb.hidden = false;
-          document.body.style.overflow = 'hidden';
-        }
-        return;
-      }
+      if (!_ph) return;
+      const _im = _ph.querySelector('img');
+      if (!_im || !_im.src) return;
+      _lbImg.src = _im.src;
+      _lb.showModal();
+      document.body.style.overflow = 'hidden';
     });
     this._on(this.shadowRoot, 'keydown', e => {
-      if (e.key === 'Escape' && !_lb.hidden) _closeLb();
+      if (e.key === 'Escape' && _lb.open) _closeLb();
     });
 this._on(this.shadowRoot,'click', e => {
       const b = e.target.closest('button'); if (!b) return;
