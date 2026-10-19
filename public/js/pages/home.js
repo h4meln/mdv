@@ -215,6 +215,44 @@
     if (document.fonts?.ready) document.fonts.ready.then(measure);
 })();
 
+// Il widget GoFundMe (iframe di terze parti, ~2s di caricamento) non deve
+// stare nel percorso critico della home: lo carichiamo solo quando la sezione
+// campagna si avvicina al viewport (o subito se si arriva con un'ancora).
+(function () {
+  const iframe = document.querySelector('.gfm-embed-iframe');
+  const src = iframe && iframe.dataset.src;
+  if (!iframe || !src) return;
+
+  let loaded = false;
+  function loadWidget() {
+    if (loaded) return;
+    loaded = true;
+    iframe.src = src;
+    iframe.removeAttribute('data-src');
+  }
+
+  if (!('IntersectionObserver' in window)) { loadWidget(); return; }
+
+  // L'osservatore parte solo a layout pronto: prima delle regole CSS il
+  // contenitore ha area zero e IntersectionObserver lo darebbe subito
+  // "visibile", caricando l'iframe durante il load della pagina.
+  function start() {
+    const io = new IntersectionObserver(entries => {
+      for (const e of entries) {
+        if (e.isIntersecting) { loadWidget(); io.disconnect(); break; }
+      }
+    }, { rootMargin: '0px' });
+
+    io.observe(iframe.closest('.campaign-widget') || iframe);
+  }
+
+  if (document.readyState === 'complete') requestAnimationFrame(start);
+  else addEventListener('load', () => requestAnimationFrame(start), { once: true });
+
+  // se il browser arriva gia' sulla sezione (link #salva-il-mondo) carica subito
+  if (location.hash === '#salva-il-mondo') loadWidget();
+})();
+
 // GoFundMe's widget reports its height after loading; accept only its own messages.
 addEventListener('message', event => {
   const widget=document.querySelector('.gfm-embed-iframe');

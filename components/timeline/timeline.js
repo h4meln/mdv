@@ -38,6 +38,9 @@ const CONFIG = {
   EXIT_RANGE: 0.45,
   EXIT_POWER: 2,
   ENTRY_POWER: 1.5,
+  // In risalita, sopra questa frazione del pin il contenuto resta fermo in
+  // overlay per un tratto: lo si guarda mentre la sezione se ne va.
+  UP_HOLD_START: 0.70,
   YEAR_OUT_DURATION: 200,
   YEAR_IN_DURATION: 300,
   YEAR_DIGIT_DELAY: 100,
@@ -90,6 +93,7 @@ class MdvTimeline extends BaseElement {
     
     // Animation & Scroll State
     this._lastScrollY = -1;
+    this._lastFrameY = null; // scrollY del frame precedente (per il delta)
     this._rafId = null;
     this._resizeTimer = null;
     this._smoothScroll = { target: 0, current: 0, active: false };
@@ -125,6 +129,7 @@ class MdvTimeline extends BaseElement {
   _rebuild() {
     if (!this._data.length) return;
     
+    this._lastFrameY = null;
     this._stopRenderLoop();
     this._cleanup();
     
@@ -202,7 +207,7 @@ class MdvTimeline extends BaseElement {
       const timeline = new TimelineBuilder();
 
       this._setupTextAnimations(timeline, words, yearText);
-      this._setupMediaAnimations(timeline, mediaItems);
+      const mediaSpan = this._setupMediaAnimations(timeline, mediaItems);
 
       timeline.duration = 1;
 
@@ -211,6 +216,7 @@ class MdvTimeline extends BaseElement {
         timeline,
         year: wrap.dataset.year,
         top: 0, height: 0, sectionHeight: 0,
+        mediaSpan: mediaSpan > 0 ? mediaSpan : 1,
         entered: false, lastProgress: -1, lastEntry: -1
       });
     });
@@ -238,6 +244,7 @@ class MdvTimeline extends BaseElement {
   _setupMediaAnimations(timeline, mediaItems) {
     const mediaCount = mediaItems.length;
     const maxMediaStart = 0.24;
+    let end = 0;   // fine reale dell'ultima animazione media (in unità di progresso)
 
     mediaItems.forEach((item, index) => {
       const rotation = item.classList.contains('reel') ? 0 : (index % 2 ? 9 : -9);
@@ -254,7 +261,13 @@ class MdvTimeline extends BaseElement {
       item.style.zIndex = String(index);
       item.style.transform = `rotate(${rotation}deg) scale(0.4)`;
       item.style.filter = 'blur(20px)';
+
+      end = Math.max(end, start + item._scrubDur);
     });
+
+    // Oltre questo punto i media sono tutti fermi sull'ultimo fotogramma:
+    // è la "pausa" che si vede in discesa.
+    return end;
   }
 
   _setVideoVisible(video, visible) {
@@ -302,7 +315,7 @@ class MdvTimeline extends BaseElement {
     });
     this._on(document, 'visibilitychange', () => {
       if (document.hidden) this.shadowRoot.querySelectorAll('video').forEach(v => this._setVideoVisible(v, false));
-      else { this._lastScrollY = -1; }
+      else { this._lastScrollY = -1; this._lastFrameY = null; }
     });
     if (!this.hasAttribute('no-smooth-scroll')) {
       this._on(window, 'wheel', this._handleWheel.bind(this), { passive: false });
@@ -340,6 +353,7 @@ class MdvTimeline extends BaseElement {
       this._smoothScroll.target = clamp(this._smoothScroll.target, 0, this._getMaxScroll());
       this._smoothScroll.current = window.scrollY;
       this._lastScrollY = -1; // Force visual update
+      this._lastFrameY = null;
     }, 150);
   }
 
@@ -358,7 +372,8 @@ class MdvTimeline extends BaseElement {
       
       // Reset caches to force re-render
       section.lastProgress = -1;
-      section.lastEntry = -1; 
+      section.lastEntry = -1;
+      section.visualTime = undefined; // riallinea l'accumulatore alla posizione
     });
   }
 
@@ -536,10 +551,15 @@ class MdvTimeline extends BaseElement {
 
   _processSections(scrollY, isInitial = false) {
     const vh = window.innerHeight;
+    const delta = this._lastFrameY === null ? 0 : scrollY - this._lastFrameY;
+    this._lastFrameY = scrollY;
+    // Salto secco (link ancora, Page Down, barra trascinata): l'accumulatore
+    // va riallineato alla posizione reale, altrimenti resterebbe indietro.
+    const jumped = Math.abs(delta) > vh * 0.9;
 
     for (let i = 0; i < this._sections.length; i++) {
       const section = this._sections[i];
-      this._updateSectionVisuals(section, scrollY, vh);
+      this._updateSectionVisuals(section, scrollY, vh, delta, jumped);
       
       if (!isInitial) {
         this._handleSectionIntersection(section, scrollY, i);
@@ -547,7 +567,7 @@ class MdvTimeline extends BaseElement {
     }
   }
 
-  _updateSectionVisuals(section, scrollY, vh) {
+  _updateSectionVisuals(section, scrollY, vh, delta, jumped = false) {
     // 1. Calculate Entry/Exit Easing
     const entryProgress = clamp((scrollY - (section.top - vh)) / vh, 0, 1);
     const easedEntry = Math.pow(entryProgress, CONFIG.ENTRY_POWER);
@@ -562,17 +582,54 @@ class MdvTimeline extends BaseElement {
       section.grid.style.opacity = totalEasing.toFixed(3);
     }
 
-    // 2. Calculate Scrub Progress (Inner Timeline)
-    const scrollableDistance = section.height - section.sectionHeight;
-    const scrubProgress = scrollableDistance > 0 ? clamp((scrollY - section.top) / scrollableDistance, 0, 1) : 0;
-    
-    if (scrubProgress !== section.lastProgress) {
-      section.lastProgress = scrubProgress;
-      section.timeline.seek(scrubProgress * section.timeline.duration);
+    // 2. Scrub: accumulatore a tempo, 1:1 con lo scroll
+    //   • in discesa il tempo avanza per tutto il pin: nessuna tenuta, le
+    //     animazioni finiscono quando il pin finisce;
+    //   • in risalita, nell'ultimo tratto del pin (p > UP_HOLD_START) il tempo
+    //     non scende: il contenuto resta fermo in overlay mentre risali, poi
+    //     sotto quella soglia si riavvolge normalmente.
+    // È un solo accumulatore per entrambi i versi: nessun salto quando si
+    // cambia direzione, nemmeno invertendo a metà animazione.
+    const scrollRange = section.height - section.sectionHeight;
+    const maxTime = section.timeline.duration;
+
+    if (scrollRange > 0) {
+      const rate = section.timeline.duration / scrollRange;
+      const pinEnd = section.top + scrollRange;
+
+      if (scrollY <= section.top) {
+        // pin non ancora iniziato: nessun accumulo, l'animazione non parte
+        // prima di arrivarci (altrimenti a scrollY=0 era già a metà)
+        section.visualTime = 0;
+      } else if (scrollY >= pinEnd) {
+        // pin già finito: si resta sull'ultimo fotogramma. Serve quando si
+        // risale da sotto, altrimenti l'accumulatore scenderebbe a 0 restando
+        // fuori dal pin e rientrando si troverebbe lo schermo vuoto.
+        section.visualTime = maxTime;
+      } else if (section.visualTime === undefined || jumped) {
+        // primo giro, dopo un resize o dopo un salto: allineati alla posizione reale
+        const p = clamp((scrollY - section.top) / scrollRange, 0, 1);
+        section.visualTime = Math.min(p * section.timeline.duration, maxTime);
+      } else {
+        // dentro il pin
+        const p = clamp((scrollY - section.top) / scrollRange, 0, 1);
+        const holdingUp = delta < 0 && p > CONFIG.UP_HOLD_START;
+        if (!holdingUp) {
+          section.visualTime = clamp(section.visualTime + delta * rate, 0, maxTime);
+        }
+        // holdingUp: contenuto in overlay, il tempo resta dov'è
+      }
+    } else {
+      section.visualTime = 0;
+    }
+
+    const timelineTime = section.visualTime;
+    if (timelineTime !== section.lastProgress) {
+      section.lastProgress = timelineTime;
+      section.timeline.seek(timelineTime);
     }
 
     // 3. Render Media Items based on Scrub Progress
-    const timelineTime = scrubProgress * section.timeline.duration;
     const mediaCount = section.mediaItems.length;
     
     for (let j = 0; j < mediaCount; j++) {

@@ -157,6 +157,10 @@ mdv-eggbar.is-visible{opacity:1;visibility:visible;pointer-events:auto}
 .home-intro > p:not(.section-kicker), .campaign p:not(.section-kicker) { font-size: clamp(16px, 1.6vw, 19px); }
 .home-actions a:not(.home-pdf-btn), .home-actions .donate { font-size: clamp(14px, 1.4vw, 16px); }
 
+/* ── Ritocco campagna #SalvaIlMondo: titolo e hashtag leggermente piu' grandi ── */
+#salva-il-mondo h2#campaign-title { font-size: clamp(44px, 6.6vw, 76px); }
+#salva-il-mondo .section-kicker { font-size: clamp(15px, 1.7vw, 20px); }
+
 /* ── Pulsante PDF stile toast (glass) ── */
 .home-actions a.home-pdf-btn {
     display:inline-flex; align-items:center; gap:14px;
