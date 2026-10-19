@@ -203,7 +203,10 @@ mdv-eggbar.is-visible{opacity:1;visibility:visible;pointer-events:auto}
    PNG bianco con trasparenza → lo sfondo scuro resta visibile.
    ══════════════════════════════════════════════════════════ */
 .egg-parallax {
-    position: absolute;
+    /* FIXED, non absolute: con absolute l'elemento scorre già via con la pagina,
+       quindi sommare una traslazione verso il basso lo faceva risalire (netto:
+       -0.3 * scroll). Ancorato al viewport, la sola traslazione è l'uscita. */
+    position: fixed;
     top: 0; left: 0; right: 0;
     height: 100vh;
     height: 100svh;
@@ -215,6 +218,8 @@ mdv-eggbar.is-visible{opacity:1;visibility:visible;pointer-events:auto}
     pointer-events: none;
     transform: translate3d(0, 0, 0);
     opacity: 1;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
 }
 .egg-parallax__art {
     position: relative;

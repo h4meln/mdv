@@ -92,12 +92,41 @@
     /* ===================== UOVA ===================== */
     // Le uova restano ferme e scendono fuori dal fondo del viewport allo scroll.
     // Nessun listener dedicato: sfrutta lo stesso requestAnimationFrame del logo.
+    //
+    // L'altezza del viewport NON è stabile: su mobile cambia quando la barra
+    // degli indirizzi si ritrae e ricompare. Ricalcolandola a ogni frame il
+    // progresso faceva un salto all'indietro (le uova "scattavano su" e poi
+    // tornavano giù). La congeliamo e la aggiorniamo solo quando cambia
+    // davvero la larghezza (desktop) o l'orientamento.
+    let eggRef = null;
+    let eggSig = '';
+    function eggReference() {
+        if (!eggRef || Math.abs(innerWidth - eggRef.vw) > 40) {
+            eggRef = { vw: innerWidth, h: innerHeight };
+        }
+        return eggRef;
+    }
+    function resetEggReference() { eggRef = null; eggSig = ''; }
+
     function renderEggs(scroll) {
         if (!eggs) return;
-        if (reducedMotion) { eggs.style.opacity = '1'; return; }
-        const t = clamp(scroll / (innerHeight * 0.6), 0, 1);
-        eggs.style.transform = `translate3d(0, ${(t * 70).toFixed(2)}vh, 0)`;
-        eggs.style.opacity = (1 - t).toFixed(3);
+        if (reducedMotion) {
+            if (eggSig !== 'static') {
+                eggSig = 'static';
+                eggs.style.transform = 'translate3d(0,0,0)';
+                eggs.style.opacity = '1';
+            }
+            return;
+        }
+        const ref = eggReference();
+        const t = clamp(scroll / (ref.h * 0.6), 0, 1);
+        const y = (t * ref.h * 0.7).toFixed(1);
+        const o = (1 - t).toFixed(3);
+        const sig = y + '|' + o;
+        if (sig === eggSig) return;          // niente stili inutili a ogni frame
+        eggSig = sig;
+        eggs.style.transform = 'translate3d(0, ' + y + 'px, 0)';
+        eggs.style.opacity = o;
     }
 
     /* ===================== RENDER ===================== */
@@ -166,7 +195,7 @@
     /* ===================== EVENTS ===================== */
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', requestMeasure, { passive: true });
-    addEventListener('orientationchange', requestMeasure, { passive: true });
+    addEventListener('orientationchange', () => { resetEggReference(); requestMeasure(); }, { passive: true });
 
     if ('ResizeObserver' in window) {
         new ResizeObserver(requestMeasure).observe(hero);
