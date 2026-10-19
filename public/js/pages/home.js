@@ -4,6 +4,7 @@
     const hero = document.getElementById('logoHero');
     const caption = document.getElementById('heroCaption');
     const nav = document.querySelector('mdv-eggbar');
+    const eggs = document.querySelector('.egg-parallax');
 
     if (!hero) return;
 
@@ -88,11 +89,24 @@
         document.body.classList.toggle('nav-hidden', !navVisible);
     }
 
+    /* ===================== UOVA ===================== */
+    // Le uova restano ferme e scendono fuori dal fondo del viewport allo scroll.
+    // Nessun listener dedicato: sfrutta lo stesso requestAnimationFrame del logo.
+    function renderEggs(scroll) {
+        if (!eggs) return;
+        if (reducedMotion) { eggs.style.opacity = '1'; return; }
+        const t = clamp(scroll / (innerHeight * 0.6), 0, 1);
+        eggs.style.transform = `translate3d(0, ${(t * 70).toFixed(2)}vh, 0)`;
+        eggs.style.opacity = (1 - t).toFixed(3);
+    }
+
     /* ===================== RENDER ===================== */
     function render() {
-        if (!metrics) return;
-
         const scroll = scrollY || root.scrollTop || 0;
+
+        renderEggs(scroll);
+
+        if (!metrics) return;
 
         updateNav(scroll);
 

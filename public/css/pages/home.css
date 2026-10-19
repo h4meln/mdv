@@ -213,16 +213,8 @@ mdv-eggbar.is-visible{opacity:1;visibility:visible;pointer-events:auto}
     justify-content: center;
     overflow: hidden;
     pointer-events: none;
-    animation: eggArcExit linear both;
-    animation-timeline: scroll(root block);
-    animation-range: 0 60vh;
-}
-@keyframes eggArcExit {
-    to { transform: translateY(65vh); opacity: 0; }
-}
-@supports not (animation-timeline: scroll()) {
-    /* fallback: resta ferma sul primo viewport */
-    .egg-parallax { animation: none; }
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
 }
 .egg-parallax__art {
     position: relative;
