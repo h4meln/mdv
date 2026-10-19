@@ -33,6 +33,7 @@ export const CARD_STYLES = `
   transform: rotateX(var(--rx)) rotateY(var(--ry));
   transform-style: preserve-3d;
   cursor: pointer; outline: none; will-change: transform;
+  touch-action: pan-y;
   transition: width var(--dur-spin) var(--ease-spin), height var(--dur-spin) var(--ease-spin);
 }
 :host([orientation="portrait"][data-standing]) .card-inner { width: var(--portrait-w); height: var(--portrait-h); }

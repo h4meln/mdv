@@ -59,6 +59,9 @@ export const SLIDER_STYLES = `
   padding: 30px 0 80px;
   overflow: visible;
   box-sizing: border-box;
+  /* Lo swipe orizzontale resta a Swiper; quello verticale scorre la pagina.
+     Senza questo Chrome emette pointercancel sul primo move orizzontale. */
+  touch-action: pan-y;
 }
 .swiper-wrapper { padding-bottom: 0; }
 
