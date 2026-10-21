@@ -39,6 +39,14 @@ export const CARD_STYLES = `
   touch-action: pan-y;
   /* The rotating child changes orientation without animating layout. */
 }
+.card-inner {
+  outline: none;
+
+  -webkit-tap-highlight-color: transparent;
+
+  user-select: none;
+  -webkit-user-select: none;
+}
 :host([orientation="portrait"][data-standing]) .card-inner { width: var(--landscape-w); height: var(--landscape-h); }
 .card-inner:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
 .card-spin {

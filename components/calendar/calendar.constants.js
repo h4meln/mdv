@@ -6,7 +6,7 @@ export const BASE_CATEGORIES = {
   deadline: { label: 'Scadenze', color: 'violet' },
 };
 
-let EXTRA_CATEGORIES = {};
+const EXTRA_CATEGORIES = {};
 try {
   const mod = await import('../../data/categories.js');
   const extra = mod?.CATEGORIES || mod?.default || {};

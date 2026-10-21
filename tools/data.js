@@ -1,4 +1,3 @@
-import { BASE_CATEGORIES } from '../components/calendar/calendar.constants.js';
 /** Parse data files without executing JavaScript. Supports legacy literal arrays. */
 import { CATEGORIES } from '../components/calendar/calendar.constants.js';
 const fields = ['date','time','end','title','category','location','description'];

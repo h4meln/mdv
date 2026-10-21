@@ -173,7 +173,7 @@ $('file').onchange=async()=>{
   if(file.size>2000000)throw new Error('File troppo grande (massimo 2 MB).');
   const text=await file.text();
   let payload=null, events=null;
-  try {const parsed=JSON.parse(text);if(parsed && Array.isArray(parsed.events)){payload=parsed;events=normalizeEvents(parsed.events,true);}} catch {}
+  try {const parsed=JSON.parse(text);if(parsed && Array.isArray(parsed.events)){payload=parsed;events=normalizeEvents(parsed.events,true);}} catch { /* non e un backup JSON: prova il parser events.js */ }
   if(!events)events=parseEventsFile(text);
   if(state.events.length&&!confirm(`Aprire ${events.length} eventi al posto dei ${state.events.length} nella bozza? Puoi annullare dopo l'importazione.`))return;
   checkpoint();
