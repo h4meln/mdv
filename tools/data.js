@@ -1,3 +1,4 @@
+import { BASE_CATEGORIES } from '../components/calendar/calendar.constants.js';
 /** Parse data files without executing JavaScript. Supports legacy literal arrays. */
 import { CATEGORIES } from '../components/calendar/calendar.constants.js';
 const fields = ['date','time','end','title','category','location','description'];
@@ -84,4 +85,34 @@ export function parseEventsFile(source) {
   const result=value();skip();if(text[position]===';')position++;skip();
   if(position!==text.length)throw new Error('Il file contiene codice aggiuntivo: importa solo l’elenco eventi.');
   return normalizeEvents(Array.isArray(result)?result:result?.events, result?.kind === 'mdv-events-draft');
+}
+
+/* ---------- Categorie personalizzate ---------- */
+export const COLORS = ['rose','amber','sky','sand','violet','lime'];
+export const CATEGORY_KEY = /^[a-z][a-z0-9_-]{0,39}$/;
+export function normalizeCategories(input) {
+  const out = Object.create(null);
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return out;
+  for (const [key, cat] of Object.entries(input)) {
+    if (!CATEGORY_KEY.test(key)) continue;
+    if (!cat || typeof cat !== 'object') continue;
+    const label = typeof cat.label === 'string' ? cat.label.trim().slice(0, 40) : '';
+    const color = COLORS.includes(cat.color) ? cat.color : 'sky';
+    if (!label) continue;
+    out[key] = { label, color };
+  }
+  return out;
+}
+export function slugifyCategory(label) {
+  const base = String(label || '').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+  return CATEGORY_KEY.test(base) ? base : '';
+}
+export function categoriesModule(custom) {
+  const clean = normalizeCategories(custom);
+  return "// Categorie personalizzate - Mondo delle Uova\nexport const CATEGORIES = " + JSON.stringify(clean, null, 2) + ";\n";
+}
+export function categoryInUse(key, events) {
+  return (events || []).some(e => e.category === key);
 }

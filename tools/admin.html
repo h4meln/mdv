@@ -18,10 +18,31 @@
     <button id="add" class="add">＋ Nuovo evento</button>
     <label class="search-label" for="search">Cerca nel programma</label><input id="search" type="search" placeholder="Titolo, data, luogo…">
     <div id="event-list" class="event-list"></div>
+    <details id="category-panel" class="category-panel">
+      <summary><span>Categorie</span><span id="category-count" class="category-count">0</span></summary>
+      <div id="category-list" class="category-list"></div>
+      <form id="category-form" class="category-form" autocomplete="off">
+        <input id="category-label" maxlength="40" placeholder="Nome categoria" required>
+        <select id="category-color" aria-label="Colore"></select>
+        <button type="submit" class="primary">Aggiungi</button>
+        <p id="category-error" class="category-error" role="status" hidden></p>
+      </form>
+    </details>
     <div class="library-footer"><span id="storage-status" role="status">Bozza locale</span><p>Le modifiche restano su questo dispositivo. Il sito cambia solo dopo aver sostituito il file esportato.</p></div>
   </aside>
   <section class="preview-area" aria-label="Anteprima">
     <div class="preview-toolbar"><div class="preview-tabs" role="group" aria-label="Tipo di anteprima"><button id="show-card" aria-pressed="true">Scheda</button><button id="show-calendar" aria-pressed="false">Calendario</button></div><span>ANTEPRIMA LIVE</span></div>
+    <div id="empty-state" class="empty-state" hidden>
+      <div class="empty-state-inner">
+        <span class="empty-eyebrow">PRIMO PASSO</span>
+        <h2>Il programma comincia qui.</h2>
+        <p>Nessun evento in bozza. Crea il primo appuntamento oppure definisci una categoria nuova per organizzare il calendario.</p>
+        <div class="empty-actions">
+          <button id="empty-add-event" class="primary">Crea il primo evento</button>
+          <button id="empty-add-category">Crea una categoria</button>
+        </div>
+      </div>
+    </div>
     <div id="card-preview" class="stage">
       <article class="event-poster"><div class="poster-top"><span>MONDO DELLE UOVA</span><span id="preview-category">IL PROSSIMO INCONTRO</span></div><div class="poster-main"><span class="poster-date" id="preview-date">Ci vediamo qui.</span><h2 id="preview-title">Il prossimo evento<br>comincia con un’idea.</h2><p id="preview-description"></p></div><div class="poster-bottom"><span id="preview-location">Arosio · Via Volta 38</span><span id="preview-time"></span></div></article>
       <p class="preview-caption">Una prova di impaginazione. Nel calendario pubblico, gli eventi seguono lo stile del sito.</p>

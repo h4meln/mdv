@@ -12,11 +12,14 @@ export const CARD_STYLES = `
 }
 
 :host(:not([data-ready])) .card-face {
-  background-color: transparent;
-  box-shadow: none;
-  opacity: 0;
+  background: linear-gradient(135deg, #191329, #30233e);
 }
-:host(:not([data-ready])) .card-inner { pointer-events: none; }
+:host(:not([data-ready])) .card-layer { visibility: hidden; }
+:host(:not([data-ready])) .card-face--front::after {
+  content: '…'; position: absolute; inset: 0; display: grid; place-items: center;
+  color: #fff; font: 24px system-ui;
+}
+:host([data-error]) .card-face--front::after { content: '↻'; }
 .card-face { transition: opacity .35s ease-out; }
 
 .card-scene {
@@ -32,11 +35,11 @@ export const CARD_STYLES = `
   width: var(--landscape-w); height: var(--landscape-h);
   transform: rotateX(var(--rx)) rotateY(var(--ry));
   transform-style: preserve-3d;
-  cursor: pointer; outline: none; will-change: transform;
+  cursor: pointer; outline: none;
   touch-action: pan-y;
-  transition: width var(--dur-spin) var(--ease-spin), height var(--dur-spin) var(--ease-spin);
+  /* The rotating child changes orientation without animating layout. */
 }
-:host([orientation="portrait"][data-standing]) .card-inner { width: var(--portrait-w); height: var(--portrait-h); }
+:host([orientation="portrait"][data-standing]) .card-inner { width: var(--landscape-w); height: var(--landscape-h); }
 .card-inner:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
 .card-spin {
   position: absolute; top: 50%; left: 50%;
@@ -124,8 +127,21 @@ export const CARD_STYLES = `
 }
 .card-header:not(:empty) { opacity: 1; }
 
+:host([data-lite]) .card-layer--bands,
+:host([data-lite]) .card-layer--sparkle { display: none; }
+:host([data-lite]) .card-layer--textures {
+  background-image: linear-gradient(-33deg, #ff006e, #ffbe0b, #06ffa5, #00b4d8, #8338ec);
+  background-size: 100% 100%; background-position: center;
+  background-blend-mode: normal; opacity: .15;
+}
+:host([data-lite]) .card-layer--glare {
+  background: radial-gradient(circle at 50% 50%, #ffffff60, transparent 70%);
+  mix-blend-mode: normal;
+}
+:host([data-lite]) .card-face { box-shadow: 0 12px 24px -10px #0009; }
 @media (prefers-reduced-motion: reduce) {
-  .card-inner, .card-spin, .card-flipper { transition: none !important; }
-  .card-layer--textures, .card-layer--bands { opacity: 0.25 !important; }
+  .card-inner, .card-spin, .card-flipper, .card-face { transition: none !important; }
+  .card-layer--textures { opacity: .15; }
+  .card-layer--bands, .card-layer--sparkle, .card-layer--glare { display: none; }
 }
 `;

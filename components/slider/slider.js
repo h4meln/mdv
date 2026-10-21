@@ -50,7 +50,11 @@
     }
   
     connectedCallback() {
-      if (this._ready || this._initPromise) return;
+      if (this._ready) {
+        if (!this._swiper && this._cards?.length) this._initSwiper();
+        return;
+      }
+      if (this._initPromise) return;
       const tryStart = () => {
         const cards = Array.from(this.children).filter(el => el.tagName === 'MDV-CARD');
         if (cards.length === 0) return false;
@@ -67,12 +71,14 @@
     }
   
     disconnectedCallback() {
+      queueMicrotask(() => {
+      if (this.isConnected) return;
       if (this._childrenObserver) { this._childrenObserver.disconnect(); this._childrenObserver = null; }
+      if (this._swiper) this._resumeIndex = this._swiper.realIndex;
       if (this._swiper) { try { this._swiper.destroy(true, false); } catch (_) {} this._swiper = null; }
       if (this._standingRaf) { cancelAnimationFrame(this._standingRaf); this._standingRaf = null; }
       this._cleanup();
-      this._ready = false;
-      this._initPromise = null;
+      });
     }
   
     attributeChangedCallback(name, oldV, newV) {
@@ -91,7 +97,7 @@
       });
       this._renderShell();
       this._adoptCards();
-      this._initSwiper();
+      if (this.isConnected) this._initSwiper();
       this._ready = true;
       this._emit('slider-ready');
     }
@@ -134,12 +140,15 @@
         this._prevEl.style.display = 'none';
         this._nextEl.style.display = 'none';
         this._paginationEl.style.display = 'none';
+        this._wrapperEl.firstElementChild.classList.add('swiper-slide-active');
         this._cards[0].setStanding(true);
         this._cards[0].wake?.('front');
         return;
       }
       const loopEnabled = n >= 3;
       this._swiper = new window.Swiper(this._swiperEl, {
+        initialSlide: this._resumeIndex || 0,
+        speed: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 300,
         effect: 'cards', grabCursor: true, centeredSlides: true, slidesPerView: 'auto',
         loop: loopEnabled, watchSlidesProgress: true, keyboard: { enabled: true },
         pagination: {
@@ -148,7 +157,7 @@
           renderBullet: (index, className) => {
             const card = this._cards[index];
             const label = card?.getAttribute('title') || String(index + 1);
-            return `<span class="${className}"><span class="slider-badge-label">${label}</span></span>`;
+            return `<span class="${className}"><span class="slider-badge-label">${escapeHtml(label)}</span></span>`;
           },
         },
         navigation: { nextEl: this._nextEl, prevEl: this._prevEl },
@@ -158,6 +167,7 @@
           init: (sw) => {
             this._updateStanding(sw);
             requestAnimationFrame(() => {
+              if (!this.isConnected || sw.destroyed) return;
               this._updateStanding(sw);
               this._scrollBadgeIntoView(sw.realIndex, 'auto');
             });
@@ -166,7 +176,7 @@
           slideChange: (sw) => {
             this._resetFlips();
             this._updateStanding(sw);
-            this._scrollBadgeIntoView(sw.realIndex, 'smooth');
+            this._scrollBadgeIntoView(sw.realIndex, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
             this._emit('slide-change', { index: sw.realIndex, card: this._cards[sw.realIndex] });
           },
           slideChangeTransitionStart: (sw) => this._updateStanding(sw),
@@ -176,17 +186,17 @@
       });
     }
   
-    /* Doppia puntina: corsia "front" da 0 → centro, corsia "back" da n-1 → centro.
-       Le chiamate a wake() sono sincrone, quindi l'ordine di accodamento
-       nelle corsie è preservato. */
+    // Load a small neighborhood instead of decoding the entire deck at startup.
     _wakeBidirectional() {
+      this._wakeNearby(this._swiper?.realIndex || this._resumeIndex || 0);
+    }
+
+    _wakeNearby(index) {
       const n = this._cards.length;
-      if (n === 0) return;
-      const mid = Math.floor((n - 1) / 2);
-      for (let i = 0; i <= mid; i++) {
-        this._cards[i].wake?.('front');
-        const j = n - 1 - i;
-        if (j > mid) this._cards[j].wake?.('back');
+      this._cards[index]?.wake('front', 2);
+      for (const offset of [-1, 1, -2, 2]) {
+        const i = this._swiper?.params.loop ? (index + offset + n) % n : index + offset;
+        this._cards[i]?.wake(offset < 0 ? 'back' : 'front', 1);
       }
     }
 
@@ -208,18 +218,15 @@
     }
   
     _updateStanding(swiper) {
-      if (!swiper || !swiper.slides) return;
+      if (!swiper || swiper.destroyed || !swiper.slides) return;
       const activeIdx = swiper.realIndex;
       swiper.slides.forEach(slide => {
         const card = slide.querySelector('mdv-card');
         if (!card) return;
-        const idxAttr = slide.getAttribute('data-swiper-slide-index');
-        const idx = idxAttr !== null ? parseInt(idxAttr, 10) : -1;
-        const want = idx === activeIdx;
+        const want = slide === swiper.slides[swiper.activeIndex];
         if (card.standing !== want) card.setStanding(want);
       });
-      const active = this._cards[activeIdx];
-      if (active) active.wake?.('front');
+      this._wakeNearby(activeIdx);
     }
   
     _resetFlips() { this._cards.forEach(c => c.resetFlip && c.resetFlip()); }

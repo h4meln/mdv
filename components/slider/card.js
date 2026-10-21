@@ -36,62 +36,40 @@ function loadTessere() {
 }
 const resolvedCache = new Map();
 
-// ── DOPPIA CODA SEQUENZIALE ─────────────────────────────────────
-// Due corsie indipendenti. Ciascuna carica UNA immagine alla volta,
-// con STAGGER_MS fra un avvio e il successivo.
-// "front" procede dall'alto verso il centro, "back" dal basso verso il centro.
-const MAX_PER_LANE = 1;
-const STAGGER_MS   = 140;
-
-const _lanes = {
-  front: { q: [], active: 0, lastStart: 0, timer: 0 },
-  back:  { q: [], active: 0, lastStart: 0, timer: 0 },
-};
-
-function _pump(side) {
-  const lane = _lanes[side];
-  if (lane.active >= MAX_PER_LANE || lane.q.length === 0) return;
-  const now = performance.now();
-  const wait = Math.max(0, lane.lastStart + STAGGER_MS - now);
-  if (wait > 0) {
-    if (lane.timer) return;
-    lane.timer = setTimeout(() => { lane.timer = 0; _pump(side); }, wait);
-    return;
+// Shared, bounded queue. Visible cards can overtake background work.
+const loads = [];
+let activeLoads = 0;
+function pumpLoads() {
+  while (activeLoads < 3 && loads.length) {
+    loads.sort((a, b) => b.priority - a.priority);
+    const job = loads.shift();
+    activeLoads++;
+    Promise.resolve().then(job.task).catch(error => {
+      console.warn('[mdv-card] load failed', error);
+    }).finally(() => { activeLoads--; pumpLoads(); });
   }
-  lane.lastStart = now;
-  const item = lane.q.shift();
-  lane.active++;
-  Promise.resolve()
-    .then(item.task)
-    .catch(() => {})
-    .then(() => {
-      lane.active--;
-      item.resolve();
-      _pump(side);
-    });
 }
-
-function enqueueLoad(task, side = 'front') {
-  return new Promise((resolve) => {
-    _lanes[side].q.push({ task, resolve });
-    _pump(side);
-  });
-}
-
 function preloadImage(url) {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.decoding = 'sync';
-    img.src = url;
-    // decode() risolve quando l'immagine è PRONTA al disegno,
-    // non solo quando i byte sono arrivati.
-    if (img.decode) {
-      img.decode().then(() => resolve(url), reject);
-    } else {
-      // Fallback per browser vecchi (iOS < 11, Android vecchi)
-      img.onload  = () => resolve(url);
-      img.onerror = reject;
+    const timer = setTimeout(() => finish(new Error('Image load timed out')), 15000);
+    let done = false;
+    function finish(error) {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      img.onload = img.onerror = null;
+      if (error) { img.src = ''; reject(error); }
+      else resolve(url);
     }
+    img.decoding = 'async';
+    img.onload = async () => {
+      // A decode rejection need not mean the successfully loaded image is unusable.
+      if (img.decode) { try { await img.decode(); } catch (_) {} }
+      finish();
+    };
+    img.onerror = () => finish(new Error('Image could not be loaded'));
+    img.src = url;
   });
 }
 
@@ -100,6 +78,8 @@ class MdvCard extends BaseElement {
 
   constructor() {
     super();
+    this._generation = 0;
+    this._attempts = 0;
     this._ready = false;
     this._initPromise = null;
     this._flipped = false;
@@ -120,7 +100,12 @@ class MdvCard extends BaseElement {
   }
 
   connectedCallback() {
+    if (!this._visibilityHandler) this._visibilityHandler = () => { if (document.hidden) this._resetHover(); };
+    document.addEventListener('visibilitychange', this._visibilityHandler);
     if (!this._initPromise) this._initPromise = this._init();
+    this._initPromise.then(() => {
+      if (this.isConnected && !this._loaded && !this._isInsideSlider()) this._observe();
+    });
     return this._initPromise;
   }
 
@@ -135,6 +120,10 @@ class MdvCard extends BaseElement {
     this._applyTitle();
     if (!this.hasAttribute('orientation')) this.setAttribute('orientation', 'portrait');
     this._wireEvents();
+    if ((navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
+        (navigator.deviceMemory && navigator.deviceMemory <= 4)) {
+      this.setAttribute('data-lite', '');
+    }
 
     this._tessere = await loadTessere();
     this._ready = true;
@@ -152,37 +141,36 @@ class MdvCard extends BaseElement {
       if (this._rafId) { cancelAnimationFrame(this._rafId); this._rafId = null; }
       this._s.idle = true;
       if (this._io) { this._io.disconnect(); this._io = null; }
-      this._cleanup();
-      this._initPromise = null;
-      this._ready = false;
+      document.removeEventListener('visibilitychange', this._visibilityHandler);
+      this._resetHover();
+      clearTimeout(this._retryTimer);
+      // Preserve the DOM, image and local listeners across real reconnects.
     });
   }
 
   attributeChangedCallback(name, oldV, newV) {
     if (oldV === newV) return;
     if (name === 'title') {
-      if (this._ready && this._header) this._applyTitle();
+      if (this._header) this._applyTitle();
       return;
     }
     if (name === 'src') {
-      // Reset stato visivo
+      this._generation++;
+      this._attempts = 0;
+      clearTimeout(this._retryTimer);
       this._loaded = false;
       this.removeAttribute('data-ready');
+      this.removeAttribute('data-error');
       if (this._cardEl) this._cardEl.style.setProperty('--tessera', 'none');
       if (this._io) { this._io.disconnect(); this._io = null; }
       if (!this._ready || !newV) return;
-      if (this._isInsideSlider()) {
-        // Lo slider decide quando ricaricare: aspettiamo wake()
-      } else {
-        this._scheduled = false;
-        this._observe();
-      }
+      this.wake('front', this._isActiveSlide() ? 2 : 0);
     }
   }
 
   // ── LAZY LOAD ────────────────────────────────────────────────
   _observe() {
-    if (this._scheduled || this._loaded) return;
+    if (this._scheduled || this._loaded || this._io || !this.isConnected) return;
     if (!('IntersectionObserver' in window)) {
       this.wake(this._pickSide());
       return;
@@ -209,46 +197,50 @@ class MdvCard extends BaseElement {
     return (r.top + r.height / 2) < mid ? 'front' : 'back';
   }
 
-  /* Richiede il caricamento su una corsia specifica.
-     Chiamabile in qualsiasi momento: se l'init non è pronto, la corsia
-     attende. L'ordine di chiamata è preservato (importante per la
-     doppia puntina dello slider). */
-  wake(side = 'front') {
+  // Safe before initialization; priority 2 is the active card, 1 its neighbors.
+  wake(side = 'front', priority = 0) {
     if (this._io) { this._io.disconnect(); this._io = null; }
-    if (this._scheduled || this._loaded) return;
+    if (this._loaded) return;
+    if (this._job) this._job.priority = Math.max(this._job.priority, priority);
+    if (this._scheduled) return;
+    clearTimeout(this._retryTimer);
     this._scheduled = true;
-    const initPromise = this._initPromise || (this._initPromise = this._init());
-    enqueueLoad(async () => {
-      await initPromise;
-      if (!this.isConnected) return;
-      await this._loadNow(side);
-    }, side);
+    const job = this._job = { priority, task: async () => {
+      const generation = this._generation;
+      try {
+        await (this._initPromise || (this._initPromise = this._init()));
+        if (this.isConnected) await this._loadNow(side, generation);
+      } finally {
+        this._scheduled = false;
+        this._job = null;
+        if (this.isConnected && generation !== this._generation) this.wake(side, priority);
+      }
+    }};
+    loads.push(job);
+    pumpLoads();
   }
 
-  async _loadNow(side) {
+  async _loadNow(side, generation) {
     const raw = this.getAttribute('src') || '';
     const url = this._resolveSrc(raw);
-    if (!url) {
-      if (raw) console.warn(`[mdv-card] chiave "${raw}" non trovata`);
-      this._scheduled = false;
-      return;
-    }
     try {
+      if (!url) throw new Error('Unknown card image: ' + raw);
       await preloadImage(url);
-    } catch (_) {
-      this._scheduled = false;
-      return;
+      if (generation !== this._generation) return;
+      this._cardEl.style.setProperty('--tessera', 'url(' + JSON.stringify(url) + ')');
+      this.setAttribute('data-ready', '');
+      this.removeAttribute('data-error');
+      this._loaded = true;
+      this._attempts = 0;
+      this._emit('card-loaded', { src: raw, url, side });
+    } catch (error) {
+      if (generation !== this._generation) return;
+      this.setAttribute('data-error', '');
+      this._emit('card-error', { src: raw, url, message: error.message });
+      if (++this._attempts < 3 && this.isConnected) {
+        this._retryTimer = setTimeout(() => this.wake(side, 1), this._attempts * 1000);
+      }
     }
-    if (this.getAttribute('src') !== raw) {
-      // src cambiato durante il preload → ritenta con il nuovo
-      this._scheduled = false;
-      return this.wake(side);
-    }
-    this._cardEl.style.setProperty('--tessera', `url('${url}')`);
-    this.setAttribute('data-ready', '');
-    this._loaded = true;
-    this._scheduled = false;
-    this._emit('card-loaded', { src: raw, url, side });
   }
 
   _resolveSrc(raw) {
@@ -296,6 +288,7 @@ class MdvCard extends BaseElement {
   // ── INTERAZIONE ──────────────────────────────────────────────
   _toggleFlip() {
     if (this._isInsideSlider() && !this._isActiveSlide()) return;
+    if (!this._loaded) { this._attempts = 0; this.wake('front', 2); return; }
     this._flipped = !this._flipped;
     this._cardEl.classList.toggle('is-flipped', this._flipped);
     this._cardEl.setAttribute('aria-pressed', String(this._flipped));
@@ -323,19 +316,21 @@ class MdvCard extends BaseElement {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this._toggleFlip(); }
     });
 
-    const isTouch = (navigator.maxTouchPoints || 0) > 0;
     const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (isTouch || !supportsHover || reduced) return;
+
+    if (!supportsHover || reduced) return;
     this._on(this._sceneEl, 'pointerenter', (e) => {
+      if (e.pointerType === 'touch' || (this._isInsideSlider() && !this.standing)) return;
       this._s.hovering = true; this._s.idle = false;
-      this._updateTarget(e); this._startLoop();
+      this._pointer = { clientX: e.clientX, clientY: e.clientY }; this._startLoop();
     });
     this._on(this._sceneEl, 'pointermove', (e) => {
       if (!this._s.hovering) return;
       this._updateTarget(e); this._startLoop();
     });
     this._on(this._sceneEl, 'pointerleave', () => {
+      this._pointer = null;
       this._s.hovering = false;
       this._s.tPX = 50; this._s.tPY = 50;
       this._s.tRX = 0;  this._s.tRY = 0;
@@ -346,6 +341,7 @@ class MdvCard extends BaseElement {
 
   _updateTarget(e) {
     const r = this._sceneEl.getBoundingClientRect();
+    if (!r.width || !r.height) return;
     const x = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
     const y = Math.max(0, Math.min(1, (e.clientY - r.top)  / r.height));
     const s = this._s;
@@ -360,15 +356,22 @@ class MdvCard extends BaseElement {
   }
 
   _startLoop() {
-    if (this._rafId) return;
-    this._rafId = requestAnimationFrame(() => this._tick());
+    if (this._rafId || !this.isConnected || document.hidden) return;
+    this._s.idle = false;
+    this._lastFrame = 0;
+    this._rafId = requestAnimationFrame(time => this._tick(time));
   }
 
-  _tick() {
+  _tick(time) {
     try {
+      if (this._pointer) { this._updateTarget(this._pointer); this._pointer = null; }
+      const elapsed = this._lastFrame ? time - this._lastFrame : 16.67;
+      this._lastFrame = time;
+      this._slowFrames = elapsed > 28 && elapsed < 250 ? (this._slowFrames || 0) + 1 : Math.max(0, (this._slowFrames || 0) - 1);
+      if (this._slowFrames >= 12) this.setAttribute('data-lite', '');
       const s = this._s;
       if (s.idle) { this._rafId = null; return; }
-      const k = s.hovering ? 0.18 : 0.08;
+      const k = 1 - Math.pow(1 - (s.hovering ? 0.18 : 0.08), Math.min(elapsed, 50) / 16.67);
       s.cPX += (s.tPX - s.cPX) * k;
       s.cPY += (s.tPY - s.cPY) * k;
       s.cRX += (s.tRX - s.cRX) * k;
@@ -387,13 +390,15 @@ class MdvCard extends BaseElement {
       const mk = target > s.motion ? 0.5 : 0.07;
       s.motion += (target - s.motion) * mk;
       const st = this._cardEl.style;
-      st.setProperty('--px',     s.cPX.toFixed(2) + '%');
-      st.setProperty('--py',     s.cPY.toFixed(2) + '%');
-      st.setProperty('--rx',     s.cRX.toFixed(2) + 'deg');
-      st.setProperty('--ry',     s.cRY.toFixed(2) + 'deg');
-      st.setProperty('--gx',     s.cGX.toFixed(2) + '%');
-      st.setProperty('--gy',     s.cGY.toFixed(2) + '%');
-      st.setProperty('--ga',     s.cGA.toFixed(2) + 'deg');
+      if (!this.hasAttribute('data-lite')) {
+        st.setProperty('--px',     s.cPX.toFixed(2) + '%');
+        st.setProperty('--py',     s.cPY.toFixed(2) + '%');
+        st.setProperty('--gx',     s.cGX.toFixed(2) + '%');
+        st.setProperty('--gy',     s.cGY.toFixed(2) + '%');
+        st.setProperty('--ga',     s.cGA.toFixed(2) + 'deg');
+      }
+      st.setProperty('--rx', s.cRX.toFixed(2) + 'deg');
+      st.setProperty('--ry', s.cRY.toFixed(2) + 'deg');
       st.setProperty('--motion', s.motion.toFixed(3));
       st.setProperty('--glare',  s.cGlare.toFixed(3));
       s.lastGX = s.cGX; s.lastGY = s.cGY; s.lastGA = s.cGA;
@@ -402,20 +407,37 @@ class MdvCard extends BaseElement {
         Math.abs(s.tPY - s.cPY) < 0.05 &&
         Math.abs(s.tRX - s.cRX) < 0.05 &&
         Math.abs(s.tRY - s.cRY) < 0.05 &&
-        s.motion < 0.002 && s.cGlare < 0.002;
-      if (settled && !s.hovering) {
-        st.setProperty('--rx', '0deg');
-        st.setProperty('--ry', '0deg');
-        st.setProperty('--motion', '0');
-        st.setProperty('--glare', '0');
+        s.motion < 0.002 && Math.abs(s.tGlare - s.cGlare) < 0.002 &&
+        Math.abs(gxT - s.cGX) < 0.05 && Math.abs(gyT - s.cGY) < 0.05 && Math.abs(gaT - s.cGA) < 0.05;
+      if (settled) {
+        if (!s.hovering) {
+          st.setProperty('--rx', '0deg');
+          st.setProperty('--ry', '0deg');
+          st.setProperty('--motion', '0');
+          st.setProperty('--glare', '0');
+        }
         s.idle = true; this._rafId = null; return;
       }
     } finally {
-      if (!this._s.idle) this._rafId = requestAnimationFrame(() => this._tick());
+      if (!this._s.idle) this._rafId = requestAnimationFrame(time => this._tick(time));
+    }
+  }
+
+  _resetHover() {
+    if (this._rafId) cancelAnimationFrame(this._rafId);
+    this._rafId = null;
+    this._pointer = null;
+    Object.assign(this._s, { hovering: false, idle: true, tPX: 50, tPY: 50,
+      tRX: 0, tRY: 0, cPX: 50, cPY: 50, cRX: 0, cRY: 0,
+      cGX: 50, cGY: 50, cGA: -33, lastGX: 50, lastGY: 50, lastGA: -33,
+      motion: 0, tGlare: 0, cGlare: 0 });
+    for (const [name, value] of Object.entries({ rx: '0deg', ry: '0deg', motion: '0', glare: '0' })) {
+      this._cardEl?.style.setProperty('--' + name, value);
     }
   }
 
   setStanding(v) {
+    if (!v) this._resetHover();
     const has = this.hasAttribute('data-standing');
     if (v === has) return;
     if (v) this.setAttribute('data-standing', '');

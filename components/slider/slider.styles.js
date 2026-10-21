@@ -3,6 +3,9 @@ export const SWIPER_BASE_CSS = `
 .swiper-wrapper { position:relative; width:100%; height:100%; z-index:1; display:flex; transition-property:transform; box-sizing:content-box; }
 .swiper-slide { flex-shrink:0; width:100%; height:100%; position:relative; transition-property:transform; display:block; }
 .swiper-cards { overflow:visible; }
+.swiper-3d { perspective:1200px; }
+.swiper-3d .swiper-wrapper, .swiper-3d .swiper-slide { transform-style:preserve-3d; }
+.swiper-cards .swiper-slide { transform-origin:center bottom; backface-visibility:hidden; }
 .swiper-button-prev, .swiper-button-next { position:absolute; top:50%; z-index:10; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 .swiper-button-disabled { opacity:.35; cursor:auto; pointer-events:none; }
 .swiper-button-lock { display:none; }
@@ -18,7 +21,7 @@ export const SLIDER_STYLES = `
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  /* container-type: inline-size; */
+  container-type: inline-size;
   font-family: "Bricolage Grotesque", system-ui, sans-serif;
   --swiper-theme-color: #fff;
   --swiper-navigation-color: #fff;
@@ -63,7 +66,7 @@ export const SLIDER_STYLES = `
      Senza questo Chrome emette pointercancel sul primo move orizzontale. */
   touch-action: pan-y;
 }
-.swiper-wrapper { padding-bottom: 0; }
+.swiper-wrapper { padding-bottom: 0; height: var(--slide); }
 
 /* ── Slide: scala con il container, lascia affiorare le vicine ── */
 .swiper-slide {
@@ -144,7 +147,7 @@ export const SLIDER_STYLES = `
   width: 44px; height: 44px;
   border-radius: 50%;
   background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(6px);
+  /* Solid translucent controls avoid filtering every moving card behind them. */
   border: none;
   padding: 0;
   z-index: 10;
@@ -197,6 +200,11 @@ export const SLIDER_STYLES = `
 /* Su schermi larghi la fetta visibile è un po' più generosa */
 @container (min-width: 600px) {
   :host { --slide: clamp(360px, 76cqw, 420px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swiper-pagination { scroll-behavior: auto; }
+  .swiper-pagination-bullet { transition: none; }
 }
 
 /* Fallback senza container queries */
